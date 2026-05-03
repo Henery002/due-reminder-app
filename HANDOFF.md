@@ -33,8 +33,10 @@
 5. 新建事项、首页读取、全部页读取、已处理、延后已形成最小闭环
 6. Expo Go Android 从 SDK 53 起会对远程推送能力弹出官方红色警告；当前实现会在 Expo Go Android 下跳过原生通知模块加载，完整本地通知验证需使用 development build
 7. 已处理会尝试取消旧通知并清空本地 `notificationId`；延后会取消旧通知、追加 snooze rule 并重排未来通知
-8. 下一步继续做 M3：事项编辑页、删除/编辑时取消和重排通知，并准备 development build 真机验证
-9. 日期选择器、事项卡片图标、更年轻化动效和更精致表单交互后续单独迭代
+8. 已安装 `expo-dev-client`，并新增 `eas.json` 与 development build 说明文档
+9. 当前本机缺少 Java Runtime、Android SDK 和 `adb`，本地 `expo run:android --device` 暂不可用；可走 EAS 云构建或先安装 Android Studio/JDK/SDK
+10. 下一步继续做 M3：通过 development build 验证真实通知触达/取消/重排，之后补事项编辑页、删除/编辑时通知重排
+11. 日期选择器、事项卡片图标、更年轻化动效和更精致表单交互后续单独迭代
 
 ## 提交约定
 

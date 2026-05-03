@@ -4,7 +4,10 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
+    "start:dev": "expo start --dev-client",
     "android": "expo start --android",
+    "android:dev": "expo run:android --device",
+    "eas:android:dev": "npx eas-cli build --platform android --profile development",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest"
@@ -14,6 +17,7 @@
     "date-fns": "^4.1.0",
     "expo": "~54.0.33",
     "expo-constants": "~18.0.13",
+    "expo-dev-client": "~6.0.21",
     "expo-linking": "~8.0.12",
     "expo-notifications": "~0.32.17",
     "expo-router": "~6.0.23",

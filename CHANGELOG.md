@@ -83,3 +83,9 @@
    - 延后事项时追加 snooze rule，取消旧通知后重新调度未来提醒
    - Expo Go Android 通知不可用时，事项状态仍会正常保存，通知副作用降级为 no-op
    - 首页和全部页已接入动作服务，避免页面直接操作通知副作用
+23. M3 development build 准备：
+   - 安装 `expo-dev-client`
+   - 新增 `eas.json`，预留 Android development / preview / production 构建配置
+   - 新增 `docs/DEVELOPMENT_BUILD.md`，记录 EAS 云构建、本地 Android 构建和通知验证清单
+   - 新增 `start:dev`、`android:dev`、`eas:android:dev` 脚本
+   - 记录当前本机缺少 Java Runtime、Android SDK 和 `adb`，暂不能直接本地构建
