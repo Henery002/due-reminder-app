@@ -78,10 +78,21 @@ export function snoozeReminder(
   days: number,
   now: Date = new Date(),
 ): ReminderItem {
+  const snoozedUntil = addDays(now, days).toISOString();
+  const snoozeRule: ReminderRule = {
+    id: `snooze-${item.id}-${snoozedUntil}`,
+    offsetDays: 0,
+    scheduledAt: snoozedUntil,
+  };
+
   return {
     ...item,
     status: 'snoozed',
-    snoozedUntil: addDays(now, days).toISOString(),
+    snoozedUntil,
+    reminderRules: [
+      ...item.reminderRules.filter((rule) => !rule.id.startsWith(`snooze-${item.id}-`)),
+      snoozeRule,
+    ],
     updatedAt: now.toISOString(),
   };
 }

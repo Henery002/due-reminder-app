@@ -77,3 +77,9 @@
    - `app.json` 补充 `scheme` 和 `expo-notifications` 插件配置
    - Expo Go Android 下跳过原生通知模块加载，避免 SDK 53+ 的远程推送红色警告影响启动体验
    - 真机验证：小米 14 Expo Go 首页和通知页未再出现启动期红色警告；完整本地通知触达需 development build 验证
+22. M3 通知取消与延后重排：
+   - 新增 `src/features/reminders/reminder.actions.ts`，集中处理事项动作与通知副作用
+   - 已处理事项时尝试取消旧通知，并清空本地提醒规则中的 `notificationId`
+   - 延后事项时追加 snooze rule，取消旧通知后重新调度未来提醒
+   - Expo Go Android 通知不可用时，事项状态仍会正常保存，通知副作用降级为 no-op
+   - 首页和全部页已接入动作服务，避免页面直接操作通知副作用

@@ -8,12 +8,16 @@ import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
 import { OverviewCard } from '../../src/components/OverviewCard';
 import { PermissionBanner } from '../../src/components/PermissionBanner';
-import { groupRemindersForHome } from '../../src/features/reminders/reminder.selectors';
 import {
-  markReminderDone,
-  refreshReminderStatus,
-  snoozeReminder,
-} from '../../src/features/reminders/reminder.service';
+  getExpoNotificationGateway,
+  isNotificationRuntimeUnavailableError,
+} from '../../src/features/notifications/expo-notification.gateway';
+import {
+  completeReminderWithNotifications,
+  snoozeReminderWithNotifications,
+} from '../../src/features/reminders/reminder.actions';
+import { groupRemindersForHome } from '../../src/features/reminders/reminder.selectors';
+import { refreshReminderStatus } from '../../src/features/reminders/reminder.service';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
 import {
   filterRemindersByType,
@@ -47,13 +51,29 @@ export default function HomeScreen() {
 
   useFocusEffect(loadItems);
 
-  const handleDone = (item: ReminderItem) => {
-    reminderRepository.upsert(markReminderDone(item));
+  const handleDone = async (item: ReminderItem) => {
+    await completeReminderWithNotifications(item, {
+      getNotificationGateway: getExpoNotificationGateway,
+      onNotificationError: (error) => {
+        if (!isNotificationRuntimeUnavailableError(error)) {
+          console.warn('Failed to cancel reminder notifications', error);
+        }
+      },
+      upsert: reminderRepository.upsert,
+    });
     loadItems();
   };
 
-  const handleSnooze = (item: ReminderItem) => {
-    reminderRepository.upsert(snoozeReminder(item, 1));
+  const handleSnooze = async (item: ReminderItem) => {
+    await snoozeReminderWithNotifications(item, 1, {
+      getNotificationGateway: getExpoNotificationGateway,
+      onNotificationError: (error) => {
+        if (!isNotificationRuntimeUnavailableError(error)) {
+          console.warn('Failed to reschedule reminder notifications', error);
+        }
+      },
+      upsert: reminderRepository.upsert,
+    });
     loadItems();
   };
 

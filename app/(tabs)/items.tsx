@@ -5,9 +5,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
 import {
-  markReminderDone,
+  getExpoNotificationGateway,
+  isNotificationRuntimeUnavailableError,
+} from '../../src/features/notifications/expo-notification.gateway';
+import {
+  completeReminderWithNotifications,
+  snoozeReminderWithNotifications,
+} from '../../src/features/reminders/reminder.actions';
+import {
   refreshReminderStatus,
-  snoozeReminder,
 } from '../../src/features/reminders/reminder.service';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
 import { reminderRepository } from '../../src/storage/reminder.store';
@@ -30,13 +36,29 @@ export default function ItemsScreen() {
 
   useFocusEffect(loadItems);
 
-  const handleDone = (item: ReminderItem) => {
-    reminderRepository.upsert(markReminderDone(item));
+  const handleDone = async (item: ReminderItem) => {
+    await completeReminderWithNotifications(item, {
+      getNotificationGateway: getExpoNotificationGateway,
+      onNotificationError: (error) => {
+        if (!isNotificationRuntimeUnavailableError(error)) {
+          console.warn('Failed to cancel reminder notifications', error);
+        }
+      },
+      upsert: reminderRepository.upsert,
+    });
     loadItems();
   };
 
-  const handleSnooze = (item: ReminderItem) => {
-    reminderRepository.upsert(snoozeReminder(item, 1));
+  const handleSnooze = async (item: ReminderItem) => {
+    await snoozeReminderWithNotifications(item, 1, {
+      getNotificationGateway: getExpoNotificationGateway,
+      onNotificationError: (error) => {
+        if (!isNotificationRuntimeUnavailableError(error)) {
+          console.warn('Failed to reschedule reminder notifications', error);
+        }
+      },
+      upsert: reminderRepository.upsert,
+    });
     loadItems();
   };
 

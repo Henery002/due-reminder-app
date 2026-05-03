@@ -68,11 +68,38 @@ describe('reminder service', () => {
   });
 
   it('snoozes reminders for a future day', () => {
-    const result = snoozeReminder(item({ id: 'later' }), 2, baseDate);
+    const result = snoozeReminder(
+      item({
+        id: 'later',
+        reminderRules: [
+          {
+            id: 'later-existing',
+            offsetDays: 1,
+            scheduledAt: '2026-05-04T01:00:00.000Z',
+            notificationId: 'notification-existing',
+          },
+        ],
+      }),
+      2,
+      baseDate,
+    );
 
     expect(result.status).toBe('snoozed');
     expect(result.snoozedUntil).toBe('2026-05-05T08:00:00.000Z');
     expect(result.updatedAt).toBe(baseDate.toISOString());
+    expect(result.reminderRules).toEqual([
+      {
+        id: 'later-existing',
+        offsetDays: 1,
+        scheduledAt: '2026-05-04T01:00:00.000Z',
+        notificationId: 'notification-existing',
+      },
+      {
+        id: 'snooze-later-2026-05-05T08:00:00.000Z',
+        offsetDays: 0,
+        scheduledAt: '2026-05-05T08:00:00.000Z',
+      },
+    ]);
   });
 });
 
