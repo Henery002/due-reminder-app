@@ -62,3 +62,10 @@
    - 新增 `MAINTENANCE.md`
    - 明确 git commit message 使用 `type: 中文提交说明`
    - 明确可用类型：`feat`、`fix`、`docs`、`style`、`refactor`、`test`、`chore`
+20. M2.5 真机体验修复：
+   - 首页、全部页、我的页接入 `SafeAreaView`，避免顶部内容侵入系统状态栏
+   - 底部 Tab 从 `H/L/M` 文字占位切换为 `@expo/vector-icons`
+   - 首页分类接入真实筛选逻辑
+   - 状态文案支持 `今日到期`、`即将到期`、`已处理`、`已逾期`、`已延后`
+   - 通知横幅改为可点击入口，跳转通知权限页
+   - 新增 `reminder.view.test.ts` 覆盖筛选和状态展示规则

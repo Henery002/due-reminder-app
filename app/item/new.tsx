@@ -2,6 +2,7 @@ import { addDays, format } from 'date-fns';
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { ReminderRuleSelector } from '../../src/components/ReminderRuleSelector';
 import { TemplateCard } from '../../src/components/TemplateCard';
@@ -64,89 +65,91 @@ export default function NewItemScreen() {
   };
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <Stack.Screen options={{ title: '添加事项' }} />
-      <View>
-        <Text style={styles.title}>添加一件快到期的事</Text>
-        <Text style={styles.subtitle}>先选模板，再确认到期日和提醒策略。</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>事项类型</Text>
-        <View style={styles.pills}>
-          {typeOptions.map((option) => (
-            <CategoryPill
-              key={option.value}
-              label={option.label}
-              selected={type === option.value}
-              onPress={() => setType(option.value)}
-            />
-          ))}
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <Stack.Screen options={{ title: '添加事项' }} />
+        <View>
+          <Text style={styles.title}>添加一件快到期的事</Text>
+          <Text style={styles.subtitle}>先选模板，再确认到期日和提醒策略。</Text>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>常用模板</Text>
-        <View style={styles.templates}>
-          {reminderTemplates.map((template) => (
-            <TemplateCard
-              key={template.id}
-              label={template.name}
-              selected={name === template.name && type === template.type}
-              onPress={() => handleTemplatePress(template)}
-            />
-          ))}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>事项类型</Text>
+          <View style={styles.pills}>
+            {typeOptions.map((option) => (
+              <CategoryPill
+                key={option.value}
+                label={option.label}
+                selected={type === option.value}
+                onPress={() => setType(option.value)}
+              />
+            ))}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>事项名称</Text>
-        <TextInput
-          placeholder="例如：视频会员续费"
-          placeholderTextColor={colors.textMuted}
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-        />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>常用模板</Text>
+          <View style={styles.templates}>
+            {reminderTemplates.map((template) => (
+              <TemplateCard
+                key={template.id}
+                label={template.name}
+                selected={name === template.name && type === template.type}
+                onPress={() => handleTemplatePress(template)}
+              />
+            ))}
+          </View>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>到期日期</Text>
-        <TextInput
-          placeholder="YYYY-MM-DD"
-          placeholderTextColor={colors.textMuted}
-          style={styles.input}
-          value={dueDate}
-          onChangeText={setDueDate}
-        />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>事项名称</Text>
+          <TextInput
+            placeholder="例如：视频会员续费"
+            placeholderTextColor={colors.textMuted}
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>金额和备注</Text>
-        <TextInput
-          keyboardType="decimal-pad"
-          placeholder="金额，可选"
-          placeholderTextColor={colors.textMuted}
-          style={styles.input}
-          value={amount}
-          onChangeText={setAmount}
-        />
-        <TextInput
-          multiline
-          placeholder="备注，可选，例如自动续费前确认"
-          placeholderTextColor={colors.textMuted}
-          style={[styles.input, styles.noteInput]}
-          value={note}
-          onChangeText={setNote}
-        />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>到期日期</Text>
+          <TextInput
+            placeholder="YYYY-MM-DD"
+            placeholderTextColor={colors.textMuted}
+            style={styles.input}
+            value={dueDate}
+            onChangeText={setDueDate}
+          />
+        </View>
 
-      <ReminderRuleSelector offsets={DEFAULT_REMINDER_OFFSETS[type]} />
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>金额和备注</Text>
+          <TextInput
+            keyboardType="decimal-pad"
+            placeholder="金额，可选"
+            placeholderTextColor={colors.textMuted}
+            style={styles.input}
+            value={amount}
+            onChangeText={setAmount}
+          />
+          <TextInput
+            multiline
+            placeholder="备注，可选，例如自动续费前确认"
+            placeholderTextColor={colors.textMuted}
+            style={[styles.input, styles.noteInput]}
+            value={note}
+            onChangeText={setNote}
+          />
+        </View>
 
-      <Pressable onPress={handleSave} style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>保存并安排提醒</Text>
-      </Pressable>
-    </ScrollView>
+        <ReminderRuleSelector offsets={DEFAULT_REMINDER_OFFSETS[type]} />
+
+        <Pressable onPress={handleSave} style={styles.saveButton}>
+          <Text style={styles.saveButtonText}>保存并安排提醒</Text>
+        </Pressable>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -186,6 +189,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   screen: {
+    backgroundColor: colors.background,
+    flex: 1,
+  },
+  safeArea: {
     backgroundColor: colors.background,
     flex: 1,
   },

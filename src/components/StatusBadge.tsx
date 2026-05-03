@@ -2,13 +2,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import type { ReminderStatus } from '../features/reminders/reminder.types';
 import { colors } from '../theme/colors';
 
-const labels: Record<ReminderStatus, string> = {
-  active: '进行中',
-  done: '已处理',
-  overdue: '已逾期',
-  snoozed: '已延后',
-};
-
 const palette: Record<ReminderStatus, { backgroundColor: string; color: string }> = {
   active: { backgroundColor: colors.primarySoft, color: colors.primary },
   done: { backgroundColor: colors.doneSoft, color: colors.done },
@@ -16,12 +9,12 @@ const palette: Record<ReminderStatus, { backgroundColor: string; color: string }
   snoozed: { backgroundColor: colors.dueSoonSoft, color: colors.dueSoon },
 };
 
-export function StatusBadge({ status }: { status: ReminderStatus }) {
+export function StatusBadge({ label, status }: { label?: string; status: ReminderStatus }) {
   const style = palette[status];
 
   return (
     <View style={[styles.badge, { backgroundColor: style.backgroundColor }]}>
-      <Text style={[styles.text, { color: style.color }]}>{labels[status]}</Text>
+      <Text style={[styles.text, { color: style.color }]}>{label ?? status}</Text>
     </View>
   );
 }

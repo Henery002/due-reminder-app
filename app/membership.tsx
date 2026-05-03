@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MembershipCard } from '../src/components/MembershipCard';
 import { colors } from '../src/theme/colors';
 
@@ -7,18 +8,20 @@ const benefits = ['去广告', '无限事项', '自定义多级提醒', '更多�
 
 export default function MembershipScreen() {
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <Stack.Screen options={{ title: '会员权益' }} />
-      <Text style={styles.title}>会员权益</Text>
-      <MembershipCard />
-      <View style={styles.list}>
-        {benefits.map((benefit) => (
-          <Text key={benefit} style={styles.item}>
-            {benefit}
-          </Text>
-        ))}
-      </View>
-    </ScrollView>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <Stack.Screen options={{ title: '会员权益' }} />
+        <Text style={styles.title}>会员权益</Text>
+        <MembershipCard />
+        <View style={styles.list}>
+          {benefits.map((benefit) => (
+            <Text key={benefit} style={styles.item}>
+              {benefit}
+            </Text>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -42,6 +45,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   screen: {
+    backgroundColor: colors.background,
+    flex: 1,
+  },
+  safeArea: {
     backgroundColor: colors.background,
     flex: 1,
   },

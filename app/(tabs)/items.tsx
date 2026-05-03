@@ -1,6 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
 import {
@@ -40,27 +41,29 @@ export default function ItemsScreen() {
   };
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <View>
-        <Text style={styles.title}>全部事项</Text>
-        <Text style={styles.subtitle}>管理所有订阅、账单和证件到期日。</Text>
-      </View>
-
-      {items.length > 0 ? (
-        <View style={styles.list}>
-          {items.map((item) => (
-            <DueItemCard
-              key={item.id}
-              item={item}
-              onDone={() => handleDone(item)}
-              onSnooze={() => handleSnooze(item)}
-            />
-          ))}
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <View>
+          <Text style={styles.title}>全部事项</Text>
+          <Text style={styles.subtitle}>管理所有订阅、账单和证件到期日。</Text>
         </View>
-      ) : (
-        <EmptyState title="还没有临期事项" description="先添加一个会员、账单或证件到期日。" />
-      )}
-    </ScrollView>
+
+        {items.length > 0 ? (
+          <View style={styles.list}>
+            {items.map((item) => (
+              <DueItemCard
+                key={item.id}
+                item={item}
+                onDone={() => handleDone(item)}
+                onSnooze={() => handleSnooze(item)}
+              />
+            ))}
+          </View>
+        ) : (
+          <EmptyState title="还没有临期事项" description="先添加一个会员、账单或证件到期日。" />
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -74,6 +77,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   screen: {
+    backgroundColor: colors.background,
+    flex: 1,
+  },
+  safeArea: {
     backgroundColor: colors.background,
     flex: 1,
   },

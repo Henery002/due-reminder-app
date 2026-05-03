@@ -1,35 +1,38 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MembershipCard } from '../../src/components/MembershipCard';
 import { PermissionBanner } from '../../src/components/PermissionBanner';
 import { colors } from '../../src/theme/colors';
 
 export default function MeScreen() {
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <View>
-        <Text style={styles.title}>我的</Text>
-        <Text style={styles.subtitle}>提醒、会员、反馈和隐私设置。</Text>
-      </View>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <View>
+          <Text style={styles.title}>我的</Text>
+          <Text style={styles.subtitle}>提醒、会员、反馈和隐私设置。</Text>
+        </View>
 
-      <Link href="/membership">
-        <MembershipCard />
-      </Link>
+        <Link href="/membership">
+          <MembershipCard />
+        </Link>
 
-      <Link href="/notification-permission">
-        <PermissionBanner />
-      </Link>
+        <Link href="/notification-permission">
+          <PermissionBanner />
+        </Link>
 
-      <View style={styles.panel}>
-        <Text style={styles.panelTitle}>默认提醒</Text>
-        <Text style={styles.panelText}>订阅、账单、证件会按推荐策略提醒。</Text>
-      </View>
+        <View style={styles.panel}>
+          <Text style={styles.panelTitle}>默认提醒</Text>
+          <Text style={styles.panelText}>订阅、账单、证件会按推荐策略提醒。</Text>
+        </View>
 
-      <View style={styles.panel}>
-        <Text style={styles.panelTitle}>反馈</Text>
-        <Text style={styles.panelText}>第一版会优先收集通知可靠性和录入体验反馈。</Text>
-      </View>
-    </ScrollView>
+        <View style={styles.panel}>
+          <Text style={styles.panelTitle}>反馈</Text>
+          <Text style={styles.panelText}>第一版会优先收集通知可靠性和录入体验反馈。</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -58,6 +61,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   screen: {
+    backgroundColor: colors.background,
+    flex: 1,
+  },
+  safeArea: {
     backgroundColor: colors.background,
     flex: 1,
   },

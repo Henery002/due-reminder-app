@@ -1,7 +1,8 @@
 import { differenceInCalendarDays, format, isSameMonth, parseISO } from 'date-fns';
-import { Link, useFocusEffect } from 'expo-router';
+import { Link, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
@@ -14,11 +15,23 @@ import {
   snoozeReminder,
 } from '../../src/features/reminders/reminder.service';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
+import {
+  filterRemindersByType,
+  type ReminderTypeFilter,
+} from '../../src/features/reminders/reminder.view';
 import { reminderRepository } from '../../src/storage/reminder.store';
 import { colors } from '../../src/theme/colors';
 
+const categoryOptions: Array<{ label: string; value: ReminderTypeFilter }> = [
+  { label: '全部', value: 'all' },
+  { label: '订阅', value: 'subscription' },
+  { label: '账单', value: 'bill' },
+  { label: '证件', value: 'document' },
+];
+
 export default function HomeScreen() {
   const [items, setItems] = useState<ReminderItem[]>([]);
+  const [selectedType, setSelectedType] = useState<ReminderTypeFilter>('all');
 
   const loadItems = useCallback(() => {
     const refreshedItems = reminderRepository.list().map((item) => {
@@ -45,7 +58,8 @@ export default function HomeScreen() {
   };
 
   const now = new Date();
-  const groups = groupRemindersForHome(items, now);
+  const visibleItems = filterRemindersByType(items, selectedType);
+  const groups = groupRemindersForHome(visibleItems, now);
   const recentItems = [
     ...groups.overdue,
     ...groups.today,
@@ -59,48 +73,58 @@ export default function HomeScreen() {
   ).length;
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <Text style={styles.eyebrow}>{format(now, 'yyyy 年 M 月 d 日')}</Text>
-        <Text style={styles.title}>今天要处理 {groups.today.length} 件事</Text>
-        <Text style={styles.subtitle}>订阅续费、账单缴费、证件到期都在这里看。</Text>
-      </View>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.eyebrow}>{format(now, 'yyyy 年 M 月 d 日')}</Text>
+          <Text style={styles.title}>今天要处理 {groups.today.length} 件事</Text>
+          <Text style={styles.subtitle}>订阅续费、账单缴费、证件到期都在这里看。</Text>
+        </View>
 
-      <PermissionBanner />
-      <OverviewCard
-        nextSevenDays={nextSevenDaysCount}
-        thisMonth={thisMonthCount}
-        overdue={groups.overdue.length}
-      />
+        <PermissionBanner onPress={() => router.push('/notification-permission')} />
+        <OverviewCard
+          nextSevenDays={nextSevenDaysCount}
+          thisMonth={thisMonthCount}
+          overdue={groups.overdue.length}
+        />
 
-      <View style={styles.pills}>
-        {['全部', '订阅', '账单', '证件'].map((label, index) => (
-          <CategoryPill key={label} label={label} selected={index === 0} />
-        ))}
-      </View>
+        <View style={styles.pills}>
+          {categoryOptions.map((option) => (
+            <CategoryPill
+              key={option.value}
+              label={option.label}
+              selected={selectedType === option.value}
+              onPress={() => setSelectedType(option.value)}
+            />
+          ))}
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>近期要处理</Text>
-        {recentItems.length > 0 ? (
-          <View style={styles.list}>
-            {recentItems.map((item) => (
-              <DueItemCard
-                key={item.id}
-                item={item}
-                onDone={() => handleDone(item)}
-                onSnooze={() => handleSnooze(item)}
-              />
-            ))}
-          </View>
-        ) : (
-          <EmptyState title="最近没有压力项" description="先添加一个会员、账单或证件到期日。" />
-        )}
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>近期要处理</Text>
+          {recentItems.length > 0 ? (
+            <View style={styles.list}>
+              {recentItems.map((item) => (
+                <DueItemCard
+                  key={item.id}
+                  item={item}
+                  onDone={() => handleDone(item)}
+                  onSnooze={() => handleSnooze(item)}
+                />
+              ))}
+            </View>
+          ) : (
+            <EmptyState
+              title="最近没有压力项"
+              description="先添加一个会员、账单或证件到期日。"
+            />
+          )}
+        </View>
 
-      <Link href="/item/new" style={styles.primaryAction}>
-        添加一件事
-      </Link>
-    </ScrollView>
+        <Link href="/item/new" style={styles.primaryAction}>
+          添加一件事
+        </Link>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -135,6 +159,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     padding: 15,
     textAlign: 'center',
+  },
+  safeArea: {
+    backgroundColor: colors.background,
+    flex: 1,
   },
   screen: {
     backgroundColor: colors.background,

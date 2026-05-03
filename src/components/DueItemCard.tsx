@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { ReminderItem } from '../features/reminders/reminder.types';
+import { getReminderStatusLabel } from '../features/reminders/reminder.view';
 import { colors } from '../theme/colors';
 import { IconGlyph } from './IconGlyph';
 import { StatusBadge } from './StatusBadge';
@@ -23,7 +24,7 @@ export function DueItemCard({ item, onDone, onSnooze }: DueItemCardProps) {
           </Text>
           <Text style={styles.date}>到期日 {item.dueDate}</Text>
         </View>
-        <StatusBadge status={item.status} />
+        <StatusBadge label={getReminderStatusLabel(item)} status={item.status} />
       </View>
 
       {typeof item.amount === 'number' ? (
