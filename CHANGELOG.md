@@ -58,3 +58,7 @@
    - 日期输入仍是文本框
    - 通知调度未接入
    - 支付/广告/会员权益仍是静态入口
+19. 补充项目维护规范：
+   - 新增 `MAINTENANCE.md`
+   - 明确 git commit message 使用 `type: 中文提交说明`
+   - 明确可用类型：`feat`、`fix`、`docs`、`style`、`refactor`、`test`、`chore`

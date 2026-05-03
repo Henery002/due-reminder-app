@@ -9,6 +9,10 @@
 3. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/70-到期提醒助手-技术方案与开发任务-v0.1.md`
 4. `/Users/henery/code/AI-Practice-Lab/docs/superpowers/plans/2026-05-03-due-reminder-app-implementation.md`
 
+维护规范：
+
+1. `MAINTENANCE.md`
+
 ## 当前命令
 
 ```bash

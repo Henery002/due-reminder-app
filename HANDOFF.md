@@ -4,10 +4,11 @@
 
 1. `README.md`
 2. `STATUS.md`
-3. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/50-到期提醒助手-PRD-v0.1.md`
-4. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/60-到期提醒助手-UI与用户流-v0.1.md`
-5. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/70-到期提醒助手-技术方案与开发任务-v0.1.md`
-6. `/Users/henery/code/AI-Practice-Lab/docs/superpowers/plans/2026-05-03-due-reminder-app-implementation.md`
+3. `MAINTENANCE.md`
+4. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/50-到期提醒助手-PRD-v0.1.md`
+5. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/60-到期提醒助手-UI与用户流-v0.1.md`
+6. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/70-到期提醒助手-技术方案与开发任务-v0.1.md`
+7. `/Users/henery/code/AI-Practice-Lab/docs/superpowers/plans/2026-05-03-due-reminder-app-implementation.md`
 
 ## 当前技术路线
 
@@ -30,3 +31,9 @@
 3. 新建事项、首页读取、全部页读取、已处理、延后已形成最小闭环
 4. 下一步优先做 M3：`expo-notifications` 权限申请、通知调度、事项更新时取消/重排通知
 5. 日期选择器、正式图标库、更年轻化动效和更精致表单交互后续单独迭代
+
+## 提交约定
+
+1. 提交格式：`type: 中文提交说明`
+2. 可用类型：`feat`、`fix`、`docs`、`style`、`refactor`、`test`、`chore`
+3. 示例：`docs: 补充代码提交规范`
