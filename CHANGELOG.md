@@ -69,3 +69,11 @@
    - 状态文案支持 `今日到期`、`即将到期`、`已处理`、`已逾期`、`已延后`
    - 通知横幅改为可点击入口，跳转通知权限页
    - 新增 `reminder.view.test.ts` 覆盖筛选和状态展示规则
+21. M3 通知权限与本地提醒基础闭环：
+   - 新增 `src/features/notifications/notification.service.ts`，保持通知调度逻辑可测试
+   - 新增 `src/features/notifications/expo-notification.gateway.ts`，通过动态 import 适配 `expo-notifications`
+   - 新增通知权限页状态展示、授权按钮和 5 秒测试通知入口
+   - 新建事项后尝试申请权限并调度未来提醒，写回 `notificationId`
+   - `app.json` 补充 `scheme` 和 `expo-notifications` 插件配置
+   - Expo Go Android 下跳过原生通知模块加载，避免 SDK 53+ 的远程推送红色警告影响启动体验
+   - 真机验证：小米 14 Expo Go 首页和通知页未再出现启动期红色警告；完整本地通知触达需 development build 验证

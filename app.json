@@ -2,6 +2,7 @@
   "expo": {
     "name": "due-reminder-app",
     "slug": "due-reminder-app",
+    "scheme": "due-reminder-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,7 +29,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-notifications"
     ]
   }
 }

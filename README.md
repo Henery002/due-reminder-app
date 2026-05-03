@@ -20,7 +20,12 @@ npm start
 npm run android
 npm test
 npx tsc --noEmit
+npx expo export --platform android
 ```
+
+## 通知验证说明
+
+Expo Go Android 从 SDK 53 起会对远程推送能力弹出官方红色警告。当前代码会在 Expo Go Android 下跳过原生通知模块加载，避免启动体验被干扰；本地通知权限、调度和 5 秒测试通知的完整验证应使用 development build。
 
 ## 目录原则
 

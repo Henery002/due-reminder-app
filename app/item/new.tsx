@@ -7,6 +7,15 @@ import { CategoryPill } from '../../src/components/CategoryPill';
 import { ReminderRuleSelector } from '../../src/components/ReminderRuleSelector';
 import { TemplateCard } from '../../src/components/TemplateCard';
 import { reminderTemplates } from '../../src/constants/templates';
+import {
+  getExpoNotificationGateway,
+  isNotificationRuntimeUnavailableError,
+} from '../../src/features/notifications/expo-notification.gateway';
+import {
+  configureNotifications,
+  requestNotificationPermission,
+  scheduleReminderNotifications,
+} from '../../src/features/notifications/notification.service';
 import { DEFAULT_REMINDER_OFFSETS } from '../../src/features/reminders/reminder.defaults';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
 import { buildReminderRules } from '../../src/features/reminders/reminder.service';
@@ -36,7 +45,7 @@ export default function NewItemScreen() {
     setName(template.name);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const parsed = createReminderSchema.safeParse({
       type,
       name,
@@ -51,7 +60,7 @@ export default function NewItemScreen() {
     }
 
     const now = new Date();
-    const reminder: ReminderItem = {
+    let reminder: ReminderItem = {
       id: createId(),
       ...parsed.data,
       status: 'active',
@@ -59,6 +68,24 @@ export default function NewItemScreen() {
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
     };
+
+    try {
+      const notificationGateway = await getExpoNotificationGateway();
+      await configureNotifications(notificationGateway);
+
+      const permissionGranted = await requestNotificationPermission(notificationGateway);
+      if (permissionGranted) {
+        const scheduledRules = await scheduleReminderNotifications(reminder, notificationGateway);
+        reminder = {
+          ...reminder,
+          reminderRules: scheduledRules,
+        };
+      }
+    } catch (error) {
+      if (!isNotificationRuntimeUnavailableError(error)) {
+        console.warn('Failed to schedule reminder notifications', error);
+      }
+    }
 
     reminderRepository.upsert(reminder);
     router.replace('/');
