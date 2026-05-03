@@ -1,0 +1,15 @@
+import { Stack } from 'expo-router';
+import { initializeDatabase } from '../src/storage/database';
+
+initializeDatabase();
+
+export default function RootLayout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="item/new" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="membership" />
+      <Stack.Screen name="notification-permission" />
+    </Stack>
+  );
+}

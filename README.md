@@ -1,0 +1,27 @@
+# 到期提醒助手原型
+
+本目录用于开发 `到期提醒助手` Android-first MVP。
+
+关联文档：
+
+1. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/50-到期提醒助手-PRD-v0.1.md`
+2. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/60-到期提醒助手-UI与用户流-v0.1.md`
+3. `/Users/henery/code/AI-Practice-Lab/05-topics/02-商业项目专题/70-到期提醒助手-技术方案与开发任务-v0.1.md`
+4. `/Users/henery/code/AI-Practice-Lab/docs/superpowers/plans/2026-05-03-due-reminder-app-implementation.md`
+
+## 当前命令
+
+```bash
+npm start
+npm run android
+npm test
+npx tsc --noEmit
+```
+
+## 目录原则
+
+1. `app/` 只放页面和路由
+2. `src/features/` 放业务领域逻辑
+3. `src/components/` 放页面无关组件
+4. `src/storage/` 放本地存储
+5. `src/theme/` 放设计 token
