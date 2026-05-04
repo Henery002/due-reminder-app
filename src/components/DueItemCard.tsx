@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
 import type { ReminderItem } from '../features/reminders/reminder.types';
 import { getReminderStatusLabel } from '../features/reminders/reminder.view';
 import { colors } from '../theme/colors';
@@ -8,12 +8,22 @@ import { StatusBadge } from './StatusBadge';
 type DueItemCardProps = {
   item: ReminderItem;
   onDone?: () => void;
+  onPress?: () => void;
   onSnooze?: () => void;
 };
 
-export function DueItemCard({ item, onDone, onSnooze }: DueItemCardProps) {
+export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProps) {
+  const handleActionPress = (event: GestureResponderEvent, action?: () => void) => {
+    event.stopPropagation();
+    action?.();
+  };
+
   return (
-    <View style={styles.card}>
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => [styles.card, pressed && onPress ? styles.pressed : null]}
+    >
       <View style={styles.header}>
         <View style={styles.iconWrap}>
           <IconGlyph label="D" size={18} />
@@ -32,16 +42,19 @@ export function DueItemCard({ item, onDone, onSnooze }: DueItemCardProps) {
       ) : null}
 
       <View style={styles.actions}>
-        <Pressable onPress={onDone} style={styles.actionButton}>
+        <Pressable onPress={(event) => handleActionPress(event, onDone)} style={styles.actionButton}>
           <IconGlyph label="✓" size={16} tone="done" />
           <Text style={styles.actionText}>已处理</Text>
         </Pressable>
-        <Pressable onPress={onSnooze} style={styles.actionButton}>
+        <Pressable
+          onPress={(event) => handleActionPress(event, onSnooze)}
+          style={styles.actionButton}
+        >
           <IconGlyph label="+" size={16} tone="dueSoon" />
           <Text style={styles.actionText}>延后</Text>
         </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -94,6 +107,9 @@ const styles = StyleSheet.create({
     height: 38,
     justifyContent: 'center',
     width: 38,
+  },
+  pressed: {
+    opacity: 0.86,
   },
   title: {
     color: colors.textPrimary,

@@ -32,6 +32,19 @@
    - `docs/assets/android-notification-test-new-package-2026-05-04.png`
 15. 已清理旧临时包 `com.anonymous.duereminderapp`，手机上仅保留正式包 `com.henery.duereminderapp`。
 16. 当前继续保持 managed Expo 路线，不提交生成的 `android/` native 工程目录。
+17. M3 收尾进入事项编辑/删除实现中：
+   - 新增编辑页 `app/item/[id].tsx`
+   - 事项卡片支持点击进入编辑页
+   - 编辑保存时取消旧通知并按新信息重排未来通知
+   - 删除事项时取消旧通知并移除本地记录
+   - 补充编辑/删除通知副作用测试和仓储删除测试
+18. 事项编辑/删除本地功能验证完成：
+   - `npm test`：6 个测试套件、28 个测试通过
+   - `npx tsc --noEmit`：通过
+   - `npx expo export --platform android`：通过
+   - `npx expo install --check`：依赖匹配
+19. 小米互联可见 UI 验证：业务首页可打开，点击 `视频会员` 卡片可进入 `编辑到期事项` 页面。
+20. 因 ADB 长时间无法识别小米 14，编辑保存后的 SQLite / `notificationId` 复核和删除后的 SQLite 复核后置；用户已要求先停止手机操控，改走功能开发。
 
 ## 2026-05-03
 

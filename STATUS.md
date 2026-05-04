@@ -4,15 +4,15 @@
 
 ## 当前阶段
 
-1. 阶段：M3 本地通知闭环真机验证后段
-2. 状态：已完成通知权限页、通知服务抽象、创建事项后的通知调度入口、本地 Android development build、小米 14 本地测试通知验证、已处理取消验证和延后重排验证
+1. 阶段：M3 本地通知闭环收尾
+2. 状态：已完成通知权限页、通知服务抽象、创建事项后的通知调度入口、本地 Android development build、小米 14 本地测试通知验证、已处理取消验证、延后重排验证；事项编辑/删除与通知重排已完成本地功能实现，SQLite/notificationId 级真机复核后置
 
 ## 当前目标
 
 1. 完成 Android-first 本地到期事项管理
 2. 跑通本地通知闭环
 3. 保持年轻化、轻盈、现代的界面风格
-4. 下一阶段补齐事项编辑、删除时的通知取消和重排
+4. 下一阶段补后台/锁屏长时间提醒验证，并将文本日期输入升级为更现代的日期选择交互
 
 ## 当前注意
 
@@ -27,3 +27,6 @@
 9. Android 正式维护包名已固定为 `com.henery.duereminderapp`，并已完成 clean prebuild、安装和正式包名下 5 秒测试通知触达验证
 10. 旧临时包 `com.anonymous.duereminderapp` 已清理，手机上仅保留正式包 `com.henery.duereminderapp`
 11. 当前尚未接入广告、会员支付和云同步
+12. 2026-05-04 已补齐事项编辑页、卡片点击进入编辑、编辑保存重排通知、删除取消通知和相关单元测试
+13. 当前已通过本地完整验证：`npm test`、`npx tsc --noEmit`、`npx expo export --platform android`、`npx expo install --check`
+14. 因 ADB 长时间无法识别小米 14，当前不再继续 Computer Use 手机操控；编辑页可见 UI 已通过小米互联观察到，SQLite/notificationId 级编辑删除复核留待后续 ADB 恢复后补测

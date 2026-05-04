@@ -175,11 +175,35 @@ sdk.dir=/opt/homebrew/share/android-commandlinetools
 6. 点击“延后”，确认旧通知取消，新的 snooze rule 被调度并写入新 `notificationId`。
 7. 后台或锁屏状态下重复验证测试通知触达。
 
+## 2026-05-04 事项编辑/删除验证暂停记录
+
+当前状态：
+
+1. 事项编辑页、编辑保存通知重排、删除取消通知已完成本地功能实现。
+2. 本地完整验证已通过：`npm test`
+3. TypeScript 检查已通过：`npx tsc --noEmit`
+4. Android export 已通过：`npx expo export --platform android`
+5. Expo 依赖检查已通过：`npx expo install --check`
+6. 真机验证期间，已创建默认 `视频会员` 事项并写回通知 ID。
+7. 已在编辑页将到期日期从 `2026-05-11` 改为 `2026-05-12`，点击保存后 UI 返回首页。
+8. 后续重新进入业务页后，可见 UI 已验证：点击 `视频会员` 卡片可以进入 `编辑到期事项` 页面。
+9. 保存后的 SQLite 复核因 ADB 设备断开而中断，尚未确认 `dueDate` 与 `notificationId` 是否已更新。
+10. 删除流程尚未做 SQLite 级真机复核。
+
+恢复验证时：
+
+1. 不再优先使用 Computer Use 手动操作手机，避免长流程验证过慢。
+2. 优先使用 `adb devices -l` 确认设备，而不是马上手动操作手机。
+3. 重新建立端口反向代理并打开 development build。
+4. 读取 SQLite，确认编辑后的事项日期和通知 ID 变化。
+5. 再进入编辑页执行删除，确认 SQLite 中对应事项被移除。
+6. 删除验证完成后，再补后台/锁屏长时间定时提醒验证。
+
 ## 当前边界
 
 1. Expo Go 仍可用于 UI 和基础数据流验证，但不作为通知完整验证环境。
 2. 5 秒测试通知已在小米 14 development build 中验证通过。
-3. 当前尚未实现事项编辑页和删除入口，因此编辑/删除场景的通知取消和重排还未验证。
+3. 事项编辑页和删除入口已完成本地实现；编辑保存后的 SQLite 复核和删除真机验证尚未完成。
 4. 小米 / Android 后台策略可能影响长时间通知触达，后续需要单独记录机型策略。
 5. 本次已验证前台/通知中心触达、创建事项写回 `notificationId`、已处理清空 `notificationId`、延后重排 `notificationId`。
 6. 后台或锁屏状态下的长时间定时提醒仍需补测。

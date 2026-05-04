@@ -8,6 +8,7 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="item/new" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="item/[id]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="membership" />
       <Stack.Screen name="notification-permission" />
     </Stack>

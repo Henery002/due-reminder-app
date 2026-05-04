@@ -2,7 +2,9 @@ import type { NotificationGateway } from '../notifications/notification.service'
 import type { ReminderItem } from './reminder.types';
 import {
   completeReminderWithNotifications,
+  deleteReminderWithNotifications,
   snoozeReminderWithNotifications,
+  updateReminderWithNotifications,
 } from './reminder.actions';
 
 const baseDate = new Date('2026-05-03T08:00:00.000Z');
@@ -153,5 +155,119 @@ describe('reminder notification actions', () => {
         ]),
       }),
     );
+  });
+
+  it('cancels old notifications and schedules new rules when updating reminder date', async () => {
+    const gateway = createGateway();
+    const upsert = jest.fn();
+
+    await updateReminderWithNotifications(
+      item(),
+      {
+        type: 'bill',
+        name: '信用卡年费',
+        dueDate: '2026-05-12',
+        amount: 199,
+        note: '确认是否继续使用',
+      },
+      {
+        getNotificationGateway: async () => gateway,
+        now: baseDate,
+        upsert,
+      },
+    );
+
+    expect(gateway.cancelScheduledNotificationAsync).toHaveBeenCalledWith('notification-old');
+    expect(gateway.scheduleNotificationAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          title: '信用卡年费快到期了',
+          body: '到期日：2026-05-12',
+        }),
+        trigger: expect.objectContaining({
+          date: new Date('2026-05-09T01:00:00.000Z'),
+          type: 'date',
+        }),
+      }),
+    );
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: '信用卡年费',
+        dueDate: '2026-05-12',
+        amount: 199,
+        note: '确认是否继续使用',
+        status: 'active',
+        snoozedUntil: undefined,
+        reminderRules: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'bill-2026-05-12-3',
+            notificationId: 'notification-new',
+            scheduledAt: '2026-05-09T01:00:00.000Z',
+          }),
+        ]),
+      }),
+    );
+  });
+
+  it('still updates reminder when notification runtime is unavailable', async () => {
+    const upsert = jest.fn();
+
+    await updateReminderWithNotifications(
+      item(),
+      {
+        type: 'bill',
+        name: '信用卡年费',
+        dueDate: '2026-05-12',
+      },
+      {
+        getNotificationGateway: async () => {
+          throw new Error('notification unavailable');
+        },
+        now: baseDate,
+        upsert,
+      },
+    );
+
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: '信用卡年费',
+        dueDate: '2026-05-12',
+        reminderRules: expect.arrayContaining([
+          {
+            id: 'bill-2026-05-12-3',
+            offsetDays: 3,
+            scheduledAt: '2026-05-09T01:00:00.000Z',
+          },
+        ]),
+      }),
+    );
+  });
+
+  it('cancels scheduled notifications and removes reminder when deleting', async () => {
+    const gateway = createGateway();
+    const remove = jest.fn();
+
+    await deleteReminderWithNotifications(item(), {
+      getNotificationGateway: async () => gateway,
+      now: baseDate,
+      remove,
+    });
+
+    expect(gateway.cancelScheduledNotificationAsync).toHaveBeenCalledWith('notification-old');
+    expect(remove).toHaveBeenCalledWith('reminder-1');
+  });
+
+  it('still removes reminder when notification runtime is unavailable', async () => {
+    const remove = jest.fn();
+
+    await deleteReminderWithNotifications(item(), {
+      getNotificationGateway: async () => {
+        throw new Error('notification unavailable');
+      },
+      now: baseDate,
+      remove,
+    });
+
+    expect(remove).toHaveBeenCalledWith('reminder-1');
   });
 });

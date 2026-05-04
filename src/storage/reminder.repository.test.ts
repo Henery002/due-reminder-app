@@ -36,6 +36,15 @@ function createFakeDatabase() {
         return;
       }
 
+      if (_sql.startsWith('DELETE')) {
+        const id = params[0];
+        const index = rows.findIndex((row) => row.id === id);
+        if (index >= 0) {
+          rows.splice(index, 1);
+        }
+        return;
+      }
+
       rows.push({
         id: params[0],
         type: params[1],
@@ -74,5 +83,15 @@ describe('reminder repository', () => {
     repository.upsert({ ...baseItem, id: 'soon', dueDate: '2026-05-04' });
 
     expect(repository.list().map((entry) => entry.id)).toEqual(['later', 'soon']);
+  });
+
+  it('removes reminder by id', () => {
+    const { database } = createFakeDatabase();
+    const repository = createReminderRepository(database);
+
+    repository.upsert(baseItem);
+    repository.remove('renewal-1');
+
+    expect(repository.getById('renewal-1')).toBeUndefined();
   });
 });

@@ -40,8 +40,31 @@
 12. 当前 `android/` 目录仍按 managed Expo 路线忽略，不提交生成的 native 工程；如 Maven 拉取失败，优先用本机 Gradle 镜像方案处理
 13. Android 包名已固定为 `com.henery.duereminderapp`，已完成 clean prebuild、安装和正式包名下 5 秒测试通知触达验证；首次验证包 `com.anonymous.duereminderapp` 可视为历史临时包
 14. 旧临时包 `com.anonymous.duereminderapp` 已清理，手机上仅保留正式包 `com.henery.duereminderapp`
-15. 下一步继续做 M3 收尾：补事项编辑页、删除/编辑时通知重排，并补后台/锁屏长时间定时提醒验证
-16. 日期选择器、事项卡片图标、更年轻化动效和更精致表单交互后续单独迭代
+15. M3 收尾已完成本地功能实现：新增编辑页、卡片点击进入编辑、编辑保存时取消旧通知并重排、删除时取消旧通知并移除事项
+16. 已完成本地完整验证：`npm test` 通过 6 个测试套件 / 28 个测试，`npx tsc --noEmit` 通过，`npx expo export --platform android` 通过，`npx expo install --check` 通过
+17. 真机可见 UI 进度：小米互联中已成功打开业务首页，点击 `视频会员` 卡片可进入 `编辑到期事项` 页面
+18. 真机深度验证边界：ADB 长时间无法识别小米 14，因此尚未读取 SQLite 确认编辑保存后的 `dueDate` 与 `notificationId` 变化，也尚未做删除后的 SQLite 复核
+19. 用户已明确要求先不继续手机操控，后续不要再用 Computer Use 慢速操作手机；如需补真机深度验证，应优先恢复 ADB 后用命令验证
+20. 日期选择器、事项卡片图标、更年轻化动效和更精致表单交互后续单独迭代
+
+## 本次功能变更文件
+
+1. `app/(tabs)/index.tsx`
+2. `app/(tabs)/items.tsx`
+3. `app/_layout.tsx`
+4. `app/item/[id].tsx`
+5. `src/components/DueItemCard.tsx`
+6. `src/features/reminders/reminder.actions.ts`
+7. `src/features/reminders/reminder.actions.test.ts`
+8. `src/storage/reminder.repository.test.ts`
+
+## 后续补测清单
+
+1. 不再优先使用 Computer Use 手动操作手机；它适合观察，不适合长流程验证
+2. ADB 恢复后，优先使用 `adb devices -l`、SQLite 和命令行做复核
+3. 编辑验证目标：确认测试事项编辑保存后 `dueDate` 已变更，旧 `notificationId` 被替换
+4. 删除验证目标：编辑页点击删除并确认后，本地 SQLite 不再存在对应事项
+5. 补测完成后再更新 `docs/DEVELOPMENT_BUILD.md` 的真机验证记录
 
 ## 提交约定
 

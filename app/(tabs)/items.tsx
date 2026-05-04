@@ -1,4 +1,4 @@
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -77,6 +77,7 @@ export default function ItemsScreen() {
                 key={item.id}
                 item={item}
                 onDone={() => handleDone(item)}
+                onPress={() => router.push(`/item/${item.id}`)}
                 onSnooze={() => handleSnooze(item)}
               />
             ))}

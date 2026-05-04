@@ -128,6 +128,7 @@ export default function HomeScreen() {
                   key={item.id}
                   item={item}
                   onDone={() => handleDone(item)}
+                  onPress={() => router.push(`/item/${item.id}`)}
                   onSnooze={() => handleSnooze(item)}
                 />
               ))}

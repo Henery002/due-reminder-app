@@ -4,14 +4,29 @@ import {
   scheduleReminderNotifications,
   type NotificationGateway,
 } from '../notifications/notification.service';
-import { markReminderDone, snoozeReminder } from './reminder.service';
-import type { ReminderItem } from './reminder.types';
+import { buildReminderRules, markReminderDone, snoozeReminder } from './reminder.service';
+import type { ReminderItem, ReminderType } from './reminder.types';
 
 type ReminderNotificationActionDeps = {
   getNotificationGateway: () => Promise<NotificationGateway>;
   now?: Date;
   onNotificationError?(error: unknown): void;
   upsert(item: ReminderItem): void;
+};
+
+type ReminderDeleteActionDeps = {
+  getNotificationGateway: () => Promise<NotificationGateway>;
+  now?: Date;
+  onNotificationError?(error: unknown): void;
+  remove(id: string): void;
+};
+
+type EditableReminderInput = {
+  type: ReminderType;
+  name: string;
+  dueDate: string;
+  amount?: number;
+  note?: string;
 };
 
 function clearNotificationIds(item: ReminderItem): ReminderItem {
@@ -67,4 +82,58 @@ export async function snoozeReminderWithNotifications(
   }
 
   deps.upsert(snoozed);
+}
+
+export async function updateReminderWithNotifications(
+  item: ReminderItem,
+  input: EditableReminderInput,
+  deps: ReminderNotificationActionDeps,
+): Promise<void> {
+  const now = deps.now ?? new Date();
+  let updated: ReminderItem = {
+    ...item,
+    type: input.type,
+    name: input.name,
+    dueDate: input.dueDate,
+    amount: input.amount,
+    note: input.note,
+    status: item.status === 'done' ? 'done' : 'active',
+    reminderRules: buildReminderRules(input.type, input.dueDate, now),
+    snoozedUntil: undefined,
+    updatedAt: now.toISOString(),
+  };
+
+  if (updated.status !== 'done') {
+    updated.completedAt = undefined;
+  }
+
+  try {
+    const gateway = await getConfiguredGateway(deps.getNotificationGateway);
+    await cancelReminderNotifications(item, gateway);
+
+    if (updated.status !== 'done') {
+      updated = {
+        ...updated,
+        reminderRules: await scheduleReminderNotifications(updated, gateway, now),
+      };
+    }
+  } catch (error) {
+    deps.onNotificationError?.(error);
+  }
+
+  deps.upsert(updated);
+}
+
+export async function deleteReminderWithNotifications(
+  item: ReminderItem,
+  deps: ReminderDeleteActionDeps,
+): Promise<void> {
+  try {
+    const gateway = await getConfiguredGateway(deps.getNotificationGateway);
+    await cancelReminderNotifications(item, gateway);
+  } catch (error) {
+    deps.onNotificationError?.(error);
+  }
+
+  deps.remove(item.id);
 }
