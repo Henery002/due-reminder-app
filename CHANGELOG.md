@@ -1,5 +1,37 @@
 # 到期提醒助手原型变更记录
 
+## 2026-05-04
+
+1. 完成本机 Android development build 环境安装和验证：
+   - JDK 17
+   - Android Studio
+   - Android SDK / Platform Tools
+   - `ANDROID_HOME` / `ANDROID_SDK_ROOT`
+2. 小米 14 真机已通过 ADB 识别：
+   - 设备序列号：`b69bc498`
+   - 设备型号：`23127PN0CC`
+3. 本地 debug APK 已构建并安装到小米 14：
+   - `android/app/build/outputs/apk/debug/app-debug.apk`
+4. development build 已连接本机 Metro。
+5. Android 通知权限已授予，`POST_NOTIFICATION` 状态为 `allow`。
+6. 5 秒测试通知已在小米 14 通知中心触达：
+   - 标题：`到期提醒测试`
+   - 正文：`如果你看到这条通知，说明本地提醒已经可以工作。`
+7. 通过真机 SQLite 数据继续验证通知动作闭环：
+   - 创建事项后 `reminderRulesJson` 写回 `notificationId`
+   - 点击「已处理」后状态变为 `done`，原 `notificationId` 清空
+   - 点击「延后」后状态变为 `snoozed`，旧通知 ID 替换为新 ID，并新增 snooze rule
+8. 新增真机通知验证截图：
+   - `docs/assets/android-notification-test-2026-05-04.png`
+9. `docs/DEVELOPMENT_BUILD.md` 更新为本地构建优先路径，并记录环境、命令、验证结果和边界。
+10. Android 正式维护包名固定为 `com.henery.duereminderapp`。
+11. App 展示名称从 `due-reminder-app` 调整为 `到期提醒助手`。
+12. clean prebuild 后重新生成本地 native 工程，并确认 `applicationId` / `namespace` 为 `com.henery.duereminderapp`。
+13. 新包 `com.henery.duereminderapp` 已成功安装到小米 14，并在正式包名下验证 5 秒测试通知触达。
+14. 新增正式包名通知验证截图：
+   - `docs/assets/android-notification-test-new-package-2026-05-04.png`
+15. 当前继续保持 managed Expo 路线，不提交生成的 `android/` native 工程目录。
+
 ## 2026-05-03
 
 1. 建立原型目录

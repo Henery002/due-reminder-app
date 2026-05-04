@@ -34,9 +34,14 @@
 6. Expo Go Android 从 SDK 53 起会对远程推送能力弹出官方红色警告；当前实现会在 Expo Go Android 下跳过原生通知模块加载，完整本地通知验证需使用 development build
 7. 已处理会尝试取消旧通知并清空本地 `notificationId`；延后会取消旧通知、追加 snooze rule 并重排未来通知
 8. 已安装 `expo-dev-client`，并新增 `eas.json` 与 development build 说明文档
-9. 当前本机缺少 Java Runtime、Android SDK 和 `adb`，本地 `expo run:android --device` 暂不可用；可走 EAS 云构建或先安装 Android Studio/JDK/SDK
-10. 下一步继续做 M3：通过 development build 验证真实通知触达/取消/重排，之后补事项编辑页、删除/编辑时通知重排
-11. 日期选择器、事项卡片图标、更年轻化动效和更精致表单交互后续单独迭代
+9. 本机已完成 JDK 17、Android Studio、Android SDK / Platform Tools 安装，小米 14 已通过 ADB 识别并成功安装 debug APK
+10. 2026-05-04 已在小米 14 development build 中验证 5 秒本地测试通知触达，通知权限为 `POST_NOTIFICATION: allow`
+11. 2026-05-04 已通过真机 SQLite 数据验证：创建事项写回 `notificationId`，已处理会清空 `notificationId`，延后会重排并写入新 `notificationId`
+12. 当前 `android/` 目录仍按 managed Expo 路线忽略，不提交生成的 native 工程；如 Maven 拉取失败，优先用本机 Gradle 镜像方案处理
+13. Android 包名已固定为 `com.henery.duereminderapp`，已完成 clean prebuild、安装和正式包名下 5 秒测试通知触达验证；首次验证包 `com.anonymous.duereminderapp` 可视为历史临时包
+14. 旧临时包 `com.anonymous.duereminderapp` 仍安装在手机上，清理前需要用户确认
+15. 下一步继续做 M3 收尾：补事项编辑页、删除/编辑时通知重排，并补后台/锁屏长时间定时提醒验证
+16. 日期选择器、事项卡片图标、更年轻化动效和更精致表单交互后续单独迭代
 
 ## 提交约定
 

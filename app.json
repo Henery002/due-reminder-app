@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "due-reminder-app",
+    "name": "到期提醒助手",
     "slug": "due-reminder-app",
     "scheme": "due-reminder-app",
     "version": "1.0.0",
@@ -22,7 +22,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.henery.duereminderapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,7 +31,8 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-font"
     ]
   }
 }
