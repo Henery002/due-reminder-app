@@ -39,7 +39,7 @@
 11. 2026-05-04 已通过真机 SQLite 数据验证：创建事项写回 `notificationId`，已处理会清空 `notificationId`，延后会重排并写入新 `notificationId`
 12. 当前 `android/` 目录仍按 managed Expo 路线忽略，不提交生成的 native 工程；如 Maven 拉取失败，优先用本机 Gradle 镜像方案处理
 13. Android 包名已固定为 `com.henery.duereminderapp`，已完成 clean prebuild、安装和正式包名下 5 秒测试通知触达验证；首次验证包 `com.anonymous.duereminderapp` 可视为历史临时包
-14. 旧临时包 `com.anonymous.duereminderapp` 仍安装在手机上，清理前需要用户确认
+14. 旧临时包 `com.anonymous.duereminderapp` 已清理，手机上仅保留正式包 `com.henery.duereminderapp`
 15. 下一步继续做 M3 收尾：补事项编辑页、删除/编辑时通知重排，并补后台/锁屏长时间定时提醒验证
 16. 日期选择器、事项卡片图标、更年轻化动效和更精致表单交互后续单独迭代
 

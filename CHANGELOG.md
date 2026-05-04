@@ -30,7 +30,8 @@
 13. 新包 `com.henery.duereminderapp` 已成功安装到小米 14，并在正式包名下验证 5 秒测试通知触达。
 14. 新增正式包名通知验证截图：
    - `docs/assets/android-notification-test-new-package-2026-05-04.png`
-15. 当前继续保持 managed Expo 路线，不提交生成的 `android/` native 工程目录。
+15. 已清理旧临时包 `com.anonymous.duereminderapp`，手机上仅保留正式包 `com.henery.duereminderapp`。
+16. 当前继续保持 managed Expo 路线，不提交生成的 `android/` native 工程目录。
 
 ## 2026-05-03
 

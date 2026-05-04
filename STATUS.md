@@ -25,5 +25,5 @@
 7. 本机已安装 JDK 17、Android Studio、Android SDK / Platform Tools，并已通过小米 14 真机安装 debug APK
 8. 2026-05-04 已在小米 14 development build 中验证 5 秒本地测试通知触达、创建事项写回 `notificationId`、已处理清空 `notificationId`、延后重排新 `notificationId`
 9. Android 正式维护包名已固定为 `com.henery.duereminderapp`，并已完成 clean prebuild、安装和正式包名下 5 秒测试通知触达验证
-10. 旧临时包 `com.anonymous.duereminderapp` 仍安装在手机上，确认不再需要后可清理
+10. 旧临时包 `com.anonymous.duereminderapp` 已清理，手机上仅保留正式包 `com.henery.duereminderapp`
 11. 当前尚未接入广告、会员支付和云同步

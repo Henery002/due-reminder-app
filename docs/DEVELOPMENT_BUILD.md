@@ -183,4 +183,4 @@ sdk.dir=/opt/homebrew/share/android-commandlinetools
 4. 小米 / Android 后台策略可能影响长时间通知触达，后续需要单独记录机型策略。
 5. 本次已验证前台/通知中心触达、创建事项写回 `notificationId`、已处理清空 `notificationId`、延后重排 `notificationId`。
 6. 后台或锁屏状态下的长时间定时提醒仍需补测。
-7. 旧临时包 `com.anonymous.duereminderapp` 仍安装在手机上，确认不再需要后可清理。
+7. 旧临时包 `com.anonymous.duereminderapp` 已于 2026-05-04 清理，手机上仅保留正式包 `com.henery.duereminderapp`。
