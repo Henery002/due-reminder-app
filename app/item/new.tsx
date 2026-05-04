@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
+import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderRuleSelector } from '../../src/components/ReminderRuleSelector';
 import { TemplateCard } from '../../src/components/TemplateCard';
 import { reminderTemplates } from '../../src/constants/templates';
@@ -140,14 +141,7 @@ export default function NewItemScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>到期日期</Text>
-          <TextInput
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={colors.textMuted}
-            style={styles.input}
-            value={dueDate}
-            onChangeText={setDueDate}
-          />
+          <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
         <View style={styles.section}>

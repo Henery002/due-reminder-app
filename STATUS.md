@@ -12,7 +12,7 @@
 1. 完成 Android-first 本地到期事项管理
 2. 跑通本地通知闭环
 3. 保持年轻化、轻盈、现代的界面风格
-4. 下一阶段补后台/锁屏长时间提醒验证，并将文本日期输入升级为更现代的日期选择交互
+4. 下一阶段补后台/锁屏长时间提醒验证，并继续打磨表单动效和视觉层次
 
 ## 当前注意
 
@@ -20,7 +20,7 @@
 2. 上级 `AI-Practice-Lab` 当前不是 git 仓库
 3. 当前 App 仓库远端为 `git@github.com:Henery002/due-reminder-app.git`
 4. Tab 已切换为 `@expo/vector-icons`，事项卡片内仍暂用 `IconGlyph`
-5. 日期输入暂用 `YYYY-MM-DD` 文本框，后续需要替换为更现代的日期选择交互
+5. 新建/编辑页已使用自定义日期选择卡片替代 `YYYY-MM-DD` 文本框，支持快捷日期和年月日步进调整
 6. `expo-notifications` 已接入服务层和页面入口；Expo Go Android 下不主动加载原生通知模块，完整通知能力以 development build 为准
 7. 本机已安装 JDK 17、Android Studio、Android SDK / Platform Tools，并已通过小米 14 真机安装 debug APK
 8. 2026-05-04 已在小米 14 development build 中验证 5 秒本地测试通知触达、创建事项写回 `notificationId`、已处理清空 `notificationId`、延后重排新 `notificationId`
@@ -30,3 +30,4 @@
 12. 2026-05-04 已补齐事项编辑页、卡片点击进入编辑、编辑保存重排通知、删除取消通知和相关单元测试
 13. 当前已通过本地完整验证：`npm test`、`npx tsc --noEmit`、`npx expo export --platform android`、`npx expo install --check`
 14. 因 ADB 长时间无法识别小米 14，当前不再继续 Computer Use 手机操控；编辑页可见 UI 已通过小米互联观察到，SQLite/notificationId 级编辑删除复核留待后续 ADB 恢复后补测
+15. 当前新增 `ReminderDatePicker` 和日期 helper，下一步可继续做表单微动效、日期选择弹层或更完整的日历视图

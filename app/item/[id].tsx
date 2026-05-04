@@ -4,6 +4,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { EmptyState } from '../../src/components/EmptyState';
+import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import {
   getExpoNotificationGateway,
   isNotificationRuntimeUnavailableError,
@@ -165,14 +166,7 @@ export default function EditItemScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>到期日期</Text>
-          <TextInput
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={colors.textMuted}
-            style={styles.input}
-            value={dueDate}
-            onChangeText={setDueDate}
-          />
+          <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
         <View style={styles.section}>

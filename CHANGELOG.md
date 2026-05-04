@@ -45,6 +45,12 @@
    - `npx expo install --check`：依赖匹配
 19. 小米互联可见 UI 验证：业务首页可打开，点击 `视频会员` 卡片可进入 `编辑到期事项` 页面。
 20. 因 ADB 长时间无法识别小米 14，编辑保存后的 SQLite / `notificationId` 复核和删除后的 SQLite 复核后置；用户已要求先停止手机操控，改走功能开发。
+21. 将新建/编辑页的 `YYYY-MM-DD` 文本输入升级为自定义日期选择交互：
+   - 新增 `src/features/reminders/reminder.date.ts`
+   - 新增 `src/components/ReminderDatePicker.tsx`
+   - 支持今天、明天、7 天后、30 天后、本月底快捷项
+   - 支持按年/月/日步进调整
+   - 补充 `reminder.date.test.ts` 覆盖快捷项、日期加减和到期描述
 
 ## 2026-05-03
 
