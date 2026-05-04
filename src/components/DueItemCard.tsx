@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
 import type { ReminderItem } from '../features/reminders/reminder.types';
-import { getReminderStatusLabel } from '../features/reminders/reminder.view';
+import { getReminderStatusLabel, getReminderTypeMeta } from '../features/reminders/reminder.view';
 import { colors } from '../theme/colors';
 import { IconGlyph } from './IconGlyph';
 import { StatusBadge } from './StatusBadge';
@@ -13,6 +13,8 @@ type DueItemCardProps = {
 };
 
 export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProps) {
+  const typeMeta = getReminderTypeMeta(item.type);
+
   const handleActionPress = (event: GestureResponderEvent, action?: () => void) => {
     event.stopPropagation();
     action?.();
@@ -25,10 +27,11 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
       style={({ pressed }) => [styles.card, pressed && onPress ? styles.pressed : null]}
     >
       <View style={styles.header}>
-        <View style={styles.iconWrap}>
-          <IconGlyph label="D" size={18} />
+        <View style={[styles.iconWrap, { backgroundColor: typeMeta.backgroundColor }]}>
+          <IconGlyph color={typeMeta.color} label={typeMeta.glyph} size={18} />
         </View>
         <View style={styles.titleWrap}>
+          <Text style={[styles.typeLabel, { color: typeMeta.color }]}>{typeMeta.label}</Text>
           <Text numberOfLines={1} style={styles.title}>
             {item.name}
           </Text>
@@ -102,7 +105,6 @@ const styles = StyleSheet.create({
   },
   iconWrap: {
     alignItems: 'center',
-    backgroundColor: colors.primarySoft,
     borderRadius: 8,
     height: 38,
     justifyContent: 'center',
@@ -118,5 +120,10 @@ const styles = StyleSheet.create({
   },
   titleWrap: {
     flex: 1,
+  },
+  typeLabel: {
+    fontSize: 12,
+    fontWeight: '900',
+    marginBottom: 2,
   },
 });

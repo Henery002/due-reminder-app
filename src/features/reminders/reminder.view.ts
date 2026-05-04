@@ -3,6 +3,34 @@ import type { ReminderItem, ReminderType } from './reminder.types';
 
 export type ReminderTypeFilter = ReminderType | 'all';
 
+export type ReminderTypeMeta = {
+  glyph: string;
+  label: string;
+  color: string;
+  backgroundColor: string;
+};
+
+const reminderTypeMeta: Record<ReminderType, ReminderTypeMeta> = {
+  subscription: {
+    backgroundColor: '#DFF7F3',
+    color: '#1BAE9F',
+    glyph: 'S',
+    label: '订阅',
+  },
+  bill: {
+    backgroundColor: '#FFF2DF',
+    color: '#F5A24A',
+    glyph: '¥',
+    label: '账单',
+  },
+  document: {
+    backgroundColor: '#E6F6EB',
+    color: '#4CA66A',
+    glyph: 'ID',
+    label: '证件',
+  },
+};
+
 export function filterRemindersByType(
   items: ReminderItem[],
   selectedType: ReminderTypeFilter,
@@ -12,6 +40,10 @@ export function filterRemindersByType(
   }
 
   return items.filter((item) => item.type === selectedType);
+}
+
+export function getReminderTypeMeta(type: ReminderType): ReminderTypeMeta {
+  return reminderTypeMeta[type];
 }
 
 export function getReminderStatusLabel(item: ReminderItem, now: Date = new Date()): string {

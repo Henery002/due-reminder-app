@@ -46,18 +46,24 @@
 18. 真机深度验证边界：ADB 长时间无法识别小米 14，因此尚未读取 SQLite 确认编辑保存后的 `dueDate` 与 `notificationId` 变化，也尚未做删除后的 SQLite 复核
 19. 用户已明确要求先不继续手机操控，后续不要再用 Computer Use 慢速操作手机；如需补真机深度验证，应优先恢复 ADB 后用命令验证
 20. 新建/编辑页已接入 `ReminderDatePicker`：支持今天、明天、7 天后、30 天后、本月底快捷项，并支持按年/月/日加减
-21. 事项卡片图标、更年轻化动效、更完整日历弹层和更精致表单交互后续单独迭代
+21. 事项卡片已按类型区分视觉：订阅、账单、证件拥有不同 glyph、颜色和类型文案
+22. 更年轻化动效、更完整日历弹层和更精致表单交互后续单独迭代
 
-## 本次功能变更文件
+## 近期功能变更文件
 
 1. `app/(tabs)/index.tsx`
 2. `app/(tabs)/items.tsx`
 3. `app/_layout.tsx`
 4. `app/item/[id].tsx`
 5. `src/components/DueItemCard.tsx`
-6. `src/features/reminders/reminder.actions.ts`
-7. `src/features/reminders/reminder.actions.test.ts`
-8. `src/storage/reminder.repository.test.ts`
+6. `src/components/ReminderDatePicker.tsx`
+7. `src/features/reminders/reminder.actions.ts`
+8. `src/features/reminders/reminder.actions.test.ts`
+9. `src/features/reminders/reminder.date.ts`
+10. `src/features/reminders/reminder.date.test.ts`
+11. `src/features/reminders/reminder.view.ts`
+12. `src/features/reminders/reminder.view.test.ts`
+13. `src/storage/reminder.repository.test.ts`
 
 ## 后续补测清单
 

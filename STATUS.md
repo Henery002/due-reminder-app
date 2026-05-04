@@ -1,6 +1,6 @@
 # 到期提醒助手原型状态
 
-> 最后更新：2026-05-04
+> 最后更新：2026-05-05
 
 ## 当前阶段
 
@@ -19,7 +19,7 @@
 1. 本原型目录由 `create-expo-app` 初始化，目录内存在独立 `.git`
 2. 上级 `AI-Practice-Lab` 当前不是 git 仓库
 3. 当前 App 仓库远端为 `git@github.com:Henery002/due-reminder-app.git`
-4. Tab 已切换为 `@expo/vector-icons`，事项卡片内仍暂用 `IconGlyph`
+4. Tab 已切换为 `@expo/vector-icons`，事项卡片内暂用 `IconGlyph`，但已按事项类型区分 glyph、色彩和类型文案
 5. 新建/编辑页已使用自定义日期选择卡片替代 `YYYY-MM-DD` 文本框，支持快捷日期和年月日步进调整
 6. `expo-notifications` 已接入服务层和页面入口；Expo Go Android 下不主动加载原生通知模块，完整通知能力以 development build 为准
 7. 本机已安装 JDK 17、Android Studio、Android SDK / Platform Tools，并已通过小米 14 真机安装 debug APK
@@ -31,3 +31,4 @@
 13. 当前已通过本地完整验证：`npm test`、`npx tsc --noEmit`、`npx expo export --platform android`、`npx expo install --check`
 14. 因 ADB 长时间无法识别小米 14，当前不再继续 Computer Use 手机操控；编辑页可见 UI 已通过小米互联观察到，SQLite/notificationId 级编辑删除复核留待后续 ADB 恢复后补测
 15. 当前新增 `ReminderDatePicker` 和日期 helper，下一步可继续做表单微动效、日期选择弹层或更完整的日历视图
+16. 2026-05-05 已新增事项类型视觉元数据，首页/全部页卡片可区分订阅、账单、证件类型

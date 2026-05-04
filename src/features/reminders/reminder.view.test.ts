@@ -1,4 +1,4 @@
-import { filterRemindersByType, getReminderStatusLabel } from './reminder.view';
+import { filterRemindersByType, getReminderStatusLabel, getReminderTypeMeta } from './reminder.view';
 import type { ReminderItem } from './reminder.types';
 
 const now = new Date('2026-05-03T08:00:00.000Z');
@@ -41,5 +41,26 @@ describe('reminder view helpers', () => {
     expect(getReminderStatusLabel(item({ status: 'done' }), now)).toBe('已处理');
     expect(getReminderStatusLabel(item({ status: 'overdue' }), now)).toBe('已逾期');
     expect(getReminderStatusLabel(item({ status: 'snoozed' }), now)).toBe('已延后');
+  });
+
+  it('returns visual metadata for reminder types', () => {
+    expect(getReminderTypeMeta('subscription')).toEqual(
+      expect.objectContaining({
+        glyph: 'S',
+        label: '订阅',
+      }),
+    );
+    expect(getReminderTypeMeta('bill')).toEqual(
+      expect.objectContaining({
+        glyph: '¥',
+        label: '账单',
+      }),
+    );
+    expect(getReminderTypeMeta('document')).toEqual(
+      expect.objectContaining({
+        glyph: 'ID',
+        label: '证件',
+      }),
+    );
   });
 });
