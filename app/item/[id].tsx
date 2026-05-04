@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { EmptyState } from '../../src/components/EmptyState';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
+import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import {
   getExpoNotificationGateway,
   isNotificationRuntimeUnavailableError,
@@ -38,6 +39,8 @@ export default function EditItemScreen() {
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [loaded, setLoaded] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const loadItem = useCallback(() => {
     if (!reminderId) {
@@ -61,7 +64,7 @@ export default function EditItemScreen() {
   useFocusEffect(loadItem);
 
   const handleSave = async () => {
-    if (!item) {
+    if (!item || isSaving || isDeleting) {
       return;
     }
 
@@ -78,6 +81,8 @@ export default function EditItemScreen() {
       return;
     }
 
+    setIsSaving(true);
+
     await updateReminderWithNotifications(item, parsed.data, {
       getNotificationGateway: getExpoNotificationGateway,
       onNotificationError: (error) => {
@@ -92,7 +97,7 @@ export default function EditItemScreen() {
   };
 
   const handleDelete = () => {
-    if (!item) {
+    if (!item || isSaving || isDeleting) {
       return;
     }
 
@@ -102,6 +107,7 @@ export default function EditItemScreen() {
         text: '删除',
         style: 'destructive',
         onPress: async () => {
+          setIsDeleting(true);
           await deleteReminderWithNotifications(item, {
             getNotificationGateway: getExpoNotificationGateway,
             onNotificationError: (error) => {
@@ -189,12 +195,21 @@ export default function EditItemScreen() {
           />
         </View>
 
-        <Pressable onPress={handleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>保存修改并重排提醒</Text>
-        </Pressable>
-        <Pressable onPress={handleDelete} style={styles.deleteButton}>
-          <Text style={styles.deleteButtonText}>删除事项</Text>
-        </Pressable>
+        <SubmitActionButton
+          disabled={isDeleting}
+          label="保存修改并重排提醒"
+          loading={isSaving}
+          loadingLabel="正在重排提醒..."
+          onPress={handleSave}
+        />
+        <SubmitActionButton
+          disabled={isSaving}
+          label="删除事项"
+          loading={isDeleting}
+          loadingLabel="正在删除..."
+          onPress={handleDelete}
+          variant="danger"
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -205,18 +220,6 @@ const styles = StyleSheet.create({
     gap: 18,
     padding: 20,
     paddingBottom: 36,
-  },
-  deleteButton: {
-    borderColor: colors.overdue,
-    borderRadius: 8,
-    borderWidth: 1,
-    padding: 15,
-  },
-  deleteButtonText: {
-    color: colors.overdue,
-    fontSize: 16,
-    fontWeight: '800',
-    textAlign: 'center',
   },
   input: {
     backgroundColor: colors.surface,
@@ -245,17 +248,6 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: colors.background,
     flex: 1,
-  },
-  saveButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    padding: 15,
-  },
-  saveButtonText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '800',
-    textAlign: 'center',
   },
   screen: {
     backgroundColor: colors.background,

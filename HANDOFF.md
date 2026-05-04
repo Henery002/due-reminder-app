@@ -47,7 +47,8 @@
 19. 用户已明确要求先不继续手机操控，后续不要再用 Computer Use 慢速操作手机；如需补真机深度验证，应优先恢复 ADB 后用命令验证
 20. 新建/编辑页已接入 `ReminderDatePicker`：支持今天、明天、7 天后、30 天后、本月底快捷项，并支持按年/月/日加减
 21. 事项卡片已按类型区分视觉：订阅、账单、证件拥有不同 glyph、颜色和类型文案
-22. 更年轻化动效、更完整日历弹层和更精致表单交互后续单独迭代
+22. 新建/编辑页已接入 `SubmitActionButton`：保存/删除时显示 loading 文案并禁用重复点击
+23. 更年轻化动效、更完整日历弹层和会员/商业化预留入口后续单独迭代
 
 ## 近期功能变更文件
 
@@ -63,7 +64,9 @@
 10. `src/features/reminders/reminder.date.test.ts`
 11. `src/features/reminders/reminder.view.ts`
 12. `src/features/reminders/reminder.view.test.ts`
-13. `src/storage/reminder.repository.test.ts`
+13. `src/features/reminders/reminder.submit.ts`
+14. `src/features/reminders/reminder.submit.test.ts`
+15. `src/storage/reminder.repository.test.ts`
 
 ## 后续补测清单
 

@@ -1,11 +1,12 @@
 import { addDays, format } from 'date-fns';
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderRuleSelector } from '../../src/components/ReminderRuleSelector';
+import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import { TemplateCard } from '../../src/components/TemplateCard';
 import { reminderTemplates } from '../../src/constants/templates';
 import {
@@ -40,6 +41,7 @@ export default function NewItemScreen() {
   const [dueDate, setDueDate] = useState(format(addDays(new Date(), 7), 'yyyy-MM-dd'));
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleTemplatePress = (template: (typeof reminderTemplates)[number]) => {
     setType(template.type);
@@ -47,6 +49,10 @@ export default function NewItemScreen() {
   };
 
   const handleSave = async () => {
+    if (isSaving) {
+      return;
+    }
+
     const parsed = createReminderSchema.safeParse({
       type,
       name,
@@ -59,6 +65,8 @@ export default function NewItemScreen() {
       Alert.alert('再检查一下', parsed.error.issues[0]?.message ?? '请补全事项信息');
       return;
     }
+
+    setIsSaving(true);
 
     const now = new Date();
     let reminder: ReminderItem = {
@@ -166,9 +174,12 @@ export default function NewItemScreen() {
 
         <ReminderRuleSelector offsets={DEFAULT_REMINDER_OFFSETS[type]} />
 
-        <Pressable onPress={handleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>保存并安排提醒</Text>
-        </Pressable>
+        <SubmitActionButton
+          label="保存并安排提醒"
+          loading={isSaving}
+          loadingLabel="正在安排提醒..."
+          onPress={handleSave}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -197,17 +208,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-  },
-  saveButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    padding: 15,
-  },
-  saveButtonText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '800',
-    textAlign: 'center',
   },
   screen: {
     backgroundColor: colors.background,

@@ -7,6 +7,13 @@
    - 订阅、账单、证件使用不同 glyph、颜色和类型文案
    - 首页和全部页事项卡片不再显示统一 `D` 占位
 2. 补充 `reminder.view.test.ts`，覆盖类型视觉元数据映射。
+3. 升级新建/编辑页提交反馈：
+   - 新增 `SubmitActionButton`
+   - 新增 `getSubmitActionState`
+   - 保存时显示 `正在安排提醒...` / `正在重排提醒...`
+   - 删除时显示 `正在删除...`
+   - loading 期间禁用按钮，避免重复提交
+4. 补充 `reminder.submit.test.ts`，覆盖提交按钮文案和禁用态。
 
 ## 2026-05-04
 
