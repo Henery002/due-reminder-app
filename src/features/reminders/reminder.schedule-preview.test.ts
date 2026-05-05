@@ -43,6 +43,20 @@ describe('reminder schedule preview', () => {
     expect(preview.items.map((item) => item.offsetLabel)).toEqual(['到期当天']);
   });
 
+  it('previews only enabled default reminder points', () => {
+    const preview = buildReminderSchedulePreview(
+      {
+        dueDate: '2026-05-20',
+        selectedOffsets: [7, 0],
+        type: 'subscription',
+      },
+      new Date('2026-05-10T08:00:00.000Z'),
+    );
+
+    expect(preview.description).toBe('将安排 2 次本地提醒，默认在当天 09:00 提醒。');
+    expect(preview.items.map((item) => item.offsetLabel)).toEqual(['提前 7 天', '到期当天']);
+  });
+
   it('returns an empty-state copy when no future reminders can be scheduled', () => {
     const preview = buildReminderSchedulePreview(
       {

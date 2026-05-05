@@ -74,6 +74,7 @@
 46. 我的页已重构为 Hub 式结构：会员通知、常用工具、提醒偏好、合规说明分区展示；提醒偏好明确当前默认规则固定，自定义规则后续作为 Pro/高级能力预留
 47. 二级页面已新增 `ScreenHeader` 显式返回入口，覆盖添加/编辑事项、会员权益、数据备份、反馈建议、通知权限、关于应用、合规说明页面
 48. 视觉资源与动效设计原则已补充到 `docs/launch/VISUAL_ASSETS_DIRECTION.md`；正式应用图标和截图采集后续单独迭代
+49. 新建页和编辑页已支持默认提醒点开关：用户可以关闭某个默认提醒点，保存时只生成开启项对应的本地通知规则；当前不做自定义提前天数，不改数据库 schema，UI 至少保留一个默认提醒点
 
 ## 近期功能变更文件
 
@@ -150,6 +151,7 @@
 71. `app/(tabs)/_layout.tsx`
 72. `app/(tabs)/me.tsx`
 73. `docs/launch/VISUAL_ASSETS_DIRECTION.md`
+74. `src/features/reminders/reminder.defaults.ts`
 
 ## 后续补测清单
 

@@ -1,15 +1,16 @@
 import { addDays, differenceInCalendarDays, parseISO, set } from 'date-fns';
-import { DEFAULT_REMINDER_OFFSETS } from './reminder.defaults';
+import { normalizeSelectedReminderOffsets } from './reminder.defaults';
 import type { ReminderItem, ReminderRule, ReminderType } from './reminder.types';
 
 export function buildReminderRules(
   type: ReminderType,
   dueDate: string,
   now: Date = new Date(),
+  selectedOffsets?: readonly number[],
 ): ReminderRule[] {
   const due = parseISO(dueDate);
 
-  return DEFAULT_REMINDER_OFFSETS[type]
+  return normalizeSelectedReminderOffsets(type, selectedOffsets)
     .map((offsetDays) => {
       const scheduledDate = addDays(due, -offsetDays);
       const scheduledAt = set(scheduledDate, {

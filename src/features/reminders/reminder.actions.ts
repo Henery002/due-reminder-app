@@ -27,6 +27,7 @@ type EditableReminderInput = {
   dueDate: string;
   amount?: number;
   note?: string;
+  selectedReminderOffsets?: readonly number[];
 };
 
 function clearNotificationIds(item: ReminderItem): ReminderItem {
@@ -98,7 +99,12 @@ export async function updateReminderWithNotifications(
     amount: input.amount,
     note: input.note,
     status: item.status === 'done' ? 'done' : 'active',
-    reminderRules: buildReminderRules(input.type, input.dueDate, now),
+    reminderRules: buildReminderRules(
+      input.type,
+      input.dueDate,
+      now,
+      input.selectedReminderOffsets,
+    ),
     snoozedUntil: undefined,
     updatedAt: now.toISOString(),
   };

@@ -22,6 +22,10 @@ import {
   scheduleReminderNotifications,
 } from '../../src/features/notifications/notification.service';
 import {
+  getDefaultReminderOffsets,
+  normalizeSelectedReminderOffsets,
+} from '../../src/features/reminders/reminder.defaults';
+import {
   getReminderFeedback,
   type ReminderFeedback,
 } from '../../src/features/reminders/reminder.feedback';
@@ -54,6 +58,9 @@ export default function NewItemScreen() {
   const [dueDate, setDueDate] = useState(format(addDays(new Date(), 7), 'yyyy-MM-dd'));
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
+  const [selectedReminderOffsets, setSelectedReminderOffsets] = useState<number[]>(() =>
+    getDefaultReminderOffsets('subscription'),
+  );
   const [feedback, setFeedback] = useState<ReminderFeedback | null>(null);
   const [reminderCount, setReminderCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
@@ -68,8 +75,31 @@ export default function NewItemScreen() {
   useFocusEffect(refreshCreationGate);
 
   const handleTemplatePress = (template: (typeof reminderTemplates)[number]) => {
-    setType(template.type);
+    handleTypeChange(template.type);
     setName(template.name);
+  };
+
+  const handleTypeChange = (nextType: ReminderType) => {
+    setType(nextType);
+    setSelectedReminderOffsets(getDefaultReminderOffsets(nextType));
+  };
+
+  const handleToggleReminderOffset = (offsetDays: number) => {
+    const isSelected = selectedReminderOffsets.includes(offsetDays);
+    if (isSelected && selectedReminderOffsets.length <= 1) {
+      setFeedback({
+        description: '如果暂时不想收到通知，可以保留最晚一次提醒，后续再关闭通知权限。',
+        title: '至少保留一个提醒点',
+        tone: 'warning',
+      });
+      return;
+    }
+
+    const nextOffsets = isSelected
+      ? selectedReminderOffsets.filter((selectedOffset) => selectedOffset !== offsetDays)
+      : [...selectedReminderOffsets, offsetDays];
+
+    setSelectedReminderOffsets(normalizeSelectedReminderOffsets(type, nextOffsets));
   };
 
   const handleSave = async () => {
@@ -121,7 +151,12 @@ export default function NewItemScreen() {
       id: createId(),
       ...parsed.data,
       status: 'active',
-      reminderRules: buildReminderRules(parsed.data.type, parsed.data.dueDate, now),
+      reminderRules: buildReminderRules(
+        parsed.data.type,
+        parsed.data.dueDate,
+        now,
+        selectedReminderOffsets,
+      ),
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
     };
@@ -169,7 +204,7 @@ export default function NewItemScreen() {
                 key={option.value}
                 label={option.label}
                 selected={type === option.value}
-                onPress={() => setType(option.value)}
+                onPress={() => handleTypeChange(option.value)}
               />
             ))}
           </View>
@@ -224,7 +259,12 @@ export default function NewItemScreen() {
           />
         </View>
 
-        <ReminderSchedulePreview dueDate={dueDate} type={type} />
+        <ReminderSchedulePreview
+          dueDate={dueDate}
+          selectedOffsets={selectedReminderOffsets}
+          type={type}
+          onToggleOffset={handleToggleReminderOffset}
+        />
 
         <SubmitActionButton
           disabled={!creationGate.allowed}

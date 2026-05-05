@@ -18,6 +18,10 @@ import {
   updateReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
 import {
+  getDefaultReminderOffsets,
+  normalizeSelectedReminderOffsets,
+} from '../../src/features/reminders/reminder.defaults';
+import {
   getReminderFeedback,
   type ReminderFeedback,
 } from '../../src/features/reminders/reminder.feedback';
@@ -52,6 +56,9 @@ export default function EditItemScreen() {
   const [dueDate, setDueDate] = useState('');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
+  const [selectedReminderOffsets, setSelectedReminderOffsets] = useState<number[]>(() =>
+    getDefaultReminderOffsets('subscription'),
+  );
   const [loaded, setLoaded] = useState(false);
   const [feedback, setFeedback] = useState<ReminderFeedback | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -73,10 +80,41 @@ export default function EditItemScreen() {
       setDueDate(nextItem.dueDate);
       setAmount(typeof nextItem.amount === 'number' ? String(nextItem.amount) : '');
       setNote(nextItem.note ?? '');
+      setSelectedReminderOffsets(
+        nextItem.reminderRules.length > 0
+          ? normalizeSelectedReminderOffsets(
+              nextItem.type,
+              nextItem.reminderRules.map((rule) => rule.offsetDays),
+            )
+          : getDefaultReminderOffsets(nextItem.type),
+      );
     }
   }, [reminderId]);
 
   useFocusEffect(loadItem);
+
+  const handleTypeChange = (nextType: ReminderType) => {
+    setType(nextType);
+    setSelectedReminderOffsets(getDefaultReminderOffsets(nextType));
+  };
+
+  const handleToggleReminderOffset = (offsetDays: number) => {
+    const isSelected = selectedReminderOffsets.includes(offsetDays);
+    if (isSelected && selectedReminderOffsets.length <= 1) {
+      setFeedback({
+        description: '为避免这个事项彻底失去提醒，当前版本至少保留一个默认提醒点。',
+        title: '至少保留一个提醒点',
+        tone: 'warning',
+      });
+      return;
+    }
+
+    const nextOffsets = isSelected
+      ? selectedReminderOffsets.filter((selectedOffset) => selectedOffset !== offsetDays)
+      : [...selectedReminderOffsets, offsetDays];
+
+    setSelectedReminderOffsets(normalizeSelectedReminderOffsets(type, nextOffsets));
+  };
 
   const handleSave = async () => {
     if (!item || isSaving || isDeleting) {
@@ -114,15 +152,22 @@ export default function EditItemScreen() {
 
     setIsSaving(true);
 
-    await updateReminderWithNotifications(item, parsed.data, {
-      getNotificationGateway: getExpoNotificationGateway,
-      onNotificationError: (error) => {
-        if (!isNotificationRuntimeUnavailableError(error)) {
-          console.warn('Failed to reschedule reminder notifications', error);
-        }
+    await updateReminderWithNotifications(
+      item,
+      {
+        ...parsed.data,
+        selectedReminderOffsets,
       },
-      upsert: reminderRepository.upsert,
-    });
+      {
+        getNotificationGateway: getExpoNotificationGateway,
+        onNotificationError: (error) => {
+          if (!isNotificationRuntimeUnavailableError(error)) {
+            console.warn('Failed to reschedule reminder notifications', error);
+          }
+        },
+        upsert: reminderRepository.upsert,
+      },
+    );
 
     setFeedback(getReminderFeedback('updated'));
     await waitForFeedbackTransition();
@@ -204,7 +249,7 @@ export default function EditItemScreen() {
                 key={option.value}
                 label={option.label}
                 selected={type === option.value}
-                onPress={() => setType(option.value)}
+                onPress={() => handleTypeChange(option.value)}
               />
             ))}
           </View>
@@ -225,7 +270,12 @@ export default function EditItemScreen() {
           <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
-        <ReminderSchedulePreview dueDate={dueDate} type={type} />
+        <ReminderSchedulePreview
+          dueDate={dueDate}
+          selectedOffsets={selectedReminderOffsets}
+          type={type}
+          onToggleOffset={handleToggleReminderOffset}
+        />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>

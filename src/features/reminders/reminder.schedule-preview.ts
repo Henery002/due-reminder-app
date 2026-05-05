@@ -1,9 +1,11 @@
 import { format, isValid, parseISO } from 'date-fns';
+import { getReminderOffsetLabel } from './reminder.defaults';
 import { buildReminderRules } from './reminder.service';
 import type { ReminderType } from './reminder.types';
 
 export type ReminderSchedulePreviewInput = {
   dueDate: string;
+  selectedOffsets?: readonly number[];
   type: ReminderType;
 };
 
@@ -32,15 +34,17 @@ export function buildReminderSchedulePreview(
     };
   }
 
-  const items = buildReminderRules(input.type, input.dueDate, now).map((rule) => {
-    const scheduledAt = parseISO(rule.scheduledAt);
+  const items = buildReminderRules(input.type, input.dueDate, now, input.selectedOffsets).map(
+    (rule) => {
+      const scheduledAt = parseISO(rule.scheduledAt);
 
-    return {
-      dateLabel: format(scheduledAt, 'yyyy-MM-dd'),
-      offsetLabel: formatReminderOffset(rule.offsetDays),
-      timeLabel: format(scheduledAt, 'HH:mm'),
-    };
-  });
+      return {
+        dateLabel: format(scheduledAt, 'yyyy-MM-dd'),
+        offsetLabel: getReminderOffsetLabel(rule.offsetDays),
+        timeLabel: format(scheduledAt, 'HH:mm'),
+      };
+    },
+  );
 
   return {
     description:
@@ -50,12 +54,4 @@ export function buildReminderSchedulePreview(
     items,
     title: '提醒计划',
   };
-}
-
-function formatReminderOffset(offsetDays: number): string {
-  if (offsetDays === 0) {
-    return '到期当天';
-  }
-
-  return `提前 ${offsetDays} 天`;
 }

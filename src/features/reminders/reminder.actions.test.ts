@@ -209,6 +209,43 @@ describe('reminder notification actions', () => {
     );
   });
 
+  it('updates reminder using enabled reminder offsets only', async () => {
+    const gateway = createGateway();
+    const upsert = jest.fn();
+
+    await updateReminderWithNotifications(
+      item(),
+      {
+        type: 'bill',
+        name: '信用卡年费',
+        dueDate: '2026-05-12',
+        selectedReminderOffsets: [1, 0],
+      },
+      {
+        getNotificationGateway: async () => gateway,
+        now: baseDate,
+        upsert,
+      },
+    );
+
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reminderRules: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'bill-2026-05-12-1',
+            offsetDays: 1,
+          }),
+          expect.objectContaining({
+            id: 'bill-2026-05-12-0',
+            offsetDays: 0,
+          }),
+        ]),
+      }),
+    );
+    const updated = upsert.mock.calls[0][0] as ReminderItem;
+    expect(updated.reminderRules.map((rule) => rule.offsetDays)).toEqual([1, 0]);
+  });
+
   it('still updates reminder when notification runtime is unavailable', async () => {
     const upsert = jest.fn();
 
