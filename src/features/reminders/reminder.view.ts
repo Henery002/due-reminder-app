@@ -1,7 +1,13 @@
 import { differenceInCalendarDays, parseISO } from 'date-fns';
-import type { ReminderItem, ReminderType } from './reminder.types';
+import type { ReminderItem, ReminderStatus, ReminderType } from './reminder.types';
 
 export type ReminderTypeFilter = ReminderType | 'all';
+export type ReminderStatusFilter = ReminderStatus | 'all' | 'pending';
+
+export type AllReminderFilters = {
+  status: ReminderStatusFilter;
+  type: ReminderTypeFilter;
+};
 
 export type ReminderTypeMeta = {
   glyph: string;
@@ -42,6 +48,33 @@ export function filterRemindersByType(
   return items.filter((item) => item.type === selectedType);
 }
 
+export function filterRemindersByStatus(
+  items: ReminderItem[],
+  selectedStatus: ReminderStatusFilter,
+): ReminderItem[] {
+  if (selectedStatus === 'all') {
+    return items;
+  }
+
+  if (selectedStatus === 'pending') {
+    return items.filter((item) => item.status !== 'done');
+  }
+
+  return items.filter((item) => item.status === selectedStatus);
+}
+
+export function getVisibleAllReminders(
+  items: ReminderItem[],
+  filters: AllReminderFilters,
+): ReminderItem[] {
+  const filteredItems = filterRemindersByStatus(
+    filterRemindersByType(items, filters.type),
+    filters.status,
+  );
+
+  return [...filteredItems].sort(compareRemindersForAllItems);
+}
+
 export function getReminderTypeMeta(type: ReminderType): ReminderTypeMeta {
   return reminderTypeMeta[type];
 }
@@ -69,4 +102,20 @@ export function getReminderStatusLabel(item: ReminderItem, now: Date = new Date(
   }
 
   return '进行中';
+}
+
+function compareRemindersForAllItems(left: ReminderItem, right: ReminderItem): number {
+  const leftDoneWeight = left.status === 'done' ? 1 : 0;
+  const rightDoneWeight = right.status === 'done' ? 1 : 0;
+
+  if (leftDoneWeight !== rightDoneWeight) {
+    return leftDoneWeight - rightDoneWeight;
+  }
+
+  const dueDateDiff = parseISO(left.dueDate).getTime() - parseISO(right.dueDate).getTime();
+  if (dueDateDiff !== 0) {
+    return dueDateDiff;
+  }
+
+  return left.name.localeCompare(right.name, 'zh-Hans-CN');
 }

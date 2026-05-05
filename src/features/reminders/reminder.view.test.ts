@@ -1,4 +1,10 @@
-import { filterRemindersByType, getReminderStatusLabel, getReminderTypeMeta } from './reminder.view';
+import {
+  filterRemindersByStatus,
+  filterRemindersByType,
+  getReminderStatusLabel,
+  getReminderTypeMeta,
+  getVisibleAllReminders,
+} from './reminder.view';
 import type { ReminderItem } from './reminder.types';
 
 const now = new Date('2026-05-03T08:00:00.000Z');
@@ -31,6 +37,44 @@ describe('reminder view helpers', () => {
       'document',
     ]);
     expect(filterRemindersByType(items, 'bill').map((entry) => entry.id)).toEqual(['bill']);
+  });
+
+  it('filters reminders by selected status', () => {
+    const items = [
+      item({ id: 'active', status: 'active' }),
+      item({ id: 'overdue', status: 'overdue' }),
+      item({ id: 'snoozed', status: 'snoozed' }),
+      item({ id: 'done', status: 'done' }),
+    ];
+
+    expect(filterRemindersByStatus(items, 'pending').map((entry) => entry.id)).toEqual([
+      'active',
+      'overdue',
+      'snoozed',
+    ]);
+    expect(filterRemindersByStatus(items, 'done').map((entry) => entry.id)).toEqual(['done']);
+  });
+
+  it('combines all-items filters and keeps pending reminders before completed reminders', () => {
+    const items = [
+      item({ id: 'done-old', dueDate: '2026-05-01', status: 'done', type: 'bill' }),
+      item({ id: 'subscription-later', dueDate: '2026-05-12', type: 'subscription' }),
+      item({ id: 'bill-soon', dueDate: '2026-05-05', type: 'bill' }),
+      item({ id: 'bill-overdue', dueDate: '2026-05-02', status: 'overdue', type: 'bill' }),
+    ];
+
+    expect(
+      getVisibleAllReminders(items, {
+        status: 'all',
+        type: 'all',
+      }).map((entry) => entry.id),
+    ).toEqual(['bill-overdue', 'bill-soon', 'subscription-later', 'done-old']);
+    expect(
+      getVisibleAllReminders(items, {
+        status: 'pending',
+        type: 'bill',
+      }).map((entry) => entry.id),
+    ).toEqual(['bill-overdue', 'bill-soon']);
   });
 
   it('shows today-specific copy for active reminders due today', () => {

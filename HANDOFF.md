@@ -63,7 +63,9 @@
 35. 数据备份页已新增“生成截图演示数据”，用于写入安全示例事项，后续截图采集不必使用真实隐私数据
 36. 首页筛选空态和全部页空态已接入 `getReminderEmptyStateContent`，展示场景化标题、行动 chips 和轻量视觉装饰；全部页空态可直接进入新建事项
 37. 事项卡片已加入按压缩放、柔和阴影和圆角行动按钮，作为第一批不依赖真机的年轻化轻动效打磨
-38. 正式应用图标和截图采集后续单独迭代
+38. 全部事项页已接入类型筛选和状态筛选，支持全部/订阅/账单/证件与全部状态/未处理/已逾期/已延后/已处理组合筛选
+39. 全部事项页可见列表统一通过 `getVisibleAllReminders` 生成，未处理事项优先，并按到期日从近到远排序；筛选无结果时展示轻量空状态
+40. 正式应用图标和截图采集后续单独迭代
 
 ## 近期功能变更文件
 
@@ -123,6 +125,8 @@
 54. `src/storage/reminder.repository.test.ts`
 55. `src/features/reminders/reminder.empty-state.ts`
 56. `src/features/reminders/reminder.empty-state.test.ts`
+57. `src/features/reminders/reminder.view.ts`
+58. `src/features/reminders/reminder.view.test.ts`
 
 ## 后续补测清单
 

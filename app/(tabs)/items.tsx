@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomActionSheet } from '../../src/components/BottomActionSheet';
+import { CategoryPill } from '../../src/components/CategoryPill';
 import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
 import {
@@ -17,11 +18,33 @@ import { getReminderEmptyStateContent } from '../../src/features/reminders/remin
 import { refreshReminderList } from '../../src/features/reminders/reminder.lifecycle';
 import { getSnoozeOptions } from '../../src/features/reminders/reminder.snooze';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
+import {
+  getVisibleAllReminders,
+  type ReminderStatusFilter,
+  type ReminderTypeFilter,
+} from '../../src/features/reminders/reminder.view';
 import { reminderRepository } from '../../src/storage/reminder.store';
 import { colors } from '../../src/theme/colors';
 
+const typeFilterOptions: Array<{ label: string; value: ReminderTypeFilter }> = [
+  { label: '全部', value: 'all' },
+  { label: '订阅', value: 'subscription' },
+  { label: '账单', value: 'bill' },
+  { label: '证件', value: 'document' },
+];
+
+const statusFilterOptions: Array<{ label: string; value: ReminderStatusFilter }> = [
+  { label: '全部状态', value: 'all' },
+  { label: '未处理', value: 'pending' },
+  { label: '已逾期', value: 'overdue' },
+  { label: '已延后', value: 'snoozed' },
+  { label: '已处理', value: 'done' },
+];
+
 export default function ItemsScreen() {
   const [items, setItems] = useState<ReminderItem[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<ReminderStatusFilter>('all');
+  const [selectedType, setSelectedType] = useState<ReminderTypeFilter>('all');
   const [snoozeTarget, setSnoozeTarget] = useState<ReminderItem | null>(null);
 
   const loadItems = useCallback(() => {
@@ -62,6 +85,11 @@ export default function ItemsScreen() {
   };
 
   const emptyContent = getReminderEmptyStateContent('items-empty');
+  const filteredEmptyContent = getReminderEmptyStateContent('home-filtered');
+  const visibleItems = getVisibleAllReminders(items, {
+    status: selectedStatus,
+    type: selectedType,
+  });
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -72,17 +100,57 @@ export default function ItemsScreen() {
         </View>
 
         {items.length > 0 ? (
-          <View style={styles.list}>
-            {items.map((item) => (
-              <DueItemCard
-                key={item.id}
-                item={item}
-                onDone={() => handleDone(item)}
-                onPress={() => router.push(`/item/${item.id}`)}
-                onSnooze={() => setSnoozeTarget(item)}
-              />
-            ))}
+          <View style={styles.filterPanel}>
+            <View style={styles.filterRow}>
+              {typeFilterOptions.map((option) => (
+                <CategoryPill
+                  key={option.value}
+                  label={option.label}
+                  onPress={() => setSelectedType(option.value)}
+                  selected={selectedType === option.value}
+                />
+              ))}
+            </View>
+            <View style={styles.filterRow}>
+              {statusFilterOptions.map((option) => (
+                <CategoryPill
+                  key={option.value}
+                  label={option.label}
+                  onPress={() => setSelectedStatus(option.value)}
+                  selected={selectedStatus === option.value}
+                />
+              ))}
+            </View>
+            <Text style={styles.resultMeta}>
+              当前显示 {visibleItems.length} / {items.length} 件，未处理事项优先按到期日排序
+            </Text>
           </View>
+        ) : null}
+
+        {items.length > 0 ? (
+          visibleItems.length > 0 ? (
+            <View style={styles.list}>
+              {visibleItems.map((item) => (
+                <DueItemCard
+                  key={item.id}
+                  item={item}
+                  onDone={() => handleDone(item)}
+                  onPress={() => router.push(`/item/${item.id}`)}
+                  onSnooze={() => setSnoozeTarget(item)}
+                />
+              ))}
+            </View>
+          ) : (
+            <EmptyState
+              accentLabel={filteredEmptyContent.accentLabel}
+              actionLabel="添加新到期日"
+              chips={filteredEmptyContent.chips}
+              description={filteredEmptyContent.description}
+              glyph={filteredEmptyContent.glyph}
+              onActionPress={() => router.push('/item/new')}
+              title={filteredEmptyContent.title}
+            />
+          )
         ) : (
           <EmptyState
             accentLabel={emptyContent.accentLabel}
@@ -116,8 +184,27 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 36,
   },
+  filterPanel: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 20,
+    borderWidth: 1,
+    gap: 12,
+    padding: 14,
+  },
+  filterRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 9,
+  },
   list: {
     gap: 12,
+  },
+  resultMeta: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: '700',
+    lineHeight: 18,
   },
   screen: {
     backgroundColor: colors.background,
