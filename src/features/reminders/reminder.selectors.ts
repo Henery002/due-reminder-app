@@ -8,6 +8,16 @@ export type HomeReminderGroups = {
   overdue: ReminderItem[];
 };
 
+export type HomeReminderSectionKey = keyof HomeReminderGroups;
+
+export type HomeReminderSection = {
+  description: string;
+  items: ReminderItem[];
+  key: HomeReminderSectionKey;
+  tone: 'danger' | 'primary' | 'warm' | 'calm';
+  title: string;
+};
+
 export function groupRemindersForHome(
   items: ReminderItem[],
   now: Date = new Date(),
@@ -42,4 +52,47 @@ export function groupRemindersForHome(
   }
 
   return groups;
+}
+
+const homeSectionMeta: Record<
+  HomeReminderSectionKey,
+  Omit<HomeReminderSection, 'items' | 'key'>
+> = {
+  overdue: {
+    description: '这些已经超过到期日，建议先处理。',
+    title: '已经逾期',
+    tone: 'danger',
+  },
+  today: {
+    description: '今天就要处理，适合现在顺手解决。',
+    title: '今天到期',
+    tone: 'primary',
+  },
+  nextThreeDays: {
+    description: '这几天快到了，提前一点会更从容。',
+    title: '未来 3 天',
+    tone: 'warm',
+  },
+  nextSevenDays: {
+    description: '一周内会到期，适合提前安排。',
+    title: '未来 7 天',
+    tone: 'calm',
+  },
+};
+
+export function getHomeReminderSections(groups: HomeReminderGroups): HomeReminderSection[] {
+  return (['overdue', 'today', 'nextThreeDays', 'nextSevenDays'] as const).flatMap((key) => {
+    const items = groups[key];
+    if (items.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        ...homeSectionMeta[key],
+        items,
+        key,
+      },
+    ];
+  });
 }

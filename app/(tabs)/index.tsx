@@ -21,7 +21,11 @@ import {
 import { getReminderEmptyStateContent } from '../../src/features/reminders/reminder.empty-state';
 import { refreshReminderList } from '../../src/features/reminders/reminder.lifecycle';
 import { getHomeEmptyMode } from '../../src/features/reminders/reminder.onboarding';
-import { groupRemindersForHome } from '../../src/features/reminders/reminder.selectors';
+import {
+  getHomeReminderSections,
+  groupRemindersForHome,
+  type HomeReminderSection,
+} from '../../src/features/reminders/reminder.selectors';
 import { getSnoozeOptions } from '../../src/features/reminders/reminder.snooze';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
 import {
@@ -83,12 +87,8 @@ export default function HomeScreen() {
   const now = new Date();
   const visibleItems = filterRemindersByType(items, selectedType);
   const groups = groupRemindersForHome(visibleItems, now);
-  const recentItems = [
-    ...groups.overdue,
-    ...groups.today,
-    ...groups.nextThreeDays,
-    ...groups.nextSevenDays,
-  ];
+  const homeSections = getHomeReminderSections(groups);
+  const recentItemCount = homeSections.reduce((total, section) => total + section.items.length, 0);
   const nextSevenDaysCount =
     groups.today.length + groups.nextThreeDays.length + groups.nextSevenDays.length;
   const thisMonthCount = items.filter(
@@ -96,7 +96,7 @@ export default function HomeScreen() {
   ).length;
   const emptyMode = getHomeEmptyMode({
     totalCount: items.length,
-    visibleCount: recentItems.length,
+    visibleCount: recentItemCount,
   });
   const filteredEmptyContent = getReminderEmptyStateContent('home-filtered');
 
@@ -129,15 +129,15 @@ export default function HomeScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>近期要处理</Text>
-          {recentItems.length > 0 ? (
-            <View style={styles.list}>
-              {recentItems.map((item) => (
-                <DueItemCard
-                  key={item.id}
-                  item={item}
-                  onDone={() => handleDone(item)}
-                  onPress={() => router.push(`/item/${item.id}`)}
-                  onSnooze={() => setSnoozeTarget(item)}
+          {homeSections.length > 0 ? (
+            <View style={styles.sectionList}>
+              {homeSections.map((section) => (
+                <HomeReminderSectionView
+                  key={section.key}
+                  onDone={handleDone}
+                  onOpen={(item) => router.push(`/item/${item.id}`)}
+                  onSnooze={(item) => setSnoozeTarget(item)}
+                  section={section}
                 />
               ))}
             </View>
@@ -173,7 +173,52 @@ export default function HomeScreen() {
   );
 }
 
+function HomeReminderSectionView({
+  onDone,
+  onOpen,
+  onSnooze,
+  section,
+}: {
+  onDone: (item: ReminderItem) => void;
+  onOpen: (item: ReminderItem) => void;
+  onSnooze: (item: ReminderItem) => void;
+  section: HomeReminderSection;
+}) {
+  return (
+    <View style={styles.group}>
+      <View style={styles.groupHeader}>
+        <View style={styles.groupTitleWrap}>
+          <Text style={styles.groupTitle}>{section.title}</Text>
+          <Text style={styles.groupDescription}>{section.description}</Text>
+        </View>
+        <View style={[styles.groupBadge, styles[`${section.tone}Badge`]]}>
+          <Text style={[styles.groupBadgeText, styles[`${section.tone}BadgeText`]]}>
+            {section.items.length} 件
+          </Text>
+        </View>
+      </View>
+      <View style={styles.list}>
+        {section.items.map((item) => (
+          <DueItemCard
+            key={item.id}
+            item={item}
+            onDone={() => onDone(item)}
+            onPress={() => onOpen(item)}
+            onSnooze={() => onSnooze(item)}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  calmBadge: {
+    backgroundColor: colors.doneSoft,
+  },
+  calmBadgeText: {
+    color: colors.done,
+  },
   content: {
     gap: 18,
     padding: 20,
@@ -186,6 +231,49 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 6,
+  },
+  dangerBadge: {
+    backgroundColor: colors.overdueSoft,
+  },
+  dangerBadgeText: {
+    color: colors.overdue,
+  },
+  group: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 22,
+    borderWidth: 1,
+    gap: 12,
+    padding: 14,
+  },
+  groupBadge: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  groupBadgeText: {
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  groupDescription: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 4,
+  },
+  groupHeader: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 10,
+    justifyContent: 'space-between',
+  },
+  groupTitle: {
+    color: colors.textPrimary,
+    fontSize: 17,
+    fontWeight: '900',
+  },
+  groupTitleWrap: {
+    flex: 1,
   },
   list: {
     gap: 12,
@@ -216,6 +304,9 @@ const styles = StyleSheet.create({
   section: {
     gap: 12,
   },
+  sectionList: {
+    gap: 14,
+  },
   sectionTitle: {
     color: colors.textPrimary,
     fontSize: 18,
@@ -230,5 +321,17 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 28,
     fontWeight: '800',
+  },
+  primaryBadge: {
+    backgroundColor: colors.primarySoft,
+  },
+  primaryBadgeText: {
+    color: colors.primary,
+  },
+  warmBadge: {
+    backgroundColor: colors.dueSoonSoft,
+  },
+  warmBadgeText: {
+    color: colors.dueSoon,
   },
 });

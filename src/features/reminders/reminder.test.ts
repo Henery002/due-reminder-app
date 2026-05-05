@@ -1,5 +1,5 @@
 import { addDays, formatISO, subDays } from 'date-fns';
-import { groupRemindersForHome } from './reminder.selectors';
+import { getHomeReminderSections, groupRemindersForHome } from './reminder.selectors';
 import {
   buildReminderRules,
   markReminderDone,
@@ -119,5 +119,30 @@ describe('home grouping', () => {
     expect(groups.nextThreeDays.map((entry) => entry.id)).toEqual(['three-days']);
     expect(groups.nextSevenDays.map((entry) => entry.id)).toEqual(['seven-days']);
     expect(groups.overdue.map((entry) => entry.id)).toEqual(['overdue']);
+  });
+
+  it('builds visible home sections in urgency order', () => {
+    const groups = groupRemindersForHome(
+      [
+        item({ id: 'seven-days', dueDate: '2026-05-09' }),
+        item({ id: 'today', dueDate: '2026-05-03' }),
+        item({ id: 'overdue', status: 'overdue', dueDate: '2026-05-01' }),
+      ],
+      baseDate,
+    );
+
+    const sections = getHomeReminderSections(groups);
+
+    expect(sections.map((section) => section.key)).toEqual(['overdue', 'today', 'nextSevenDays']);
+    expect(sections.map((section) => section.title)).toEqual([
+      '已经逾期',
+      '今天到期',
+      '未来 7 天',
+    ]);
+    expect(sections.map((section) => section.items.map((entry) => entry.id))).toEqual([
+      ['overdue'],
+      ['today'],
+      ['seven-days'],
+    ]);
   });
 });
