@@ -69,7 +69,8 @@
 41. 首页近期事项已接入 `getHomeReminderSections`，按已逾期、今天到期、未来 3 天、未来 7 天分组展示，并为每组提供说明和数量标签
 42. 新建页和编辑页已接入 `ReminderSchedulePreview`，根据事项类型和到期日展示未来实际可安排的本地提醒日期与时间；过去日期或已错过提醒会展示记录模式说明
 43. 旧 `ReminderRuleSelector` 已被提醒计划预览替代并清理
-44. 正式应用图标和截图采集后续单独迭代
+44. 已修复从全部页点击事项进入详情时报错：根因是编辑页首次渲染时 `dueDate` 仍为空但已渲染 `ReminderDatePicker`；现在编辑页先展示加载态，且日期 helper 对空日期/无效日期安全兜底
+45. 正式应用图标和截图采集后续单独迭代
 
 ## 近期功能变更文件
 
@@ -139,6 +140,8 @@
 64. `src/components/ReminderSchedulePreview.tsx`
 65. `app/item/new.tsx`
 66. `app/item/[id].tsx`
+67. `src/features/reminders/reminder.date.ts`
+68. `src/features/reminders/reminder.date.test.ts`
 
 ## 后续补测清单
 

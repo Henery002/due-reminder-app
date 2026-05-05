@@ -6,6 +6,7 @@ import {
   endOfMonth,
   endOfWeek,
   format,
+  isValid,
   parseISO,
   startOfMonth,
   startOfWeek,
@@ -47,8 +48,13 @@ export function getReminderDateQuickOptions(baseDate = new Date()): ReminderDate
   ];
 }
 
-export function shiftReminderDate(value: string, unit: ReminderDateUnit, amount: number): string {
-  const date = parseISO(value);
+export function shiftReminderDate(
+  value: string,
+  unit: ReminderDateUnit,
+  amount: number,
+  fallbackDate = new Date(),
+): string {
+  const date = parseReminderDateOrFallback(value, fallbackDate);
 
   if (unit === 'year') {
     return formatReminderDate(addYears(date, amount));
@@ -62,7 +68,12 @@ export function shiftReminderDate(value: string, unit: ReminderDateUnit, amount:
 }
 
 export function getReminderDateDescription(value: string, baseDate = new Date()): string {
-  const days = differenceInCalendarDays(parseISO(value), baseDate);
+  const selectedDate = parseISO(value);
+  if (!isValid(selectedDate)) {
+    return '先选择到期日期';
+  }
+
+  const days = differenceInCalendarDays(selectedDate, baseDate);
 
   if (days === 0) {
     return '今天到期';
@@ -79,7 +90,8 @@ export function buildReminderMonthCalendar(
   value: string,
   baseDate = new Date(),
 ): ReminderMonthCalendar {
-  const selectedDate = parseISO(value);
+  const selectedDate = parseReminderDateOrFallback(value, baseDate);
+  const selectedValue = formatReminderDate(selectedDate);
   const today = formatReminderDate(baseDate);
   const monthStart = startOfMonth(selectedDate);
   const monthEnd = endOfMonth(selectedDate);
@@ -94,7 +106,7 @@ export function buildReminderMonthCalendar(
       dayLabel: format(cursor, 'd'),
       isCurrentMonth: cursor.getMonth() === selectedDate.getMonth(),
       isPast: differenceInCalendarDays(cursor, baseDate) < 0,
-      isSelected: dateValue === value,
+      isSelected: dateValue === selectedValue,
       isToday: dateValue === today,
       value: dateValue,
     });
@@ -106,4 +118,10 @@ export function buildReminderMonthCalendar(
     title: format(selectedDate, 'yyyy 年 M 月'),
     weekdays: ['一', '二', '三', '四', '五', '六', '日'],
   };
+}
+
+function parseReminderDateOrFallback(value: string, fallbackDate: Date): Date {
+  const parsedDate = parseISO(value);
+
+  return isValid(parsedDate) ? parsedDate : fallbackDate;
 }

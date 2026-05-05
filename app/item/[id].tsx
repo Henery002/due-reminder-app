@@ -157,7 +157,18 @@ export default function EditItemScreen() {
     ]);
   };
 
-  if (loaded && !item) {
+  if (!loaded) {
+    return (
+      <SafeAreaView edges={['top']} style={styles.safeArea}>
+        <View style={styles.notFound}>
+          <Stack.Screen options={{ title: '编辑事项' }} />
+          <EmptyState title="正在打开事项" description="正在读取本地事项数据，请稍等。" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!item) {
     return (
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <View style={styles.notFound}>

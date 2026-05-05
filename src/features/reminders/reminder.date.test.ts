@@ -32,6 +32,21 @@ describe('reminder date helpers', () => {
     expect(getReminderDateDescription('2026-05-03', baseDate)).toBe('已逾期 1 天');
   });
 
+  it('falls back safely when the selected date is not loaded yet', () => {
+    expect(getReminderDateDescription('', baseDate)).toBe('先选择到期日期');
+
+    const calendar = buildReminderMonthCalendar('', baseDate);
+
+    expect(calendar.title).toBe('2026 年 5 月');
+    expect(calendar.days.find((day) => day.value === '2026-05-04')).toEqual(
+      expect.objectContaining({
+        isSelected: true,
+        isToday: true,
+      }),
+    );
+    expect(shiftReminderDate('', 'day', 1, baseDate)).toBe('2026-05-05');
+  });
+
   it('builds a compact month calendar grid around the selected date', () => {
     const calendar = buildReminderMonthCalendar('2026-05-04', baseDate);
 
