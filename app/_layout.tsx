@@ -14,6 +14,9 @@ export default function RootLayout() {
       <Stack.Screen name="feedback" />
       <Stack.Screen name="membership" />
       <Stack.Screen name="notification-permission" />
+      <Stack.Screen name="permissions" />
+      <Stack.Screen name="privacy-policy" />
+      <Stack.Screen name="terms-of-use" />
     </Stack>
   );
 }

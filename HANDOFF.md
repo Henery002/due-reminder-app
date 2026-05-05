@@ -57,7 +57,8 @@
 29. 数据备份页已完成纯文本方案：导出 JSON 备份文本、粘贴导入恢复事项，不依赖原生文件选择或云同步
 30. 延后提醒已升级为底部面板，支持明天、3 天后、下周提醒
 31. 我的页已新增数据备份、反馈建议、关于应用入口；反馈页先使用邮件渠道
-32. 更年轻化动效、更完整日历弹层和正式隐私政策/用户协议后续单独迭代
+32. 隐私政策、用户协议、权限说明草稿已落到 `docs/legal/`，并已接入 App 内页面；当前按 local-first、无账号、无云同步、无广告、无真实支付口径编写
+33. 更年轻化动效、更完整日历弹层、应用图标和正式上架材料后续单独迭代
 
 ## 近期功能变更文件
 
@@ -98,7 +99,16 @@
 35. `app/data-backup.tsx`
 36. `app/feedback.tsx`
 37. `app/about.tsx`
-38. `src/storage/reminder.repository.test.ts`
+38. `app/privacy-policy.tsx`
+39. `app/terms-of-use.tsx`
+40. `app/permissions.tsx`
+41. `src/features/legal/legal.content.ts`
+42. `src/features/legal/legal.content.test.ts`
+43. `src/components/LegalDocumentView.tsx`
+44. `docs/legal/PRIVACY_POLICY_DRAFT.md`
+45. `docs/legal/TERMS_OF_USE_DRAFT.md`
+46. `docs/legal/PERMISSION_GUIDE.md`
+47. `src/storage/reminder.repository.test.ts`
 
 ## 后续补测清单
 

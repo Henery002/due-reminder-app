@@ -3,11 +3,13 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MembershipCard } from '../../src/components/MembershipCard';
 import { PermissionBanner } from '../../src/components/PermissionBanner';
+import { getLegalActions } from '../../src/features/legal/legal.content';
 import { getSettingsActions } from '../../src/features/settings/settings.content';
 import { colors } from '../../src/theme/colors';
 
 export default function MeScreen() {
   const actions = getSettingsActions();
+  const legalActions = getLegalActions();
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -36,6 +38,16 @@ export default function MeScreen() {
             <Text style={styles.panelText}>{action.description}</Text>
           </Link>
         ))}
+
+        <View style={styles.group}>
+          <Text style={styles.groupTitle}>合规说明</Text>
+          {legalActions.map((action) => (
+            <Link key={action.href} href={action.href} style={styles.panel}>
+              <Text style={styles.panelTitle}>{action.title}</Text>
+              <Text style={styles.panelText}>{action.description}</Text>
+            </Link>
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -46,6 +58,14 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 20,
     paddingBottom: 36,
+  },
+  group: {
+    gap: 10,
+  },
+  groupTitle: {
+    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '900',
   },
   panel: {
     backgroundColor: colors.surface,

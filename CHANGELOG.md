@@ -61,6 +61,15 @@
    - 新增 `app/about.tsx`
    - 我的页新增数据备份、反馈建议、关于应用入口
    - 补充 `settings.content.test.ts`
+17. 补齐合规说明草稿：
+   - 新增 `docs/legal/PRIVACY_POLICY_DRAFT.md`
+   - 新增 `docs/legal/TERMS_OF_USE_DRAFT.md`
+   - 新增 `docs/legal/PERMISSION_GUIDE.md`
+   - 新增 `src/features/legal/legal.content.ts`
+   - 新增隐私政策、用户协议、权限说明三个 App 页面
+   - 我的页和关于页均可进入合规说明
+   - 当前草稿按 local-first、无账号、无云同步、无广告、无真实支付口径编写
+18. 补充 `legal.content.test.ts`，覆盖合规入口、隐私边界、通知权限和原型阶段服务边界。
 
 ## 2026-05-04
 

@@ -1,11 +1,13 @@
-import { Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getLegalActions } from '../src/features/legal/legal.content';
 import { getAboutSections } from '../src/features/settings/settings.content';
 import { colors } from '../src/theme/colors';
 
 export default function AboutScreen() {
   const sections = getAboutSections();
+  const legalActions = getLegalActions();
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -23,6 +25,16 @@ export default function AboutScreen() {
             <Text style={styles.cardText}>{section.body}</Text>
           </View>
         ))}
+
+        <View style={styles.legalGroup}>
+          <Text style={styles.groupTitle}>合规说明</Text>
+          {legalActions.map((action) => (
+            <Link key={action.href} href={action.href} style={styles.card}>
+              <Text style={styles.cardTitle}>{action.title}</Text>
+              <Text style={styles.cardText}>{action.description}</Text>
+            </Link>
+          ))}
+        </View>
 
         <Text style={styles.version}>原型版本 v0.1 · Android-first</Text>
       </ScrollView>
@@ -66,6 +78,14 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 1,
     textTransform: 'uppercase',
+  },
+  groupTitle: {
+    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  legalGroup: {
+    gap: 10,
   },
   safeArea: {
     backgroundColor: colors.background,
