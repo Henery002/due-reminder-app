@@ -70,6 +70,13 @@
    - 我的页和关于页均可进入合规说明
    - 当前草稿按 local-first、无账号、无云同步、无广告、无真实支付口径编写
 18. 补充 `legal.content.test.ts`，覆盖合规入口、隐私边界、通知权限和原型阶段服务边界。
+19. 补齐应用市场上线材料草稿：
+   - 新增 `docs/launch/APP_STORE_LISTING_DRAFT.md`
+   - 新增 `docs/launch/SCREENSHOT_PLAN.md`
+   - 新增 `docs/launch/VISUAL_ASSETS_DIRECTION.md`
+   - 新增 `src/features/launch/launch.content.ts`
+   - 文案避免承诺当前未上线的云同步、真实支付、OCR 或 AI 能力
+20. 补充 `launch.content.test.ts`，覆盖应用市场文案、截图叙事顺序和图标/启动页视觉方向。
 
 ## 2026-05-04
 
