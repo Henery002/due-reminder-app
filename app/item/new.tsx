@@ -7,6 +7,7 @@ import { CategoryPill } from '../../src/components/CategoryPill';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePreview';
+import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import { TemplateCard } from '../../src/components/TemplateCard';
 import { reminderTemplates } from '../../src/constants/templates';
@@ -153,6 +154,7 @@ export default function NewItemScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '添加事项' }} />
+        <ScreenHeader subtitle="返回上一页" title="添加事项" />
         <View>
           <Text style={styles.title}>添加一件快到期的事</Text>
           <Text style={styles.subtitle}>先选模板，再确认到期日和提醒策略。</Text>

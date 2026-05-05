@@ -1,8 +1,10 @@
 import { Stack, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PermissionBanner } from '../src/components/PermissionBanner';
+import { ScreenHeader } from '../src/components/ScreenHeader';
+import { SubmitActionButton } from '../src/components/SubmitActionButton';
 import {
   getExpoNotificationGateway,
   getExpoNotificationRuntimeInfo,
@@ -90,6 +92,7 @@ export default function NotificationPermissionScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '通知权限' }} />
+        <ScreenHeader subtitle="我的 / 通知" title="通知权限" />
         <Text style={styles.title}>通知权限</Text>
         <PermissionBanner onPress={handleRequestPermission} />
         <Text style={styles.copy}>到期提醒依赖系统通知。创建第一个事项后，再开启通知会更自然。</Text>
@@ -107,13 +110,12 @@ export default function NotificationPermissionScreen() {
           ) : null}
         </View>
 
-        <Pressable onPress={handleRequestPermission} style={styles.primaryButton}>
-          <Text style={styles.primaryButtonText}>开启通知权限</Text>
-        </Pressable>
-
-        <Pressable onPress={handleTestNotification} style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>发送 5 秒测试通知</Text>
-        </Pressable>
+        <SubmitActionButton label="开启通知权限" onPress={handleRequestPermission} />
+        <SubmitActionButton
+          label="发送 5 秒测试通知"
+          onPress={handleTestNotification}
+          variant="secondary"
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -153,17 +155,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
   },
-  primaryButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    padding: 15,
-  },
-  primaryButtonText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
   screen: {
     backgroundColor: colors.background,
     flex: 1,
@@ -176,18 +167,5 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 28,
     fontWeight: '800',
-  },
-  secondaryButton: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 15,
-  },
-  secondaryButtonText: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '800',
-    textAlign: 'center',
   },
 });

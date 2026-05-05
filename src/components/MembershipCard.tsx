@@ -3,11 +3,15 @@ import { getMembershipPlans } from '../features/membership/membership.plan';
 import { colors } from '../theme/colors';
 import { IconGlyph } from './IconGlyph';
 
-export function MembershipCard() {
+type MembershipCardProps = {
+  compact?: boolean;
+};
+
+export function MembershipCard({ compact }: MembershipCardProps) {
   const [freePlan, proPlan] = getMembershipPlans();
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, compact ? styles.compactCard : null]}>
       <IconGlyph label="P" size={20} />
       <View style={styles.copy}>
         <Text style={styles.title}>更自由地管理所有到期事项</Text>
@@ -43,6 +47,9 @@ const styles = StyleSheet.create({
   },
   copy: {
     flex: 1,
+  },
+  compactCard: {
+    borderRadius: 18,
   },
   description: {
     color: colors.textSecondary,

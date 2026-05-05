@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MembershipCard } from '../src/components/MembershipCard';
+import { ScreenHeader } from '../src/components/ScreenHeader';
 import { getMembershipPlans } from '../src/features/membership/membership.plan';
 import { colors } from '../src/theme/colors';
 
@@ -12,6 +13,7 @@ export default function MembershipScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '会员权益' }} />
+        <ScreenHeader subtitle="我的 / 会员" title="会员权益" />
         <View>
           <Text style={styles.title}>会员权益</Text>
           <Text style={styles.subtitle}>先把免费版体验做扎实，再开放真实会员支付。</Text>

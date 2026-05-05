@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { LegalSection } from '../features/legal/legal.content';
 import { colors } from '../theme/colors';
+import { ScreenHeader } from './ScreenHeader';
 
 type LegalDocumentViewProps = {
   description: string;
@@ -19,6 +20,7 @@ export function LegalDocumentView({
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <ScreenHeader subtitle="合规说明" title={title} />
         <View style={styles.hero}>
           <Text style={styles.eyebrow}>{eyebrow}</Text>
           <Text style={styles.title}>{title}</Text>

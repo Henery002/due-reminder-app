@@ -6,16 +6,19 @@ describe('settings content', () => {
       {
         description: '导出备份文本，或从备份文本恢复到期事项。',
         href: '/data-backup',
+        icon: 'B',
         title: '数据备份',
       },
       {
         description: '告诉我哪里卡、哪里丑、哪里不够顺手。',
         href: '/feedback',
+        icon: 'F',
         title: '反馈建议',
       },
       {
         description: '版本、隐私和当前能力边界。',
         href: '/about',
+        icon: 'i',
         title: '关于应用',
       },
     ]);

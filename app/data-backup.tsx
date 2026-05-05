@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FeedbackBanner } from '../src/components/FeedbackBanner';
+import { ScreenHeader } from '../src/components/ScreenHeader';
 import { SubmitActionButton } from '../src/components/SubmitActionButton';
 import { exportRemindersBackup, parseRemindersBackup } from '../src/features/data/backup';
 import { getScreenshotDemoReminders } from '../src/features/launch/demo-data';
@@ -66,6 +67,7 @@ export default function DataBackupScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '数据备份' }} />
+        <ScreenHeader subtitle="我的 / 数据" title="数据备份" />
         <View>
           <Text style={styles.title}>数据备份</Text>
           <Text style={styles.subtitle}>

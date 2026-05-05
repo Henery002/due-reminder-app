@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { colors } from '../theme/colors';
+import { PressableScale } from './PressableScale';
 
 type CategoryPillProps = {
   label: string;
@@ -9,13 +10,14 @@ type CategoryPillProps = {
 
 export function CategoryPill({ label, selected, onPress }: CategoryPillProps) {
   return (
-    <Pressable
+    <PressableScale
       onPress={onPress}
-      style={[styles.pill, selected && styles.selected]}
+      scaleTo={0.94}
+      style={({ pressed }) => [styles.pill, selected && styles.selected, pressed && styles.pressed]}
       accessibilityRole="button"
     >
       <Text style={[styles.text, selected && styles.selectedText]}>{label}</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -23,10 +25,13 @@ const styles = StyleSheet.create({
   pill: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 8,
+    borderRadius: 999,
     borderWidth: 1,
     paddingHorizontal: 14,
     paddingVertical: 9,
+  },
+  pressed: {
+    opacity: 0.82,
   },
   selected: {
     backgroundColor: colors.primarySoft,

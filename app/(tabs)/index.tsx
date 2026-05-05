@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   content: {
     gap: 18,
     padding: 20,
-    paddingBottom: 36,
+    paddingBottom: 112,
   },
   eyebrow: {
     color: colors.textMuted,

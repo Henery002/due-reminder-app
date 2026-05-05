@@ -1,6 +1,8 @@
 import { Stack } from 'expo-router';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { PressableScale } from '../src/components/PressableScale';
+import { ScreenHeader } from '../src/components/ScreenHeader';
 import { getFeedbackChannels } from '../src/features/settings/settings.content';
 import { colors } from '../src/theme/colors';
 
@@ -11,6 +13,7 @@ export default function FeedbackScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '反馈建议' }} />
+        <ScreenHeader subtitle="我的 / 支持" title="反馈建议" />
         <View>
           <Text style={styles.title}>反馈建议</Text>
           <Text style={styles.subtitle}>
@@ -26,14 +29,15 @@ export default function FeedbackScreen() {
         </View>
 
         {channels.map((channel) => (
-          <Pressable
+          <PressableScale
             key={channel.url}
             onPress={() => Linking.openURL(channel.url)}
+            scaleTo={0.985}
             style={({ pressed }) => [styles.channelCard, pressed ? styles.pressed : null]}
           >
             <Text style={styles.channelTitle}>{channel.label}</Text>
             <Text style={styles.channelText}>{channel.description}</Text>
-          </Pressable>
+          </PressableScale>
         ))}
       </ScrollView>
     </SafeAreaView>

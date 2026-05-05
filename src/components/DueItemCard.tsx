@@ -11,6 +11,7 @@ import type { ReminderItem } from '../features/reminders/reminder.types';
 import { getReminderStatusLabel, getReminderTypeMeta } from '../features/reminders/reminder.view';
 import { colors } from '../theme/colors';
 import { IconGlyph } from './IconGlyph';
+import { PressableScale } from './PressableScale';
 import { StatusBadge } from './StatusBadge';
 
 type DueItemCardProps = {
@@ -67,20 +68,34 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
         ) : null}
 
         <View style={styles.actions}>
-          <Pressable
+          <PressableScale
             onPress={(event) => handleActionPress(event, onDone)}
-            style={({ pressed }) => [styles.actionButton, pressed ? styles.actionPressed : null]}
+            scaleTo={0.94}
+            style={({ pressed }) => [
+              styles.actionButton,
+              styles.doneAction,
+              pressed ? styles.actionPressed : null,
+            ]}
           >
-            <IconGlyph label="✓" size={16} tone="done" />
-            <Text style={styles.actionText}>已处理</Text>
-          </Pressable>
-          <Pressable
+            <View style={styles.doneIconPuck}>
+              <IconGlyph color={colors.done} label="✓" size={15} />
+            </View>
+            <Text style={[styles.actionText, styles.doneActionText]}>已处理</Text>
+          </PressableScale>
+          <PressableScale
             onPress={(event) => handleActionPress(event, onSnooze)}
-            style={({ pressed }) => [styles.actionButton, pressed ? styles.actionPressed : null]}
+            scaleTo={0.94}
+            style={({ pressed }) => [
+              styles.actionButton,
+              styles.snoozeAction,
+              pressed ? styles.actionPressed : null,
+            ]}
           >
-            <IconGlyph label="+" size={16} tone="dueSoon" />
-            <Text style={styles.actionText}>延后</Text>
-          </Pressable>
+            <View style={styles.snoozeIconPuck}>
+              <IconGlyph color={colors.dueSoon} label="+" size={15} />
+            </View>
+            <Text style={[styles.actionText, styles.snoozeActionText]}>延后</Text>
+          </PressableScale>
         </View>
       </Pressable>
     </Animated.View>
@@ -90,26 +105,40 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
 const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
+    borderWidth: 1,
     borderRadius: 999,
     flexDirection: 'row',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 9,
+    gap: 8,
+    minHeight: 42,
+    paddingHorizontal: 13,
+    paddingVertical: 8,
   },
   actionPressed: {
-    opacity: 0.78,
-    transform: [{ scale: 0.98 }],
+    opacity: 0.84,
   },
   actionText: {
-    color: colors.textPrimary,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '900',
   },
   actions: {
     flexDirection: 'row',
     gap: 10,
     marginTop: 14,
+  },
+  doneAction: {
+    backgroundColor: colors.doneSoft,
+    borderColor: colors.doneSoft,
+  },
+  doneActionText: {
+    color: colors.done,
+  },
+  doneIconPuck: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 999,
+    height: 24,
+    justifyContent: 'center',
+    width: 24,
   },
   amount: {
     color: colors.textSecondary,
@@ -150,6 +179,21 @@ const styles = StyleSheet.create({
   pressed: {
     borderColor: colors.primarySoft,
     opacity: 0.94,
+  },
+  snoozeAction: {
+    backgroundColor: colors.dueSoonSoft,
+    borderColor: colors.dueSoonSoft,
+  },
+  snoozeActionText: {
+    color: colors.dueSoon,
+  },
+  snoozeIconPuck: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 999,
+    height: 24,
+    justifyContent: 'center',
+    width: 24,
   },
   title: {
     color: colors.textPrimary,

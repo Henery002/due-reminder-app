@@ -1,6 +1,7 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { colors } from '../theme/colors';
 import { IconGlyph } from './IconGlyph';
+import { PressableScale } from './PressableScale';
 
 type PermissionBannerProps = {
   onPress?: () => void;
@@ -8,15 +9,16 @@ type PermissionBannerProps = {
 
 export function PermissionBanner({ onPress }: PermissionBannerProps) {
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       onPress={onPress}
+      scaleTo={0.985}
       style={({ pressed }) => [styles.banner, pressed && styles.pressed]}
     >
       <IconGlyph label="!" size={18} tone="dueSoon" />
       <Text style={styles.text}>打开通知，才不会错过提醒</Text>
       <Text style={styles.arrow}>›</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -24,10 +26,10 @@ const styles = StyleSheet.create({
   banner: {
     alignItems: 'center',
     backgroundColor: colors.dueSoonSoft,
-    borderRadius: 8,
+    borderRadius: 16,
     flexDirection: 'row',
     gap: 10,
-    padding: 12,
+    padding: 14,
   },
   arrow: {
     color: colors.textMuted,

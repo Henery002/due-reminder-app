@@ -1,6 +1,7 @@
 import { Link, Stack } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenHeader } from '../src/components/ScreenHeader';
 import { getLegalActions } from '../src/features/legal/legal.content';
 import { getAboutSections } from '../src/features/settings/settings.content';
 import { colors } from '../src/theme/colors';
@@ -13,6 +14,7 @@ export default function AboutScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '关于应用' }} />
+        <ScreenHeader subtitle="我的 / 关于" title="关于应用" />
         <View style={styles.hero}>
           <Text style={styles.heroKicker}>Due Reminder</Text>
           <Text style={styles.title}>到期提醒助手</Text>

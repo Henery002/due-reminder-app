@@ -70,7 +70,10 @@
 42. 新建页和编辑页已接入 `ReminderSchedulePreview`，根据事项类型和到期日展示未来实际可安排的本地提醒日期与时间；过去日期或已错过提醒会展示记录模式说明
 43. 旧 `ReminderRuleSelector` 已被提醒计划预览替代并清理
 44. 已修复从全部页点击事项进入详情时报错：根因是编辑页首次渲染时 `dueDate` 仍为空但已渲染 `ReminderDatePicker`；现在编辑页先展示加载态，且日期 helper 对空日期/无效日期安全兜底
-45. 正式应用图标和截图采集后续单独迭代
+45. 第一批 UI/动效系统化优化已落地：底部 Tab 使用浮动胶囊、激活态填充图标和弹性缩放；事项卡片行动按钮升级为完成/延后语义色胶囊；通用按钮、筛选胶囊、通知卡片等加入按压缩放
+46. 我的页已重构为 Hub 式结构：会员通知、常用工具、提醒偏好、合规说明分区展示；提醒偏好明确当前默认规则固定，自定义规则后续作为 Pro/高级能力预留
+47. 二级页面已新增 `ScreenHeader` 显式返回入口，覆盖添加/编辑事项、会员权益、数据备份、反馈建议、通知权限、关于应用、合规说明页面
+48. 视觉资源与动效设计原则已补充到 `docs/launch/VISUAL_ASSETS_DIRECTION.md`；正式应用图标和截图采集后续单独迭代
 
 ## 近期功能变更文件
 
@@ -142,6 +145,11 @@
 66. `app/item/[id].tsx`
 67. `src/features/reminders/reminder.date.ts`
 68. `src/features/reminders/reminder.date.test.ts`
+69. `src/components/PressableScale.tsx`
+70. `src/components/ScreenHeader.tsx`
+71. `app/(tabs)/_layout.tsx`
+72. `app/(tabs)/me.tsx`
+73. `docs/launch/VISUAL_ASSETS_DIRECTION.md`
 
 ## 后续补测清单
 

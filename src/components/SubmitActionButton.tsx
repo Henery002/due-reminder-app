@@ -1,6 +1,7 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { getSubmitActionState } from '../features/reminders/reminder.submit';
 import { colors } from '../theme/colors';
+import { PressableScale } from './PressableScale';
 
 type SubmitActionButtonProps = {
   disabled?: boolean;
@@ -22,11 +23,12 @@ export function SubmitActionButton({
   const state = getSubmitActionState({ disabled, label, loading, loadingLabel });
 
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       accessibilityState={{ busy: Boolean(loading), disabled: state.disabled }}
       disabled={state.disabled}
       onPress={onPress}
+      scaleTo={0.985}
       style={({ pressed }) => [
         styles.button,
         styles[variant],
@@ -43,14 +45,18 @@ export function SubmitActionButton({
       >
         {state.label}
       </Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 12,
-    padding: 15,
+    alignItems: 'center',
+    borderRadius: 16,
+    justifyContent: 'center',
+    minHeight: 52,
+    paddingHorizontal: 18,
+    paddingVertical: 15,
   },
   danger: {
     backgroundColor: colors.surface,

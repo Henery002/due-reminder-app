@@ -7,6 +7,7 @@ import { EmptyState } from '../../src/components/EmptyState';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePreview';
+import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import {
   getExpoNotificationGateway,
@@ -162,6 +163,7 @@ export default function EditItemScreen() {
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <View style={styles.notFound}>
           <Stack.Screen options={{ title: '编辑事项' }} />
+          <ScreenHeader subtitle="返回上一页" title="编辑事项" />
           <EmptyState title="正在打开事项" description="正在读取本地事项数据，请稍等。" />
         </View>
       </SafeAreaView>
@@ -173,6 +175,7 @@ export default function EditItemScreen() {
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <View style={styles.notFound}>
           <Stack.Screen options={{ title: '编辑事项' }} />
+          <ScreenHeader subtitle="返回上一页" title="编辑事项" />
           <EmptyState title="没有找到这个事项" description="它可能已经被删除或本地数据已刷新。" />
           <Pressable onPress={() => router.back()} style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>返回</Text>
@@ -186,6 +189,7 @@ export default function EditItemScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '编辑事项' }} />
+        <ScreenHeader subtitle="返回上一页" title="编辑事项" />
         <View>
           <Text style={styles.title}>编辑到期事项</Text>
           <Text style={styles.subtitle}>修改后会取消旧提醒，并按新的到期日重新安排。</Text>
