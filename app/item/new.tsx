@@ -1,14 +1,16 @@
 import { addDays, format } from 'date-fns';
-import { Stack, router } from 'expo-router';
-import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Stack, router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
+import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderRuleSelector } from '../../src/components/ReminderRuleSelector';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import { TemplateCard } from '../../src/components/TemplateCard';
 import { reminderTemplates } from '../../src/constants/templates';
+import { getReminderCreationGate } from '../../src/features/membership/membership.entitlement';
 import {
   getExpoNotificationGateway,
   isNotificationRuntimeUnavailableError,
@@ -19,6 +21,11 @@ import {
   scheduleReminderNotifications,
 } from '../../src/features/notifications/notification.service';
 import { DEFAULT_REMINDER_OFFSETS } from '../../src/features/reminders/reminder.defaults';
+import {
+  getReminderFeedback,
+  type ReminderFeedback,
+} from '../../src/features/reminders/reminder.feedback';
+import { parseOptionalReminderAmount } from '../../src/features/reminders/reminder.form';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
 import { buildReminderRules } from '../../src/features/reminders/reminder.service';
 import type { ReminderItem, ReminderType } from '../../src/features/reminders/reminder.types';
@@ -35,13 +42,30 @@ function createId(): string {
   return `reminder-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+function waitForFeedbackTransition(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 450);
+  });
+}
+
 export default function NewItemScreen() {
   const [type, setType] = useState<ReminderType>('subscription');
   const [name, setName] = useState('视频会员');
   const [dueDate, setDueDate] = useState(format(addDays(new Date(), 7), 'yyyy-MM-dd'));
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
+  const [feedback, setFeedback] = useState<ReminderFeedback | null>(null);
+  const [reminderCount, setReminderCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
+  const creationGate = getReminderCreationGate(reminderCount);
+
+  const refreshCreationGate = useCallback(() => {
+    const gate = getReminderCreationGate(reminderRepository.list().length);
+    setReminderCount(gate.used);
+    setFeedback(gate.allowed ? null : getReminderFeedback('free-limit'));
+  }, []);
+
+  useFocusEffect(refreshCreationGate);
 
   const handleTemplatePress = (template: (typeof reminderTemplates)[number]) => {
     setType(template.type);
@@ -53,16 +77,40 @@ export default function NewItemScreen() {
       return;
     }
 
+    const latestGate = getReminderCreationGate(reminderRepository.list().length);
+    setReminderCount(latestGate.used);
+
+    if (!latestGate.allowed) {
+      setFeedback(getReminderFeedback('free-limit'));
+      return;
+    }
+
+    let parsedAmount: number | undefined;
+    try {
+      parsedAmount = parseOptionalReminderAmount(amount);
+    } catch (error) {
+      setFeedback({
+        description: error instanceof Error ? error.message : '金额格式不太对，换成数字试试。',
+        title: '金额格式不太对',
+        tone: 'warning',
+      });
+      return;
+    }
+
     const parsed = createReminderSchema.safeParse({
       type,
       name,
       dueDate,
-      amount: amount.trim().length > 0 ? Number(amount) : undefined,
+      amount: parsedAmount,
       note: note.trim().length > 0 ? note.trim() : undefined,
     });
 
     if (!parsed.success) {
-      Alert.alert('再检查一下', parsed.error.issues[0]?.message ?? '请补全事项信息');
+      setFeedback({
+        description: parsed.error.issues[0]?.message ?? '请补全事项信息',
+        title: '再检查一下',
+        tone: 'warning',
+      });
       return;
     }
 
@@ -97,6 +145,8 @@ export default function NewItemScreen() {
     }
 
     reminderRepository.upsert(reminder);
+    setFeedback(getReminderFeedback('created'));
+    await waitForFeedbackTransition();
     router.replace('/');
   };
 
@@ -108,6 +158,7 @@ export default function NewItemScreen() {
           <Text style={styles.title}>添加一件快到期的事</Text>
           <Text style={styles.subtitle}>先选模板，再确认到期日和提醒策略。</Text>
         </View>
+        <FeedbackBanner feedback={feedback} />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>事项类型</Text>
@@ -175,11 +226,19 @@ export default function NewItemScreen() {
         <ReminderRuleSelector offsets={DEFAULT_REMINDER_OFFSETS[type]} />
 
         <SubmitActionButton
+          disabled={!creationGate.allowed}
           label="保存并安排提醒"
           loading={isSaving}
           loadingLabel="正在安排提醒..."
           onPress={handleSave}
         />
+        {!creationGate.allowed ? (
+          <SubmitActionButton
+            label={creationGate.actionLabel ?? '查看会员权益'}
+            onPress={() => router.push('/membership')}
+            variant="secondary"
+          />
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

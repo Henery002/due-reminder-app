@@ -9,6 +9,9 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="item/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="item/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="about" />
+      <Stack.Screen name="data-backup" />
+      <Stack.Screen name="feedback" />
       <Stack.Screen name="membership" />
       <Stack.Screen name="notification-permission" />
     </Stack>

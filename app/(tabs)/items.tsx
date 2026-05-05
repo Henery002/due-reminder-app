@@ -2,6 +2,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BottomActionSheet } from '../../src/components/BottomActionSheet';
 import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
 import {
@@ -12,26 +13,22 @@ import {
   completeReminderWithNotifications,
   snoozeReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
-import {
-  refreshReminderStatus,
-} from '../../src/features/reminders/reminder.service';
+import { refreshReminderList } from '../../src/features/reminders/reminder.lifecycle';
+import { getSnoozeOptions } from '../../src/features/reminders/reminder.snooze';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
 import { reminderRepository } from '../../src/storage/reminder.store';
 import { colors } from '../../src/theme/colors';
 
 export default function ItemsScreen() {
   const [items, setItems] = useState<ReminderItem[]>([]);
+  const [snoozeTarget, setSnoozeTarget] = useState<ReminderItem | null>(null);
 
   const loadItems = useCallback(() => {
-    const refreshedItems = reminderRepository.list().map((item) => {
-      const refreshed = refreshReminderStatus(item);
-      if (refreshed !== item) {
-        reminderRepository.upsert(refreshed);
-      }
-      return refreshed;
-    });
-
-    setItems(refreshedItems);
+    setItems(
+      refreshReminderList(reminderRepository.list(), {
+        upsert: reminderRepository.upsert,
+      }),
+    );
   }, []);
 
   useFocusEffect(loadItems);
@@ -49,8 +46,8 @@ export default function ItemsScreen() {
     loadItems();
   };
 
-  const handleSnooze = async (item: ReminderItem) => {
-    await snoozeReminderWithNotifications(item, 1, {
+  const handleSnooze = async (item: ReminderItem, days: number) => {
+    await snoozeReminderWithNotifications(item, days, {
       getNotificationGateway: getExpoNotificationGateway,
       onNotificationError: (error) => {
         if (!isNotificationRuntimeUnavailableError(error)) {
@@ -59,6 +56,7 @@ export default function ItemsScreen() {
       },
       upsert: reminderRepository.upsert,
     });
+    setSnoozeTarget(null);
     loadItems();
   };
 
@@ -78,13 +76,24 @@ export default function ItemsScreen() {
                 item={item}
                 onDone={() => handleDone(item)}
                 onPress={() => router.push(`/item/${item.id}`)}
-                onSnooze={() => handleSnooze(item)}
+                onSnooze={() => setSnoozeTarget(item)}
               />
             ))}
           </View>
         ) : (
           <EmptyState title="还没有临期事项" description="先添加一个会员、账单或证件到期日。" />
         )}
+        {snoozeTarget ? (
+          <BottomActionSheet
+            actions={getSnoozeOptions().map((option) => ({
+              description: option.description,
+              label: option.label,
+              onPress: () => handleSnooze(snoozeTarget, option.days),
+            }))}
+            onCancel={() => setSnoozeTarget(null)}
+            title={`延后「${snoozeTarget.name}」`}
+          />
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

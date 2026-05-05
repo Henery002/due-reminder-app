@@ -34,7 +34,13 @@ export function SubmitActionButton({
         state.disabled ? styles.disabled : null,
       ]}
     >
-      <Text style={[styles.text, variant === 'danger' ? styles.dangerText : null]}>
+      <Text
+        style={[
+          styles.text,
+          variant === 'danger' ? styles.dangerText : null,
+          variant === 'secondary' ? styles.secondaryText : null,
+        ]}
+      >
         {state.label}
       </Text>
     </Pressable>
@@ -66,6 +72,9 @@ const styles = StyleSheet.create({
   },
   secondary: {
     backgroundColor: colors.surfaceMuted,
+  },
+  secondaryText: {
+    color: colors.textPrimary,
   },
   text: {
     color: colors.surface,

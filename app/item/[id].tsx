@@ -4,6 +4,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { EmptyState } from '../../src/components/EmptyState';
+import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import {
@@ -14,6 +15,11 @@ import {
   deleteReminderWithNotifications,
   updateReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
+import {
+  getReminderFeedback,
+  type ReminderFeedback,
+} from '../../src/features/reminders/reminder.feedback';
+import { parseOptionalReminderAmount } from '../../src/features/reminders/reminder.form';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
 import type { ReminderItem, ReminderType } from '../../src/features/reminders/reminder.types';
 import { reminderRepository } from '../../src/storage/reminder.store';
@@ -29,6 +35,12 @@ function readRouteId(param: string | string[] | undefined): string | undefined {
   return Array.isArray(param) ? param[0] : param;
 }
 
+function waitForFeedbackTransition(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 450);
+  });
+}
+
 export default function EditItemScreen() {
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const reminderId = readRouteId(params.id);
@@ -39,6 +51,7 @@ export default function EditItemScreen() {
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [loaded, setLoaded] = useState(false);
+  const [feedback, setFeedback] = useState<ReminderFeedback | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -68,16 +81,32 @@ export default function EditItemScreen() {
       return;
     }
 
+    let parsedAmount: number | undefined;
+    try {
+      parsedAmount = parseOptionalReminderAmount(amount);
+    } catch (error) {
+      setFeedback({
+        description: error instanceof Error ? error.message : '金额格式不太对，换成数字试试。',
+        title: '金额格式不太对',
+        tone: 'warning',
+      });
+      return;
+    }
+
     const parsed = createReminderSchema.safeParse({
       type,
       name,
       dueDate,
-      amount: amount.trim().length > 0 ? Number(amount) : undefined,
+      amount: parsedAmount,
       note: note.trim().length > 0 ? note.trim() : undefined,
     });
 
     if (!parsed.success) {
-      Alert.alert('再检查一下', parsed.error.issues[0]?.message ?? '请补全事项信息');
+      setFeedback({
+        description: parsed.error.issues[0]?.message ?? '请补全事项信息',
+        title: '再检查一下',
+        tone: 'warning',
+      });
       return;
     }
 
@@ -93,6 +122,8 @@ export default function EditItemScreen() {
       upsert: reminderRepository.upsert,
     });
 
+    setFeedback(getReminderFeedback('updated'));
+    await waitForFeedbackTransition();
     router.back();
   };
 
@@ -117,6 +148,8 @@ export default function EditItemScreen() {
             },
             remove: reminderRepository.remove,
           });
+          setFeedback(getReminderFeedback('deleted'));
+          await waitForFeedbackTransition();
           router.back();
         },
       },
@@ -145,6 +178,7 @@ export default function EditItemScreen() {
           <Text style={styles.title}>编辑到期事项</Text>
           <Text style={styles.subtitle}>修改后会取消旧提醒，并按新的到期日重新安排。</Text>
         </View>
+        <FeedbackBanner feedback={feedback} />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>事项类型</Text>

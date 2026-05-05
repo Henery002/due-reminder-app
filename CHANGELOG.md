@@ -26,6 +26,41 @@
    - 免费版明确最多 20 个到期事项、推荐提醒规则、基础模板和本地存储
    - Pro 明确后续开放，不展示虚假价格或假支付入口
 8. 补充 `membership.plan.test.ts`，覆盖免费版边界和 Pro 预留状态。
+9. 补齐免费版 20 个事项限制：
+   - 新增 `getReminderCreationGate`
+   - 新建页达到免费上限时禁用保存，并提供 Pro 预留权益入口
+   - 补充 `membership.entitlement.test.ts`
+10. 抽出事项生命周期刷新：
+   - 新增 `refreshReminderList`
+   - 首页和全部页统一刷新已逾期事项，避免页面重复实现
+   - 补充 `reminder.lifecycle.test.ts`
+11. 增强新建/编辑表单校验：
+   - 新增 `parseOptionalReminderAmount`
+   - 金额非数字时使用页内轻反馈
+   - 日期 schema 拒绝不存在的日历日期
+   - 补充 `reminder.form.test.ts`
+12. 新增页内轻反馈组件：
+   - 新增 `FeedbackBanner`
+   - 新建、编辑、删除成功后显示轻量反馈再返回
+   - 表单错误不再使用老式弹窗打断
+   - 补充 `reminder.feedback.test.ts`
+13. 新增提速脚本：
+   - `npm run typecheck`
+   - `npm run verify`
+14. 新增本地数据备份能力：
+   - 新增 `app/data-backup.tsx`
+   - 新增 `exportRemindersBackup` / `parseRemindersBackup`
+   - 支持导出可选中文本 JSON，并通过粘贴备份文本恢复事项
+   - 首版不引入原生文件选择或云同步依赖
+15. 升级延后提醒交互：
+   - 新增 `getSnoozeOptions`
+   - 首页和全部页点击延后后展示底部操作面板
+   - 支持明天、3 天后、下周提醒
+16. 补齐我的页辅助入口：
+   - 新增 `app/feedback.tsx`
+   - 新增 `app/about.tsx`
+   - 我的页新增数据备份、反馈建议、关于应用入口
+   - 补充 `settings.content.test.ts`
 
 ## 2026-05-04
 

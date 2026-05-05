@@ -3,6 +3,7 @@ import { Link, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BottomActionSheet } from '../../src/components/BottomActionSheet';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
@@ -17,9 +18,10 @@ import {
   completeReminderWithNotifications,
   snoozeReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
+import { refreshReminderList } from '../../src/features/reminders/reminder.lifecycle';
 import { getHomeEmptyMode } from '../../src/features/reminders/reminder.onboarding';
 import { groupRemindersForHome } from '../../src/features/reminders/reminder.selectors';
-import { refreshReminderStatus } from '../../src/features/reminders/reminder.service';
+import { getSnoozeOptions } from '../../src/features/reminders/reminder.snooze';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
 import {
   filterRemindersByType,
@@ -38,17 +40,14 @@ const categoryOptions: Array<{ label: string; value: ReminderTypeFilter }> = [
 export default function HomeScreen() {
   const [items, setItems] = useState<ReminderItem[]>([]);
   const [selectedType, setSelectedType] = useState<ReminderTypeFilter>('all');
+  const [snoozeTarget, setSnoozeTarget] = useState<ReminderItem | null>(null);
 
   const loadItems = useCallback(() => {
-    const refreshedItems = reminderRepository.list().map((item) => {
-      const refreshed = refreshReminderStatus(item);
-      if (refreshed !== item) {
-        reminderRepository.upsert(refreshed);
-      }
-      return refreshed;
-    });
-
-    setItems(refreshedItems);
+    setItems(
+      refreshReminderList(reminderRepository.list(), {
+        upsert: reminderRepository.upsert,
+      }),
+    );
   }, []);
 
   useFocusEffect(loadItems);
@@ -66,8 +65,8 @@ export default function HomeScreen() {
     loadItems();
   };
 
-  const handleSnooze = async (item: ReminderItem) => {
-    await snoozeReminderWithNotifications(item, 1, {
+  const handleSnooze = async (item: ReminderItem, days: number) => {
+    await snoozeReminderWithNotifications(item, days, {
       getNotificationGateway: getExpoNotificationGateway,
       onNotificationError: (error) => {
         if (!isNotificationRuntimeUnavailableError(error)) {
@@ -76,6 +75,7 @@ export default function HomeScreen() {
       },
       upsert: reminderRepository.upsert,
     });
+    setSnoozeTarget(null);
     loadItems();
   };
 
@@ -135,7 +135,7 @@ export default function HomeScreen() {
                   item={item}
                   onDone={() => handleDone(item)}
                   onPress={() => router.push(`/item/${item.id}`)}
-                  onSnooze={() => handleSnooze(item)}
+                  onSnooze={() => setSnoozeTarget(item)}
                 />
               ))}
             </View>
@@ -152,6 +152,17 @@ export default function HomeScreen() {
         <Link href="/item/new" style={styles.primaryAction}>
           添加一件事
         </Link>
+        {snoozeTarget ? (
+          <BottomActionSheet
+            actions={getSnoozeOptions().map((option) => ({
+              description: option.description,
+              label: option.label,
+              onPress: () => handleSnooze(snoozeTarget, option.days),
+            }))}
+            onCancel={() => setSnoozeTarget(null)}
+            title={`延后「${snoozeTarget.name}」`}
+          />
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

@@ -3,9 +3,12 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MembershipCard } from '../../src/components/MembershipCard';
 import { PermissionBanner } from '../../src/components/PermissionBanner';
+import { getSettingsActions } from '../../src/features/settings/settings.content';
 import { colors } from '../../src/theme/colors';
 
 export default function MeScreen() {
+  const actions = getSettingsActions();
+
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -27,10 +30,12 @@ export default function MeScreen() {
           <Text style={styles.panelText}>订阅、账单、证件会按推荐策略提醒。</Text>
         </View>
 
-        <View style={styles.panel}>
-          <Text style={styles.panelTitle}>反馈</Text>
-          <Text style={styles.panelText}>第一版会优先收集通知可靠性和录入体验反馈。</Text>
-        </View>
+        {actions.map((action) => (
+          <Link key={action.href} href={action.href} style={styles.panel}>
+            <Text style={styles.panelTitle}>{action.title}</Text>
+            <Text style={styles.panelText}>{action.description}</Text>
+          </Link>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );

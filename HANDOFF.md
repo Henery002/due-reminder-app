@@ -50,7 +50,14 @@
 22. 新建/编辑页已接入 `SubmitActionButton`：保存/删除时显示 loading 文案并禁用重复点击
 23. 首页已接入 `FirstRunGuide`：0 事项时展示推荐场景和添加第一个到期日入口
 24. 会员页已展示免费版边界和 Pro 预留权益，不接真实支付、不展示虚假价格
-25. 更年轻化动效、更完整日历弹层和数据导出/备份能力后续单独迭代
+25. 免费版 20 个事项限制已落地：新建页达到上限时禁用保存，并提供 Pro 预留权益入口；删除旧事项可释放空间
+26. 首页和全部页已统一使用 `refreshReminderList` 刷新逾期状态，避免页面重复实现
+27. 新建/编辑页已接入 `FeedbackBanner`：表单错误使用页内轻反馈，创建/编辑/删除成功后短暂展示反馈再返回
+28. 已新增提速脚本：`npm run typecheck`、`npm run verify`
+29. 数据备份页已完成纯文本方案：导出 JSON 备份文本、粘贴导入恢复事项，不依赖原生文件选择或云同步
+30. 延后提醒已升级为底部面板，支持明天、3 天后、下周提醒
+31. 我的页已新增数据备份、反馈建议、关于应用入口；反馈页先使用邮件渠道
+32. 更年轻化动效、更完整日历弹层和正式隐私政策/用户协议后续单独迭代
 
 ## 近期功能变更文件
 
@@ -73,7 +80,25 @@
 17. `src/components/FirstRunGuide.tsx`
 18. `src/features/membership/membership.plan.ts`
 19. `src/features/membership/membership.plan.test.ts`
-20. `src/storage/reminder.repository.test.ts`
+20. `src/features/membership/membership.entitlement.ts`
+21. `src/features/membership/membership.entitlement.test.ts`
+22. `src/features/reminders/reminder.lifecycle.ts`
+23. `src/features/reminders/reminder.lifecycle.test.ts`
+24. `src/features/reminders/reminder.form.ts`
+25. `src/features/reminders/reminder.form.test.ts`
+26. `src/features/reminders/reminder.feedback.ts`
+27. `src/features/reminders/reminder.feedback.test.ts`
+28. `src/components/FeedbackBanner.tsx`
+29. `src/features/reminders/reminder.snooze.ts`
+30. `src/features/reminders/reminder.snooze.test.ts`
+31. `src/features/data/backup.ts`
+32. `src/features/data/backup.test.ts`
+33. `src/features/settings/settings.content.ts`
+34. `src/features/settings/settings.content.test.ts`
+35. `app/data-backup.tsx`
+36. `app/feedback.tsx`
+37. `app/about.tsx`
+38. `src/storage/reminder.repository.test.ts`
 
 ## 后续补测清单
 
