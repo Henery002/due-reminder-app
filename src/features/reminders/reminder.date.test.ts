@@ -1,4 +1,5 @@
 import {
+  buildReminderMonthCalendar,
   formatReminderDate,
   getReminderDateDescription,
   getReminderDateQuickOptions,
@@ -29,5 +30,29 @@ describe('reminder date helpers', () => {
     expect(getReminderDateDescription('2026-05-04', baseDate)).toBe('今天到期');
     expect(getReminderDateDescription('2026-05-05', baseDate)).toBe('还有 1 天到期');
     expect(getReminderDateDescription('2026-05-03', baseDate)).toBe('已逾期 1 天');
+  });
+
+  it('builds a compact month calendar grid around the selected date', () => {
+    const calendar = buildReminderMonthCalendar('2026-05-04', baseDate);
+
+    expect(calendar.title).toBe('2026 年 5 月');
+    expect(calendar.weekdays).toEqual(['一', '二', '三', '四', '五', '六', '日']);
+    expect(calendar.days).toHaveLength(35);
+    expect(calendar.days[0]).toEqual({
+      dayLabel: '27',
+      isCurrentMonth: false,
+      isPast: true,
+      isSelected: false,
+      isToday: false,
+      value: '2026-04-27',
+    });
+    expect(calendar.days.find((day) => day.value === '2026-05-04')).toEqual({
+      dayLabel: '4',
+      isCurrentMonth: true,
+      isPast: false,
+      isSelected: true,
+      isToday: true,
+      value: '2026-05-04',
+    });
   });
 });

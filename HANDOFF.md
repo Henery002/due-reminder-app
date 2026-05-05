@@ -59,7 +59,9 @@
 31. 我的页已新增数据备份、反馈建议、关于应用入口；反馈页先使用邮件渠道
 32. 隐私政策、用户协议、权限说明草稿已落到 `docs/legal/`，并已接入 App 内页面；当前按 local-first、无账号、无云同步、无广告、无真实支付口径编写
 33. 应用市场文案、截图清单、图标/启动页视觉方向已落到 `docs/launch/`；文案避免承诺云同步、真实支付、OCR 或 AI 等未上线能力
-34. 更年轻化动效、更完整日历弹层、正式应用图标和截图采集后续单独迭代
+34. 日期选择器已升级为快捷项 + 月历网格 + 年/月/日步进组合，过去日期弱化但仍可选择，方便补录逾期事项
+35. 数据备份页已新增“生成截图演示数据”，用于写入安全示例事项，后续截图采集不必使用真实隐私数据
+36. 更年轻化动效、正式应用图标和截图采集后续单独迭代
 
 ## 近期功能变更文件
 
@@ -111,10 +113,12 @@
 46. `docs/legal/PERMISSION_GUIDE.md`
 47. `src/features/launch/launch.content.ts`
 48. `src/features/launch/launch.content.test.ts`
-49. `docs/launch/APP_STORE_LISTING_DRAFT.md`
-50. `docs/launch/SCREENSHOT_PLAN.md`
-51. `docs/launch/VISUAL_ASSETS_DIRECTION.md`
-52. `src/storage/reminder.repository.test.ts`
+49. `src/features/launch/demo-data.ts`
+50. `src/features/launch/demo-data.test.ts`
+51. `docs/launch/APP_STORE_LISTING_DRAFT.md`
+52. `docs/launch/SCREENSHOT_PLAN.md`
+53. `docs/launch/VISUAL_ASSETS_DIRECTION.md`
+54. `src/storage/reminder.repository.test.ts`
 
 ## 后续补测清单
 

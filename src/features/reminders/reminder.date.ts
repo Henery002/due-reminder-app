@@ -1,10 +1,36 @@
-import { addDays, addMonths, addYears, differenceInCalendarDays, endOfMonth, format, parseISO } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  addYears,
+  differenceInCalendarDays,
+  endOfMonth,
+  endOfWeek,
+  format,
+  parseISO,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns';
 
 export type ReminderDateUnit = 'year' | 'month' | 'day';
 
 export type ReminderDateQuickOption = {
   label: string;
   value: string;
+};
+
+export type ReminderCalendarDay = {
+  dayLabel: string;
+  isCurrentMonth: boolean;
+  isPast: boolean;
+  isSelected: boolean;
+  isToday: boolean;
+  value: string;
+};
+
+export type ReminderMonthCalendar = {
+  days: ReminderCalendarDay[];
+  title: string;
+  weekdays: string[];
 };
 
 export function formatReminderDate(date: Date): string {
@@ -47,4 +73,37 @@ export function getReminderDateDescription(value: string, baseDate = new Date())
   }
 
   return `已逾期 ${Math.abs(days)} 天`;
+}
+
+export function buildReminderMonthCalendar(
+  value: string,
+  baseDate = new Date(),
+): ReminderMonthCalendar {
+  const selectedDate = parseISO(value);
+  const today = formatReminderDate(baseDate);
+  const monthStart = startOfMonth(selectedDate);
+  const monthEnd = endOfMonth(selectedDate);
+  const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  const days: ReminderCalendarDay[] = [];
+
+  let cursor = gridStart;
+  while (cursor.getTime() <= gridEnd.getTime()) {
+    const dateValue = formatReminderDate(cursor);
+    days.push({
+      dayLabel: format(cursor, 'd'),
+      isCurrentMonth: cursor.getMonth() === selectedDate.getMonth(),
+      isPast: differenceInCalendarDays(cursor, baseDate) < 0,
+      isSelected: dateValue === value,
+      isToday: dateValue === today,
+      value: dateValue,
+    });
+    cursor = addDays(cursor, 1);
+  }
+
+  return {
+    days,
+    title: format(selectedDate, 'yyyy 年 M 月'),
+    weekdays: ['一', '二', '三', '四', '五', '六', '日'],
+  };
 }

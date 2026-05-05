@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
+  buildReminderMonthCalendar,
   getReminderDateDescription,
   getReminderDateQuickOptions,
   shiftReminderDate,
@@ -20,6 +21,7 @@ const controls: Array<{ label: string; unit: ReminderDateUnit }> = [
 
 export function ReminderDatePicker({ value, onChange }: ReminderDatePickerProps) {
   const quickOptions = getReminderDateQuickOptions();
+  const calendar = buildReminderMonthCalendar(value);
 
   return (
     <View style={styles.card}>
@@ -44,6 +46,43 @@ export function ReminderDatePicker({ value, onChange }: ReminderDatePickerProps)
             </Pressable>
           );
         })}
+      </View>
+
+      <View style={styles.calendar}>
+        <Text style={styles.calendarTitle}>{calendar.title}</Text>
+        <View style={styles.weekRow}>
+          {calendar.weekdays.map((weekday) => (
+            <Text key={weekday} style={styles.weekday}>
+              {weekday}
+            </Text>
+          ))}
+        </View>
+        <View style={styles.dayGrid}>
+          {calendar.days.map((day) => {
+            return (
+              <Pressable
+                key={day.value}
+                onPress={() => onChange(day.value)}
+                style={[
+                  styles.dayButton,
+                  day.isSelected ? styles.dayButtonSelected : null,
+                  day.isToday && !day.isSelected ? styles.dayButtonToday : null,
+                  !day.isCurrentMonth ? styles.dayButtonMuted : null,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.dayText,
+                    day.isSelected ? styles.dayTextSelected : null,
+                    !day.isCurrentMonth || day.isPast ? styles.dayTextMuted : null,
+                  ]}
+                >
+                  {day.dayLabel}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
 
       <View style={styles.controls}>
@@ -81,6 +120,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     padding: 14,
   },
+  calendar: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 16,
+    gap: 10,
+    padding: 12,
+  },
+  calendarTitle: {
+    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: '900',
+  },
   controlLabel: {
     color: colors.textPrimary,
     fontSize: 15,
@@ -97,6 +147,38 @@ const styles = StyleSheet.create({
   controls: {
     flexDirection: 'row',
     gap: 10,
+  },
+  dayButton: {
+    alignItems: 'center',
+    aspectRatio: 1,
+    borderRadius: 12,
+    justifyContent: 'center',
+    width: '13.2%',
+  },
+  dayButtonMuted: {
+    opacity: 0.5,
+  },
+  dayButtonSelected: {
+    backgroundColor: colors.primary,
+  },
+  dayButtonToday: {
+    backgroundColor: colors.primarySoft,
+  },
+  dayGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+  },
+  dayText: {
+    color: colors.textPrimary,
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  dayTextMuted: {
+    color: colors.textMuted,
+  },
+  dayTextSelected: {
+    color: colors.surface,
   },
   hero: {
     backgroundColor: colors.primarySoft,
@@ -162,5 +244,15 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 18,
     fontWeight: '900',
+  },
+  weekday: {
+    color: colors.textMuted,
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+  weekRow: {
+    flexDirection: 'row',
   },
 });

@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FeedbackBanner } from '../src/components/FeedbackBanner';
 import { SubmitActionButton } from '../src/components/SubmitActionButton';
 import { exportRemindersBackup, parseRemindersBackup } from '../src/features/data/backup';
+import { getScreenshotDemoReminders } from '../src/features/launch/demo-data';
 import { type ReminderFeedback } from '../src/features/reminders/reminder.feedback';
 import { reminderRepository } from '../src/storage/reminder.store';
 import { colors } from '../src/theme/colors';
@@ -50,6 +51,17 @@ export default function DataBackupScreen() {
     }
   };
 
+  const handleSeedDemoData = () => {
+    const demoReminders = getScreenshotDemoReminders();
+    demoReminders.forEach((item) => reminderRepository.upsert(item));
+    refreshBackupText();
+    setFeedback({
+      description: '已写入 5 条安全演示事项，适合后续采集应用市场截图。',
+      title: '演示数据已准备',
+      tone: 'success',
+    });
+  };
+
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -74,6 +86,18 @@ export default function DataBackupScreen() {
           <SubmitActionButton
             label="重新生成备份文本"
             onPress={handleRefreshExport}
+            variant="secondary"
+          />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>截图演示数据</Text>
+          <Text style={styles.cardText}>
+            生成一组不含真实隐私的示例事项，用来拍首页、新建、延后和备份页截图。重复点击会覆盖同 ID 演示数据。
+          </Text>
+          <SubmitActionButton
+            label="生成截图演示数据"
+            onPress={handleSeedDemoData}
             variant="secondary"
           />
         </View>

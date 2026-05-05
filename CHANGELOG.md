@@ -77,6 +77,16 @@
    - 新增 `src/features/launch/launch.content.ts`
    - 文案避免承诺当前未上线的云同步、真实支付、OCR 或 AI 能力
 20. 补充 `launch.content.test.ts`，覆盖应用市场文案、截图叙事顺序和图标/启动页视觉方向。
+21. 升级日期选择体验：
+   - 新增 `buildReminderMonthCalendar`
+   - `ReminderDatePicker` 新增月历网格
+   - 支持直接点选当月日期
+   - 过去日期弱化显示但仍可选择，方便补录逾期事项
+22. 新增截图演示数据：
+   - 新增 `getScreenshotDemoReminders`
+   - 数据备份页新增“生成截图演示数据”入口
+   - 生成视频会员、信用卡年费、驾驶证换证、云服务器续费、水电燃气缴费等安全示例数据
+23. 补充 `demo-data.test.ts`，覆盖截图演示数据结构。
 
 ## 2026-05-04
 
