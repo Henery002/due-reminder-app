@@ -77,6 +77,36 @@ describe('reminder view helpers', () => {
     ).toEqual(['bill-overdue', 'bill-soon']);
   });
 
+  it('searches all-items reminders by name and note while preserving filters', () => {
+    const items = [
+      item({ id: 'netflix', name: '视频会员', note: '家庭共享订阅', type: 'subscription' }),
+      item({ id: 'water-bill', name: '水电燃气缴费', note: '厨房表读数', type: 'bill' }),
+      item({ id: 'driver-license', name: '驾驶证换证', note: '体检和照片', type: 'document' }),
+    ];
+
+    expect(
+      getVisibleAllReminders(items, {
+        query: '共享',
+        status: 'all',
+        type: 'subscription',
+      }).map((entry) => entry.id),
+    ).toEqual(['netflix']);
+    expect(
+      getVisibleAllReminders(items, {
+        query: '缴费',
+        status: 'all',
+        type: 'all',
+      }).map((entry) => entry.id),
+    ).toEqual(['water-bill']);
+    expect(
+      getVisibleAllReminders(items, {
+        query: '   ',
+        status: 'all',
+        type: 'document',
+      }).map((entry) => entry.id),
+    ).toEqual(['driver-license']);
+  });
+
   it('shows today-specific copy for active reminders due today', () => {
     expect(getReminderStatusLabel(item({ dueDate: '2026-05-03' }), now)).toBe('今日到期');
   });

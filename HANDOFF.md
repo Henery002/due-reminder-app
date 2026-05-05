@@ -65,7 +65,8 @@
 37. 事项卡片已加入按压缩放、柔和阴影和圆角行动按钮，作为第一批不依赖真机的年轻化轻动效打磨
 38. 全部事项页已接入类型筛选和状态筛选，支持全部/订阅/账单/证件与全部状态/未处理/已逾期/已延后/已处理组合筛选
 39. 全部事项页可见列表统一通过 `getVisibleAllReminders` 生成，未处理事项优先，并按到期日从近到远排序；筛选无结果时展示轻量空状态
-40. 正式应用图标和截图采集后续单独迭代
+40. 全部事项页已接入轻量搜索框，支持按事项名称和备注关键词检索，并可与类型/状态筛选组合使用；搜索无结果时可一键清空搜索
+41. 正式应用图标和截图采集后续单独迭代
 
 ## 近期功能变更文件
 
@@ -127,6 +128,7 @@
 56. `src/features/reminders/reminder.empty-state.test.ts`
 57. `src/features/reminders/reminder.view.ts`
 58. `src/features/reminders/reminder.view.test.ts`
+59. `app/(tabs)/items.tsx`
 
 ## 后续补测清单
 

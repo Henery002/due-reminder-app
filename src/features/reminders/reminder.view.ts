@@ -5,6 +5,7 @@ export type ReminderTypeFilter = ReminderType | 'all';
 export type ReminderStatusFilter = ReminderStatus | 'all' | 'pending';
 
 export type AllReminderFilters = {
+  query?: string;
   status: ReminderStatusFilter;
   type: ReminderTypeFilter;
 };
@@ -63,13 +64,25 @@ export function filterRemindersByStatus(
   return items.filter((item) => item.status === selectedStatus);
 }
 
+export function filterRemindersByQuery(items: ReminderItem[], query = ''): ReminderItem[] {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) {
+    return items;
+  }
+
+  return items.filter((item) => {
+    const searchableText = [item.name, item.note ?? ''].join(' ').toLowerCase();
+    return searchableText.includes(normalizedQuery);
+  });
+}
+
 export function getVisibleAllReminders(
   items: ReminderItem[],
   filters: AllReminderFilters,
 ): ReminderItem[] {
-  const filteredItems = filterRemindersByStatus(
-    filterRemindersByType(items, filters.type),
-    filters.status,
+  const filteredItems = filterRemindersByQuery(
+    filterRemindersByStatus(filterRemindersByType(items, filters.type), filters.status),
+    filters.query,
   );
 
   return [...filteredItems].sort(compareRemindersForAllItems);

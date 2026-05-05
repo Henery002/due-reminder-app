@@ -1,6 +1,6 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useDeferredValue, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomActionSheet } from '../../src/components/BottomActionSheet';
 import { CategoryPill } from '../../src/components/CategoryPill';
@@ -43,9 +43,11 @@ const statusFilterOptions: Array<{ label: string; value: ReminderStatusFilter }>
 
 export default function ItemsScreen() {
   const [items, setItems] = useState<ReminderItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<ReminderStatusFilter>('all');
   const [selectedType, setSelectedType] = useState<ReminderTypeFilter>('all');
   const [snoozeTarget, setSnoozeTarget] = useState<ReminderItem | null>(null);
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const loadItems = useCallback(() => {
     setItems(
@@ -87,9 +89,11 @@ export default function ItemsScreen() {
   const emptyContent = getReminderEmptyStateContent('items-empty');
   const filteredEmptyContent = getReminderEmptyStateContent('home-filtered');
   const visibleItems = getVisibleAllReminders(items, {
+    query: deferredSearchQuery,
     status: selectedStatus,
     type: selectedType,
   });
+  const hasSearchQuery = searchQuery.trim().length > 0;
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -101,6 +105,29 @@ export default function ItemsScreen() {
 
         {items.length > 0 ? (
           <View style={styles.filterPanel}>
+            <View style={styles.searchBox}>
+              <Text style={styles.searchIcon}>⌕</Text>
+              <TextInput
+                onChangeText={setSearchQuery}
+                placeholder="搜索名称或备注"
+                placeholderTextColor={colors.textMuted}
+                returnKeyType="search"
+                style={styles.searchInput}
+                value={searchQuery}
+              />
+              {hasSearchQuery ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setSearchQuery('')}
+                  style={({ pressed }) => [
+                    styles.clearSearch,
+                    pressed ? styles.clearPressed : null,
+                  ]}
+                >
+                  <Text style={styles.clearSearchText}>清除</Text>
+                </Pressable>
+              ) : null}
+            </View>
             <View style={styles.filterRow}>
               {typeFilterOptions.map((option) => (
                 <CategoryPill
@@ -122,7 +149,7 @@ export default function ItemsScreen() {
               ))}
             </View>
             <Text style={styles.resultMeta}>
-              当前显示 {visibleItems.length} / {items.length} 件，未处理事项优先按到期日排序
+              当前显示 {visibleItems.length} / {items.length} 件，支持按名称和备注搜索
             </Text>
           </View>
         ) : null}
@@ -143,12 +170,23 @@ export default function ItemsScreen() {
           ) : (
             <EmptyState
               accentLabel={filteredEmptyContent.accentLabel}
-              actionLabel="添加新到期日"
+              actionLabel={hasSearchQuery ? '清空搜索' : '添加新到期日'}
               chips={filteredEmptyContent.chips}
-              description={filteredEmptyContent.description}
+              description={
+                hasSearchQuery
+                  ? '没有找到匹配的事项。可以换个关键词，或者清空搜索后再按分类慢慢找。'
+                  : filteredEmptyContent.description
+              }
               glyph={filteredEmptyContent.glyph}
-              onActionPress={() => router.push('/item/new')}
-              title={filteredEmptyContent.title}
+              onActionPress={() => {
+                if (hasSearchQuery) {
+                  setSearchQuery('');
+                  return;
+                }
+
+                router.push('/item/new');
+              }}
+              title={hasSearchQuery ? '没有搜到相关到期日' : filteredEmptyContent.title}
             />
           )
         ) : (
@@ -179,6 +217,20 @@ export default function ItemsScreen() {
 }
 
 const styles = StyleSheet.create({
+  clearPressed: {
+    opacity: 0.72,
+  },
+  clearSearch: {
+    backgroundColor: colors.surface,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  clearSearchText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '900',
+  },
   content: {
     gap: 18,
     padding: 20,
@@ -205,6 +257,28 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     lineHeight: 18,
+  },
+  searchBox: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 16,
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  searchIcon: {
+    color: colors.primary,
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  searchInput: {
+    color: colors.textPrimary,
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '700',
+    minHeight: 42,
+    paddingVertical: 8,
   },
   screen: {
     backgroundColor: colors.background,
