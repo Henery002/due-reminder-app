@@ -61,7 +61,9 @@
 33. 应用市场文案、截图清单、图标/启动页视觉方向已落到 `docs/launch/`；文案避免承诺云同步、真实支付、OCR 或 AI 等未上线能力
 34. 日期选择器已升级为快捷项 + 月历网格 + 年/月/日步进组合，过去日期弱化但仍可选择，方便补录逾期事项
 35. 数据备份页已新增“生成截图演示数据”，用于写入安全示例事项，后续截图采集不必使用真实隐私数据
-36. 更年轻化动效、正式应用图标和截图采集后续单独迭代
+36. 首页筛选空态和全部页空态已接入 `getReminderEmptyStateContent`，展示场景化标题、行动 chips 和轻量视觉装饰；全部页空态可直接进入新建事项
+37. 事项卡片已加入按压缩放、柔和阴影和圆角行动按钮，作为第一批不依赖真机的年轻化轻动效打磨
+38. 正式应用图标和截图采集后续单独迭代
 
 ## 近期功能变更文件
 
@@ -119,6 +121,8 @@
 52. `docs/launch/SCREENSHOT_PLAN.md`
 53. `docs/launch/VISUAL_ASSETS_DIRECTION.md`
 54. `src/storage/reminder.repository.test.ts`
+55. `src/features/reminders/reminder.empty-state.ts`
+56. `src/features/reminders/reminder.empty-state.test.ts`
 
 ## 后续补测清单
 

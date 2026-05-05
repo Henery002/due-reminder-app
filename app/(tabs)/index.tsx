@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, format, isSameMonth, parseISO } from 'date-fns';
+import { format, isSameMonth, parseISO } from 'date-fns';
 import { Link, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -18,6 +18,7 @@ import {
   completeReminderWithNotifications,
   snoozeReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
+import { getReminderEmptyStateContent } from '../../src/features/reminders/reminder.empty-state';
 import { refreshReminderList } from '../../src/features/reminders/reminder.lifecycle';
 import { getHomeEmptyMode } from '../../src/features/reminders/reminder.onboarding';
 import { groupRemindersForHome } from '../../src/features/reminders/reminder.selectors';
@@ -97,6 +98,7 @@ export default function HomeScreen() {
     totalCount: items.length,
     visibleCount: recentItems.length,
   });
+  const filteredEmptyContent = getReminderEmptyStateContent('home-filtered');
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -143,8 +145,11 @@ export default function HomeScreen() {
             <FirstRunGuide onAddPress={() => router.push('/item/new')} />
           ) : (
             <EmptyState
-              title="最近没有压力项"
-              description="先添加一个会员、账单或证件到期日。"
+              accentLabel={filteredEmptyContent.accentLabel}
+              chips={filteredEmptyContent.chips}
+              description={filteredEmptyContent.description}
+              glyph={filteredEmptyContent.glyph}
+              title={filteredEmptyContent.title}
             />
           )}
         </View>

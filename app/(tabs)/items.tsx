@@ -13,6 +13,7 @@ import {
   completeReminderWithNotifications,
   snoozeReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
+import { getReminderEmptyStateContent } from '../../src/features/reminders/reminder.empty-state';
 import { refreshReminderList } from '../../src/features/reminders/reminder.lifecycle';
 import { getSnoozeOptions } from '../../src/features/reminders/reminder.snooze';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
@@ -60,6 +61,8 @@ export default function ItemsScreen() {
     loadItems();
   };
 
+  const emptyContent = getReminderEmptyStateContent('items-empty');
+
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -81,7 +84,15 @@ export default function ItemsScreen() {
             ))}
           </View>
         ) : (
-          <EmptyState title="还没有临期事项" description="先添加一个会员、账单或证件到期日。" />
+          <EmptyState
+            accentLabel={emptyContent.accentLabel}
+            actionLabel="添加第一件事"
+            chips={emptyContent.chips}
+            description={emptyContent.description}
+            glyph={emptyContent.glyph}
+            onActionPress={() => router.push('/item/new')}
+            title={emptyContent.title}
+          />
         )}
         {snoozeTarget ? (
           <BottomActionSheet
