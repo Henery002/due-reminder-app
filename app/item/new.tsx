@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
-import { ReminderRuleSelector } from '../../src/components/ReminderRuleSelector';
+import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePreview';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import { TemplateCard } from '../../src/components/TemplateCard';
 import { reminderTemplates } from '../../src/constants/templates';
@@ -20,7 +20,6 @@ import {
   requestNotificationPermission,
   scheduleReminderNotifications,
 } from '../../src/features/notifications/notification.service';
-import { DEFAULT_REMINDER_OFFSETS } from '../../src/features/reminders/reminder.defaults';
 import {
   getReminderFeedback,
   type ReminderFeedback,
@@ -223,7 +222,7 @@ export default function NewItemScreen() {
           />
         </View>
 
-        <ReminderRuleSelector offsets={DEFAULT_REMINDER_OFFSETS[type]} />
+        <ReminderSchedulePreview dueDate={dueDate} type={type} />
 
         <SubmitActionButton
           disabled={!creationGate.allowed}

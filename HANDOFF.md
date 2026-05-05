@@ -67,7 +67,9 @@
 39. 全部事项页可见列表统一通过 `getVisibleAllReminders` 生成，未处理事项优先，并按到期日从近到远排序；筛选无结果时展示轻量空状态
 40. 全部事项页已接入轻量搜索框，支持按事项名称和备注关键词检索，并可与类型/状态筛选组合使用；搜索无结果时可一键清空搜索
 41. 首页近期事项已接入 `getHomeReminderSections`，按已逾期、今天到期、未来 3 天、未来 7 天分组展示，并为每组提供说明和数量标签
-42. 正式应用图标和截图采集后续单独迭代
+42. 新建页和编辑页已接入 `ReminderSchedulePreview`，根据事项类型和到期日展示未来实际可安排的本地提醒日期与时间；过去日期或已错过提醒会展示记录模式说明
+43. 旧 `ReminderRuleSelector` 已被提醒计划预览替代并清理
+44. 正式应用图标和截图采集后续单独迭代
 
 ## 近期功能变更文件
 
@@ -132,6 +134,11 @@
 59. `app/(tabs)/items.tsx`
 60. `src/features/reminders/reminder.selectors.ts`
 61. `src/features/reminders/reminder.test.ts`
+62. `src/features/reminders/reminder.schedule-preview.ts`
+63. `src/features/reminders/reminder.schedule-preview.test.ts`
+64. `src/components/ReminderSchedulePreview.tsx`
+65. `app/item/new.tsx`
+66. `app/item/[id].tsx`
 
 ## 后续补测清单
 

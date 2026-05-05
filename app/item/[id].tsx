@@ -6,6 +6,7 @@ import { CategoryPill } from '../../src/components/CategoryPill';
 import { EmptyState } from '../../src/components/EmptyState';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
+import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePreview';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import {
   getExpoNotificationGateway,
@@ -208,6 +209,8 @@ export default function EditItemScreen() {
         <View style={styles.section}>
           <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
+
+        <ReminderSchedulePreview dueDate={dueDate} type={type} />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>

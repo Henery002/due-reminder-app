@@ -113,6 +113,13 @@
    - 每个分组展示说明文案和数量标签
    - 保持原有已处理、延后、进入编辑页操作闭环
 31. 扩展 `reminder.test.ts`，覆盖首页分组展示顺序和空分组隐藏规则。
+32. 新增提醒计划预览：
+   - 新增 `buildReminderSchedulePreview`
+   - 新增 `ReminderSchedulePreview`
+   - 新建页和编辑页展示未来实际可安排的本地提醒日期与时间
+   - 已错过的提醒不会展示成可安排提醒，过期补录时会展示记录模式说明
+   - 清理已被替代的 `ReminderRuleSelector`
+33. 补充 `reminder.schedule-preview.test.ts`，覆盖未来提醒、已错过提醒和无未来提醒场景。
 
 ## 2026-05-04
 
