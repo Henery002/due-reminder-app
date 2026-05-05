@@ -49,7 +49,8 @@
 21. 事项卡片已按类型区分视觉：订阅、账单、证件拥有不同 glyph、颜色和类型文案
 22. 新建/编辑页已接入 `SubmitActionButton`：保存/删除时显示 loading 文案并禁用重复点击
 23. 首页已接入 `FirstRunGuide`：0 事项时展示推荐场景和添加第一个到期日入口
-24. 更年轻化动效、更完整日历弹层和会员/商业化预留入口后续单独迭代
+24. 会员页已展示免费版边界和 Pro 预留权益，不接真实支付、不展示虚假价格
+25. 更年轻化动效、更完整日历弹层和数据导出/备份能力后续单独迭代
 
 ## 近期功能变更文件
 
@@ -70,7 +71,9 @@
 15. `src/features/reminders/reminder.onboarding.ts`
 16. `src/features/reminders/reminder.onboarding.test.ts`
 17. `src/components/FirstRunGuide.tsx`
-18. `src/storage/reminder.repository.test.ts`
+18. `src/features/membership/membership.plan.ts`
+19. `src/features/membership/membership.plan.test.ts`
+20. `src/storage/reminder.repository.test.ts`
 
 ## 后续补测清单
 
