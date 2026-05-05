@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { DueItemCard } from '../../src/components/DueItemCard';
 import { EmptyState } from '../../src/components/EmptyState';
+import { FirstRunGuide } from '../../src/components/FirstRunGuide';
 import { OverviewCard } from '../../src/components/OverviewCard';
 import { PermissionBanner } from '../../src/components/PermissionBanner';
 import {
@@ -16,6 +17,7 @@ import {
   completeReminderWithNotifications,
   snoozeReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
+import { getHomeEmptyMode } from '../../src/features/reminders/reminder.onboarding';
 import { groupRemindersForHome } from '../../src/features/reminders/reminder.selectors';
 import { refreshReminderStatus } from '../../src/features/reminders/reminder.service';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
@@ -91,6 +93,10 @@ export default function HomeScreen() {
   const thisMonthCount = items.filter(
     (item) => item.status !== 'done' && isSameMonth(parseISO(item.dueDate), now),
   ).length;
+  const emptyMode = getHomeEmptyMode({
+    totalCount: items.length,
+    visibleCount: recentItems.length,
+  });
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -133,6 +139,8 @@ export default function HomeScreen() {
                 />
               ))}
             </View>
+          ) : emptyMode === 'first-run' ? (
+            <FirstRunGuide onAddPress={() => router.push('/item/new')} />
           ) : (
             <EmptyState
               title="最近没有压力项"

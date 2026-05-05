@@ -14,6 +14,12 @@
    - 删除时显示 `正在删除...`
    - loading 期间禁用按钮，避免重复提交
 4. 补充 `reminder.submit.test.ts`，覆盖提交按钮文案和禁用态。
+5. 升级首页首次使用体验：
+   - 新增 `FirstRunGuide`
+   - 新增 `getHomeEmptyMode`
+   - 0 事项时展示订阅续费、账单缴费、证件到期三个推荐场景
+   - 有事项但筛选为空时继续使用轻量空状态
+6. 补充 `reminder.onboarding.test.ts`，覆盖首次引导展示条件和推荐场景文案。
 
 ## 2026-05-04
 
