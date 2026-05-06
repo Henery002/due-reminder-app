@@ -7,6 +7,7 @@ export const DEFAULT_REMINDER_OFFSETS: Record<ReminderType, number[]> = {
 };
 
 export const MAX_CUSTOM_REMINDER_OFFSET_DAYS = 365;
+export const MAX_REMINDER_POINT_COUNT = 5;
 
 export function getDefaultReminderOffsets(type: ReminderType): number[] {
   return [...DEFAULT_REMINDER_OFFSETS[type]];
@@ -39,4 +40,11 @@ export function normalizeSelectedReminderOffsets(
       ),
     ),
   ).sort((left, right) => right - left);
+}
+
+export function canAddCustomReminderOffset(
+  type: ReminderType,
+  selectedOffsets?: readonly number[],
+): boolean {
+  return normalizeSelectedReminderOffsets(type, selectedOffsets).length < MAX_REMINDER_POINT_COUNT;
 }

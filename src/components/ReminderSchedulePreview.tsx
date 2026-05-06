@@ -6,7 +6,9 @@ import {
   type ReminderSchedulePreviewItem,
 } from '../features/reminders/reminder.schedule-preview';
 import {
+  canAddCustomReminderOffset,
   MAX_CUSTOM_REMINDER_OFFSET_DAYS,
+  MAX_REMINDER_POINT_COUNT,
   getDefaultReminderOffsets,
   getReminderOffsetLabel,
   normalizeSelectedReminderOffsets,
@@ -38,12 +40,18 @@ export function ReminderSchedulePreview({
   const isEditable = Boolean(onToggleOffset);
   const selectedOffsetSet = new Set(normalizeSelectedReminderOffsets(type, selectedOffsets));
   const defaultOffsetSet = new Set(getDefaultReminderOffsets(type));
-  const visibleOffsets = normalizeSelectedReminderOffsets(type, [
+  const normalizedOffsets = normalizeSelectedReminderOffsets(type, [
     ...getDefaultReminderOffsets(type),
     ...(selectedOffsets ?? []),
   ]);
+  const visibleOffsets = normalizedOffsets;
+  const canAddMoreOffsets = canAddCustomReminderOffset(type, selectedOffsets);
 
   const handleAddCustomOffset = () => {
+    if (!canAddMoreOffsets) {
+      return;
+    }
+
     const offsetDays = Number(customOffsetText.trim());
     if (
       !Number.isInteger(offsetDays) ||
@@ -108,17 +116,24 @@ export function ReminderSchedulePreview({
               onChangeText={setCustomOffsetText}
               placeholder="自定义天数"
               placeholderTextColor={colors.textMuted}
-              style={styles.customInput}
+              style={[styles.customInput, !canAddMoreOffsets ? styles.customInputDisabled : null]}
               value={customOffsetText}
+              editable={canAddMoreOffsets}
             />
-            <PressableScale containerStyle={styles.customButtonWrap} onPress={handleAddCustomOffset}>
-              <View style={styles.customButton}>
+            <PressableScale
+              containerStyle={styles.customButtonWrap}
+              disabled={!canAddMoreOffsets}
+              onPress={handleAddCustomOffset}
+            >
+              <View style={[styles.customButton, !canAddMoreOffsets ? styles.customButtonDisabled : null]}>
                 <Text style={styles.customButtonText}>添加</Text>
               </View>
             </PressableScale>
           </View>
           <Text style={styles.toggleHint}>
-            可关闭默认提醒点，也可添加 0-{MAX_CUSTOM_REMINDER_OFFSET_DAYS} 天内的自定义提醒。
+            {canAddMoreOffsets
+              ? `可关闭默认提醒点，也可添加 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 天内的自定义提醒。最多保留 ${MAX_REMINDER_POINT_COUNT} 个提醒点。`
+              : `当前已达到 ${MAX_REMINDER_POINT_COUNT} 个提醒点上限。若想继续添加，请先关闭一个提醒点。`}
           </Text>
         </View>
       ) : null}
@@ -210,6 +225,9 @@ function createStyles(theme: AppTheme) {
       minHeight: 36,
       paddingHorizontal: spacing.md,
     },
+    customButtonDisabled: {
+      opacity: 0.54,
+    },
     customButtonText: {
       color: colors.surface,
       ...typography.label,
@@ -228,6 +246,9 @@ function createStyles(theme: AppTheme) {
       paddingHorizontal: spacing.md,
       paddingVertical: 8,
       ...typography.label,
+    },
+    customInputDisabled: {
+      opacity: 0.68,
     },
     customRow: {
       flexDirection: 'row',

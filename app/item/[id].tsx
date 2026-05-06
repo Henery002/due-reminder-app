@@ -18,7 +18,9 @@ import {
   updateReminderWithNotifications,
 } from '../../src/features/reminders/reminder.actions';
 import {
+  canAddCustomReminderOffset,
   getDefaultReminderOffsets,
+  MAX_REMINDER_POINT_COUNT,
   normalizeSelectedReminderOffsets,
 } from '../../src/features/reminders/reminder.defaults';
 import {
@@ -125,6 +127,15 @@ export default function EditItemScreen() {
       setFeedback({
         description: '这个提醒点已经在计划里了，可以直接开启或关闭。',
         title: '提醒点已存在',
+        tone: 'warning',
+      });
+      return;
+    }
+
+    if (!canAddCustomReminderOffset(type, selectedReminderOffsets)) {
+      setFeedback({
+        description: `单个事项最多保留 ${MAX_REMINDER_POINT_COUNT} 个提醒点，避免通知过多。请先关闭一个提醒点再继续添加。`,
+        title: '提醒点已到上限',
         tone: 'warning',
       });
       return;

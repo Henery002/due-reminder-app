@@ -1,11 +1,7 @@
 import { addDays, formatISO, subDays } from 'date-fns';
 import { getHomeReminderSections, groupRemindersForHome } from './reminder.selectors';
-import {
-  buildReminderRules,
-  markReminderDone,
-  refreshReminderStatus,
-  snoozeReminder,
-} from './reminder.service';
+import { buildReminderRules, markReminderDone, refreshReminderStatus, snoozeReminder } from './reminder.service';
+import { canAddCustomReminderOffset, MAX_REMINDER_POINT_COUNT } from './reminder.defaults';
 import type { ReminderItem } from './reminder.types';
 
 const baseDate = new Date('2026-05-03T08:00:00.000Z');
@@ -67,6 +63,17 @@ describe('reminder service', () => {
     ]);
 
     expect(rules.map((rule) => rule.offsetDays)).toEqual([7, 0]);
+  });
+
+  it('prevents adding custom reminder offsets after reaching the point limit', () => {
+    expect(
+      canAddCustomReminderOffset('subscription', [30, 14, 7, 1, 0]),
+    ).toBe(false);
+    expect(MAX_REMINDER_POINT_COUNT).toBe(5);
+  });
+
+  it('allows adding custom reminder offsets when reminder points are still below limit', () => {
+    expect(canAddCustomReminderOffset('subscription', [7, 1, 0])).toBe(true);
   });
 
   it('marks active reminders overdue when due date has passed', () => {
