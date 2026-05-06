@@ -9,7 +9,7 @@ describe('launch content', () => {
     expect(getLaunchListingDraft()).toEqual({
       appName: '到期提醒助手',
       keywords: ['到期提醒', '续费提醒', '账单提醒', '证件到期', '会员续费'],
-      shortDescription: '订阅续费、账单缴费、证件到期，一起提前提醒。',
+      shortDescription: '订阅、账单、证件到期，能提醒，也能仅记录。',
       subtitle: '会员续费、账单缴费、证件到期都不再临时想起',
     });
     expect(getLaunchListingDraft().shortDescription).not.toContain('云同步');
@@ -20,10 +20,15 @@ describe('launch content', () => {
     expect(getLaunchScreenshotPlan().map((item) => item.title)).toEqual([
       '首页看清最近要处理什么',
       '30 秒添加一个到期事项',
-      '本地通知提前提醒',
+      '提醒方式自己决定',
       '延后、已处理、编辑都很快',
       '本地备份更安心',
     ]);
+    expect(getLaunchScreenshotPlan()[2]).toEqual({
+      caption: '本地提醒适合需要提前处理的事项，仅记录适合补录和留档。',
+      screen: '新建事项 / 全部事项',
+      title: '提醒方式自己决定',
+    });
   });
 
   it('sets a young but not childish visual direction for icon and splash', () => {

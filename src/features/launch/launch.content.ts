@@ -22,7 +22,7 @@ export function getLaunchListingDraft(): LaunchListingDraft {
   return {
     appName: '到期提醒助手',
     keywords: ['到期提醒', '续费提醒', '账单提醒', '证件到期', '会员续费'],
-    shortDescription: '订阅续费、账单缴费、证件到期，一起提前提醒。',
+    shortDescription: '订阅、账单、证件到期，能提醒，也能仅记录。',
     subtitle: '会员续费、账单缴费、证件到期都不再临时想起',
   };
 }
@@ -40,9 +40,9 @@ export function getLaunchScreenshotPlan(): LaunchScreenshotItem[] {
       title: '30 秒添加一个到期事项',
     },
     {
-      caption: '通知权限只用于本地到期提醒，拒绝授权也能继续管理清单。',
-      screen: '通知权限',
-      title: '本地通知提前提醒',
+      caption: '本地提醒适合需要提前处理的事项，仅记录适合补录和留档。',
+      screen: '新建事项 / 全部事项',
+      title: '提醒方式自己决定',
     },
     {
       caption: '临期事项可以直接标记已处理，或延后到明天、3 天后、下周。',
