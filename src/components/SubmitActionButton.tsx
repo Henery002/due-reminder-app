@@ -60,8 +60,8 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.lg,
       justifyContent: 'center',
       minHeight: sizes.buttonHeight,
-      paddingHorizontal: spacing.lg,
-      paddingVertical: 11,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 10,
     },
     danger: {
       backgroundColor: colors.surface,
@@ -76,7 +76,7 @@ function createStyles(theme: AppTheme) {
     },
     pressed: {
       opacity: 0.86,
-      transform: [{ scale: 0.99 }],
+      transform: [{ scale: 0.985 }],
     },
     primary: {
       backgroundColor: colors.primary,

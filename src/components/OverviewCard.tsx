@@ -52,14 +52,15 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.lg,
       borderWidth: 1,
       flexDirection: 'row',
-      padding: spacing.lg,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
     },
     danger: {
       color: colors.overdue,
     },
     divider: {
       backgroundColor: colors.border,
-      height: 30,
+      height: 26,
       width: 1,
     },
     label: {

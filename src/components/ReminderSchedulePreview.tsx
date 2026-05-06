@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { PressableScale } from './PressableScale';
 import {
   buildReminderSchedulePreview,
   type ReminderSchedulePreviewItem,
 } from '../features/reminders/reminder.schedule-preview';
 import {
+  MAX_CUSTOM_REMINDER_OFFSET_DAYS,
   getDefaultReminderOffsets,
   getReminderOffsetLabel,
   normalizeSelectedReminderOffsets,
@@ -15,22 +17,45 @@ import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 type ReminderSchedulePreviewProps = {
   dueDate: string;
   selectedOffsets?: readonly number[];
+  onAddCustomOffset?(offsetDays: number): void;
   onToggleOffset?(offsetDays: number): void;
   type: ReminderType;
 };
 
 export function ReminderSchedulePreview({
   dueDate,
+  onAddCustomOffset,
   onToggleOffset,
   selectedOffsets,
   type,
 }: ReminderSchedulePreviewProps) {
   const theme = useTheme();
+  const { colors } = theme;
   const styles = createStyles(theme);
+  const [customOffsetText, setCustomOffsetText] = useState('');
   const preview = buildReminderSchedulePreview({ dueDate, selectedOffsets, type });
   const hasItems = preview.items.length > 0;
   const isEditable = Boolean(onToggleOffset);
   const selectedOffsetSet = new Set(normalizeSelectedReminderOffsets(type, selectedOffsets));
+  const defaultOffsetSet = new Set(getDefaultReminderOffsets(type));
+  const visibleOffsets = normalizeSelectedReminderOffsets(type, [
+    ...getDefaultReminderOffsets(type),
+    ...(selectedOffsets ?? []),
+  ]);
+
+  const handleAddCustomOffset = () => {
+    const offsetDays = Number(customOffsetText.trim());
+    if (
+      !Number.isInteger(offsetDays) ||
+      offsetDays < 0 ||
+      offsetDays > MAX_CUSTOM_REMINDER_OFFSET_DAYS
+    ) {
+      return;
+    }
+
+    onAddCustomOffset?.(offsetDays);
+    setCustomOffsetText('');
+  };
 
   return (
     <View style={styles.card}>
@@ -51,8 +76,9 @@ export function ReminderSchedulePreview({
       {isEditable ? (
         <View style={styles.togglePanel}>
           <View style={styles.toggleGrid}>
-            {getDefaultReminderOffsets(type).map((offsetDays) => {
+            {visibleOffsets.map((offsetDays) => {
               const selected = selectedOffsetSet.has(offsetDays);
+              const custom = !defaultOffsetSet.has(offsetDays);
 
               return (
                 <PressableScale
@@ -68,14 +94,32 @@ export function ReminderSchedulePreview({
                       {getReminderOffsetLabel(offsetDays)}
                     </Text>
                     <Text style={[styles.toggleState, selected ? styles.toggleStateActive : null]}>
-                      {selected ? '开启' : '关闭'}
+                      {custom ? '自定义' : selected ? '开启' : '关闭'}
                     </Text>
                   </View>
                 </PressableScale>
               );
             })}
           </View>
-          <Text style={styles.toggleHint}>可关闭不需要的默认提醒点，保存后会按开启项重排。</Text>
+          <View style={styles.customRow}>
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={3}
+              onChangeText={setCustomOffsetText}
+              placeholder="自定义天数"
+              placeholderTextColor={colors.textMuted}
+              style={styles.customInput}
+              value={customOffsetText}
+            />
+            <PressableScale containerStyle={styles.customButtonWrap} onPress={handleAddCustomOffset}>
+              <View style={styles.customButton}>
+                <Text style={styles.customButtonText}>添加</Text>
+              </View>
+            </PressableScale>
+          </View>
+          <Text style={styles.toggleHint}>
+            可关闭默认提醒点，也可添加 0-{MAX_CUSTOM_REMINDER_OFFSET_DAYS} 天内的自定义提醒。
+          </Text>
         </View>
       ) : null}
 
@@ -157,6 +201,37 @@ function createStyles(theme: AppTheme) {
     description: {
       color: colors.textSecondary,
       ...typography.body,
+    },
+    customButton: {
+      alignItems: 'center',
+      backgroundColor: colors.primary,
+      borderRadius: radius.pill,
+      justifyContent: 'center',
+      minHeight: 36,
+      paddingHorizontal: spacing.md,
+    },
+    customButtonText: {
+      color: colors.surface,
+      ...typography.label,
+    },
+    customButtonWrap: {
+      alignSelf: 'stretch',
+    },
+    customInput: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      color: colors.textPrimary,
+      flex: 1,
+      minHeight: 36,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 8,
+      ...typography.label,
+    },
+    customRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
     },
     dot: {
       backgroundColor: colors.primary,

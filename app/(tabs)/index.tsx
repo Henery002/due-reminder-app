@@ -107,9 +107,25 @@ export default function HomeScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.eyebrow}>{format(now, 'yyyy 年 M 月 d 日')}</Text>
-          <Text style={styles.title}>今天要处理 {groups.today.length} 件事</Text>
+          <View style={styles.eyebrowBadge}>
+            <Text style={styles.eyebrow}>{format(now, 'yyyy 年 M 月 d 日')}</Text>
+          </View>
+          <Text style={styles.title}>今天待处理 {groups.today.length} 件</Text>
           <Text style={styles.subtitle}>订阅续费、账单缴费、证件到期都在这里看。</Text>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{groups.overdue.length}</Text>
+              <Text style={styles.summaryLabel}>已逾期</Text>
+            </View>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{nextSevenDaysCount}</Text>
+              <Text style={styles.summaryLabel}>7 天内</Text>
+            </View>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{thisMonthCount}</Text>
+              <Text style={styles.summaryLabel}>本月到期</Text>
+            </View>
+          </View>
         </View>
 
         <PermissionBanner onPress={() => router.push('/notification-permission')} />
@@ -240,16 +256,23 @@ function createStyles(theme: AppTheme) {
       color: colors.overdue,
     },
     eyebrow: {
-      color: colors.textMuted,
+      color: colors.primary,
       ...typography.label,
+    },
+    eyebrowBadge: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
     },
     group: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       borderWidth: 1,
       gap: spacing.md,
-      padding: 14,
+      padding: spacing.md,
     },
     groupBadge: {
       borderRadius: radius.pill,
@@ -278,7 +301,7 @@ function createStyles(theme: AppTheme) {
       flex: 1,
     },
     header: {
-      gap: spacing.xs,
+      gap: spacing.sm,
     },
     list: {
       gap: spacing.md,
@@ -294,8 +317,8 @@ function createStyles(theme: AppTheme) {
       color: colors.surface,
       minHeight: 44,
       overflow: 'hidden',
-      paddingHorizontal: spacing.lg,
-      paddingVertical: 12,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 11,
       textAlign: 'center',
       ...typography.bodyStrong,
     },
@@ -321,15 +344,39 @@ function createStyles(theme: AppTheme) {
     },
     sectionTitle: {
       color: colors.textPrimary,
-      ...typography.sectionTitle,
+      ...typography.bodyStrong,
     },
     subtitle: {
       color: colors.textSecondary,
       ...typography.body,
     },
+    summaryChip: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      flex: 1,
+      gap: 1,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+    },
+    summaryLabel: {
+      color: colors.textMuted,
+      ...typography.helper,
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    summaryValue: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
+    },
     title: {
       color: colors.textPrimary,
-      ...typography.pageTitle,
+      ...typography.cardTitle,
     },
     warmBadge: {
       backgroundColor: colors.dueSoonSoft,

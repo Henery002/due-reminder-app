@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { useTheme, type AppTheme } from '../theme/ThemeProvider';
+import { PressableScale } from './PressableScale';
 
 type TemplateCardProps = {
   label: string;
@@ -12,9 +13,13 @@ export function TemplateCard({ label, selected, onPress }: TemplateCardProps) {
   const styles = createStyles(theme);
 
   return (
-    <Pressable onPress={onPress} style={[styles.card, selected && styles.selected]}>
+    <PressableScale
+      onPress={onPress}
+      scaleTo={0.96}
+      style={({ pressed }) => [styles.card, selected && styles.selected, pressed && styles.pressed]}
+    >
       <Text style={[styles.text, selected && styles.selectedText]}>{label}</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -28,7 +33,10 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.md,
       borderWidth: 1,
       paddingHorizontal: spacing.md,
-      paddingVertical: 8,
+      paddingVertical: 7,
+    },
+    pressed: {
+      opacity: 0.84,
     },
     selected: {
       backgroundColor: colors.primarySoft,

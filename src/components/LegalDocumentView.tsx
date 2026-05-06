@@ -76,10 +76,10 @@ function createStyles(theme: AppTheme) {
       ...typography.label,
     },
     hero: {
-      backgroundColor: colors.primarySoft,
-      borderRadius: radius.xl,
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
       gap: spacing.sm,
-      padding: spacing.lg,
+      padding: spacing.md,
     },
     safeArea: {
       backgroundColor: colors.background,
@@ -91,7 +91,7 @@ function createStyles(theme: AppTheme) {
     },
     title: {
       color: colors.textPrimary,
-      ...typography.pageTitle,
+      ...typography.cardTitle,
     },
   });
 }

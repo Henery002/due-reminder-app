@@ -18,7 +18,7 @@ export default function AboutScreen() {
         <Stack.Screen options={{ title: '关于应用' }} />
         <ScreenHeader subtitle="我的 / 关于" title="关于应用" />
         <View style={styles.hero}>
-          <Text style={styles.heroKicker}>Due Reminder</Text>
+          <Text style={styles.heroKicker}>产品定位</Text>
           <Text style={styles.title}>到期提醒助手</Text>
           <Text style={styles.subtitle}>把容易忘的小事，变成一个轻松可处理的清单。</Text>
         </View>
@@ -76,15 +76,13 @@ function createStyles(theme: AppTheme) {
       ...typography.sectionTitle,
     },
     hero: {
-      backgroundColor: colors.primarySoft,
-      borderRadius: radius.xl,
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
       gap: spacing.sm,
-      padding: spacing.lg,
+      padding: spacing.md,
     },
     heroKicker: {
       color: colors.primary,
-      letterSpacing: 0.6,
-      textTransform: 'uppercase',
       ...typography.label,
     },
     legalGroup: {
@@ -104,7 +102,7 @@ function createStyles(theme: AppTheme) {
     },
     title: {
       color: colors.textPrimary,
-      ...typography.pageTitle,
+      ...typography.cardTitle,
     },
     version: {
       color: colors.textMuted,

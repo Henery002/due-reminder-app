@@ -46,10 +46,27 @@ describe('reminder service', () => {
     ]);
   });
 
-  it('ignores unsupported custom offsets when building reminder rules', () => {
-    const rules = buildReminderRules('bill', '2026-05-10', baseDate, [9, 1, 1, 0]);
+  it('builds reminder rules from custom offsets in schedule order', () => {
+    const rules = buildReminderRules('bill', '2026-05-20', baseDate, [9, 1, 1, 0]);
 
-    expect(rules.map((rule) => rule.offsetDays)).toEqual([1, 0]);
+    expect(rules.map((rule) => rule.offsetDays)).toEqual([9, 1, 0]);
+    expect(rules.map((rule) => rule.id)).toEqual([
+      'bill-2026-05-20-9',
+      'bill-2026-05-20-1',
+      'bill-2026-05-20-0',
+    ]);
+  });
+
+  it('drops invalid custom offsets before building reminder rules', () => {
+    const rules = buildReminderRules('subscription', '2026-05-20', baseDate, [
+      366,
+      7,
+      2.5,
+      -1,
+      0,
+    ]);
+
+    expect(rules.map((rule) => rule.offsetDays)).toEqual([7, 0]);
   });
 
   it('marks active reminders overdue when due date has passed', () => {

@@ -31,11 +31,11 @@ function createStyles(theme: AppTheme) {
 
   return StyleSheet.create({
     banner: {
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       borderWidth: 1,
       gap: spacing.xs,
       paddingHorizontal: spacing.md,
-      paddingVertical: 10,
+      paddingVertical: 9,
     },
     description: {
       color: colors.textSecondary,

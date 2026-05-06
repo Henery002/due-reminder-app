@@ -31,7 +31,9 @@ function createStyles(theme: AppTheme) {
   return StyleSheet.create({
     banner: {
       alignItems: 'center',
-      backgroundColor: colors.dueSoonSoft,
+      backgroundColor: colors.surface,
+      borderColor: colors.dueSoonSoft,
+      borderWidth: 1,
       borderRadius: radius.lg,
       flexDirection: 'row',
       gap: spacing.sm,
@@ -48,7 +50,7 @@ function createStyles(theme: AppTheme) {
     text: {
       color: colors.textPrimary,
       flex: 1,
-      ...typography.bodyStrong,
+      ...typography.body,
     },
   });
 }

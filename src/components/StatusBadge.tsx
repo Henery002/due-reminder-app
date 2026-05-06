@@ -27,9 +27,9 @@ function createStyles(theme: AppTheme) {
   return StyleSheet.create({
     badge: {
       alignSelf: 'flex-start',
-      borderRadius: radius.sm,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
+      borderRadius: radius.pill,
+      paddingHorizontal: 7,
+      paddingVertical: 3,
     },
     text: {
       ...typography.label,

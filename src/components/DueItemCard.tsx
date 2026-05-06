@@ -52,18 +52,20 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
         onPressOut={() => animatePress(1)}
         style={({ pressed }) => [styles.card, pressed && onPress ? styles.pressed : null]}
       >
+        <View style={styles.metaRow}>
+          <Text style={[styles.typeLabel, { color: typeMeta.color }]}>{typeMeta.label}</Text>
+          <StatusBadge label={getReminderStatusLabel(item)} status={item.status} />
+        </View>
         <View style={styles.header}>
           <View style={[styles.iconWrap, { backgroundColor: typeMeta.backgroundColor }]}>
             <IconGlyph color={typeMeta.color} label={typeMeta.glyph} size={18} />
           </View>
           <View style={styles.titleWrap}>
-            <Text style={[styles.typeLabel, { color: typeMeta.color }]}>{typeMeta.label}</Text>
             <Text numberOfLines={1} style={styles.title}>
               {item.name}
             </Text>
             <Text style={styles.date}>到期日 {item.dueDate}</Text>
           </View>
-          <StatusBadge label={getReminderStatusLabel(item)} status={item.status} />
         </View>
 
         {typeof item.amount === 'number' ? (
@@ -114,10 +116,10 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.pill,
       borderWidth: 1,
       flexDirection: 'row',
-      gap: 7,
-      minHeight: 36,
-      paddingHorizontal: 11,
-      paddingVertical: 6,
+      gap: 6,
+      minHeight: 34,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
     },
     actionPressed: {
       opacity: 0.84,
@@ -128,7 +130,7 @@ function createStyles(theme: AppTheme) {
     actions: {
       flexDirection: 'row',
       gap: spacing.sm,
-      marginTop: spacing.md,
+      marginTop: spacing.sm,
     },
     amount: {
       color: colors.textSecondary,
@@ -140,14 +142,14 @@ function createStyles(theme: AppTheme) {
       borderColor: colors.border,
       borderRadius: radius.lg,
       borderWidth: 1,
-      padding: 14,
+      padding: spacing.md,
     },
     cardMotion: {
       elevation: 2,
       shadowColor: colors.cardShadow,
-      shadowOffset: { height: 6, width: 0 },
-      shadowOpacity: theme.colorScheme === 'dark' ? 0.18 : 0.06,
-      shadowRadius: 14,
+      shadowOffset: { height: 4, width: 0 },
+      shadowOpacity: theme.colorScheme === 'dark' ? 0.14 : 0.05,
+      shadowRadius: 10,
     },
     date: {
       color: colors.textSecondary,
@@ -165,9 +167,9 @@ function createStyles(theme: AppTheme) {
       alignItems: 'center',
       backgroundColor: colors.surface,
       borderRadius: radius.pill,
-      height: 22,
+      height: 20,
       justifyContent: 'center',
-      width: 22,
+      width: 20,
     },
     header: {
       alignItems: 'center',
@@ -177,9 +179,15 @@ function createStyles(theme: AppTheme) {
     iconWrap: {
       alignItems: 'center',
       borderRadius: radius.md,
-      height: 36,
+      height: 34,
       justifyContent: 'center',
-      width: 36,
+      width: 34,
+    },
+    metaRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: spacing.sm,
     },
     pressed: {
       borderColor: colors.primarySoft,
@@ -196,9 +204,9 @@ function createStyles(theme: AppTheme) {
       alignItems: 'center',
       backgroundColor: colors.surface,
       borderRadius: radius.pill,
-      height: 22,
+      height: 20,
       justifyContent: 'center',
-      width: 22,
+      width: 20,
     },
     title: {
       color: colors.textPrimary,
@@ -209,7 +217,6 @@ function createStyles(theme: AppTheme) {
     },
     typeLabel: {
       ...typography.label,
-      marginBottom: 1,
     },
   });
 }

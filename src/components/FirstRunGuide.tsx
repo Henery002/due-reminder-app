@@ -14,7 +14,9 @@ export function FirstRunGuide({ onAddPress }: FirstRunGuideProps) {
   return (
     <View style={styles.card}>
       <View style={styles.hero}>
-        <Text style={styles.eyebrow}>第一次使用</Text>
+        <View style={styles.eyebrowBadge}>
+          <Text style={styles.eyebrow}>第一次使用</Text>
+        </View>
         <Text style={styles.title}>先把最容易忘的那件事放进来</Text>
         <Text style={styles.description}>
           一个到期日就够了。后面你再慢慢补金额、备注和更多提醒。
@@ -61,10 +63,10 @@ function createStyles(theme: AppTheme) {
     card: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       borderWidth: 1,
       gap: spacing.md,
-      padding: spacing.lg,
+      padding: spacing.md,
     },
     description: {
       color: colors.textSecondary,
@@ -97,6 +99,13 @@ function createStyles(theme: AppTheme) {
       color: colors.primary,
       ...typography.label,
     },
+    eyebrowBadge: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+    },
     hero: {
       gap: spacing.xs,
     },
@@ -110,9 +119,7 @@ function createStyles(theme: AppTheme) {
     },
     title: {
       color: colors.textPrimary,
-      fontSize: 20,
-      fontWeight: '700',
-      lineHeight: 27,
+      ...typography.cardTitle,
     },
   });
 }

@@ -6,6 +6,8 @@ export const DEFAULT_REMINDER_OFFSETS: Record<ReminderType, number[]> = {
   document: [60, 30, 7],
 };
 
+export const MAX_CUSTOM_REMINDER_OFFSET_DAYS = 365;
+
 export function getDefaultReminderOffsets(type: ReminderType): number[] {
   return [...DEFAULT_REMINDER_OFFSETS[type]];
 }
@@ -27,6 +29,14 @@ export function normalizeSelectedReminderOffsets(
     return defaultOffsets;
   }
 
-  const selectedSet = new Set(selectedOffsets);
-  return defaultOffsets.filter((offsetDays) => selectedSet.has(offsetDays));
+  return Array.from(
+    new Set(
+      selectedOffsets.filter(
+        (offsetDays) =>
+          Number.isInteger(offsetDays) &&
+          offsetDays >= 0 &&
+          offsetDays <= MAX_CUSTOM_REMINDER_OFFSET_DAYS,
+      ),
+    ),
+  ).sort((left, right) => right - left);
 }

@@ -43,7 +43,9 @@ function createStyles(theme: AppTheme) {
     },
     card: {
       alignItems: 'flex-start',
-      backgroundColor: colors.primarySoft,
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderWidth: 1,
       borderRadius: radius.lg,
       flexDirection: 'row',
       gap: spacing.md,

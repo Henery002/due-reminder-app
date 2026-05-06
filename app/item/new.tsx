@@ -68,6 +68,7 @@ export default function NewItemScreen() {
   const [reminderCount, setReminderCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const creationGate = getReminderCreationGate(reminderCount);
+  const selectedTypeLabel = typeOptions.find((option) => option.value === type)?.label ?? '事项';
 
   const refreshCreationGate = useCallback(() => {
     const gate = getReminderCreationGate(reminderRepository.list().length);
@@ -103,6 +104,26 @@ export default function NewItemScreen() {
       : [...selectedReminderOffsets, offsetDays];
 
     setSelectedReminderOffsets(normalizeSelectedReminderOffsets(type, nextOffsets));
+  };
+
+  const handleAddCustomReminderOffset = (offsetDays: number) => {
+    if (selectedReminderOffsets.includes(offsetDays)) {
+      setFeedback({
+        description: '这个提醒点已经在计划里了，可以直接开启或关闭。',
+        title: '提醒点已存在',
+        tone: 'warning',
+      });
+      return;
+    }
+
+    setSelectedReminderOffsets(
+      normalizeSelectedReminderOffsets(type, [...selectedReminderOffsets, offsetDays]),
+    );
+    setFeedback({
+      description: `已加入“提前 ${offsetDays} 天”提醒，保存后会一起安排。`,
+      title: '已添加自定义提醒',
+      tone: 'success',
+    });
   };
 
   const handleSave = async () => {
@@ -196,6 +217,16 @@ export default function NewItemScreen() {
         <View>
           <Text style={styles.title}>添加一件快到期的事</Text>
           <Text style={styles.subtitle}>先选模板，再确认到期日和提醒策略。</Text>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{selectedTypeLabel}</Text>
+              <Text style={styles.summaryLabel}>当前类型</Text>
+            </View>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{selectedReminderOffsets.length} 个</Text>
+              <Text style={styles.summaryLabel}>提醒点</Text>
+            </View>
+          </View>
         </View>
         <FeedbackBanner feedback={feedback} />
 
@@ -264,9 +295,10 @@ export default function NewItemScreen() {
 
         <ReminderSchedulePreview
           dueDate={dueDate}
+          onAddCustomOffset={handleAddCustomReminderOffset}
+          onToggleOffset={handleToggleReminderOffset}
           selectedOffsets={selectedReminderOffsets}
           type={type}
-          onToggleOffset={handleToggleReminderOffset}
         />
 
         <SubmitActionButton
@@ -330,12 +362,35 @@ function createStyles(theme: AppTheme) {
     },
     sectionTitle: {
       color: colors.textPrimary,
-      ...typography.sectionTitle,
+      ...typography.bodyStrong,
     },
     subtitle: {
       color: colors.textSecondary,
       marginTop: spacing.xs,
       ...typography.body,
+    },
+    summaryChip: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      flex: 1,
+      gap: 1,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+    },
+    summaryLabel: {
+      color: colors.textMuted,
+      ...typography.helper,
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      marginTop: spacing.md,
+    },
+    summaryValue: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
     },
     templates: {
       flexDirection: 'row',
@@ -344,7 +399,7 @@ function createStyles(theme: AppTheme) {
     },
     title: {
       color: colors.textPrimary,
-      ...typography.pageTitle,
+      ...typography.cardTitle,
     },
   });
 }

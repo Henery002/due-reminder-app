@@ -34,8 +34,8 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.pill,
       borderWidth: 1,
       minHeight: theme.sizes.chipHeight,
-      paddingHorizontal: spacing.md,
-      paddingVertical: 7,
+      paddingHorizontal: 11,
+      paddingVertical: 6,
     },
     pressed: {
       opacity: 0.82,

@@ -41,6 +41,22 @@ const statusFilterOptions: Array<{ label: string; value: ReminderStatusFilter }>
   { label: '已处理', value: 'done' },
 ];
 
+const typeFilterLabels: Record<ReminderTypeFilter, string> = {
+  all: '全部类型',
+  subscription: '订阅',
+  bill: '账单',
+  document: '证件',
+};
+
+const statusFilterLabels: Record<ReminderStatusFilter, string> = {
+  all: '全部状态',
+  active: '进行中',
+  pending: '未处理',
+  overdue: '已逾期',
+  snoozed: '已延后',
+  done: '已处理',
+};
+
 export default function ItemsScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -97,13 +113,37 @@ export default function ItemsScreen() {
     type: selectedType,
   });
   const hasSearchQuery = searchQuery.trim().length > 0;
+  const pendingCount = items.filter((item) => item.status !== 'done').length;
+  const doneCount = items.filter((item) => item.status === 'done').length;
+  const activeFilterLabels = [
+    selectedType !== 'all' ? typeFilterLabels[selectedType] : null,
+    selectedStatus !== 'all' ? statusFilterLabels[selectedStatus] : null,
+    hasSearchQuery ? `搜索：${searchQuery.trim()}` : null,
+  ].filter(Boolean) as string[];
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-        <View>
+        <View style={styles.header}>
+          <View style={styles.eyebrowBadge}>
+            <Text style={styles.eyebrow}>事项总览</Text>
+          </View>
           <Text style={styles.title}>全部事项</Text>
           <Text style={styles.subtitle}>管理所有订阅、账单和证件到期日。</Text>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{items.length}</Text>
+              <Text style={styles.summaryLabel}>总数</Text>
+            </View>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{pendingCount}</Text>
+              <Text style={styles.summaryLabel}>未处理</Text>
+            </View>
+            <View style={styles.summaryChip}>
+              <Text style={styles.summaryValue}>{doneCount}</Text>
+              <Text style={styles.summaryLabel}>已处理</Text>
+            </View>
+          </View>
         </View>
 
         {items.length > 0 ? (
@@ -154,6 +194,15 @@ export default function ItemsScreen() {
             <Text style={styles.resultMeta}>
               当前显示 {visibleItems.length} / {items.length} 件，支持按名称和备注搜索
             </Text>
+            {activeFilterLabels.length > 0 ? (
+              <View style={styles.activeFilterRow}>
+                {activeFilterLabels.map((label) => (
+                  <View key={label} style={styles.activeFilterChip}>
+                    <Text style={styles.activeFilterText}>{label}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
           </View>
         ) : null}
 
@@ -223,6 +272,21 @@ function createStyles(theme: AppTheme) {
   const { colors, radius, spacing, typography } = theme;
 
   return StyleSheet.create({
+    activeFilterChip: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.pill,
+      paddingHorizontal: 9,
+      paddingVertical: 5,
+    },
+    activeFilterRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    activeFilterText: {
+      color: colors.primary,
+      ...typography.label,
+    },
     clearPressed: {
       opacity: 0.72,
     },
@@ -230,7 +294,7 @@ function createStyles(theme: AppTheme) {
       backgroundColor: colors.surface,
       borderRadius: radius.pill,
       paddingHorizontal: 9,
-      paddingVertical: 6,
+      paddingVertical: 5,
     },
     clearSearchText: {
       color: colors.primary,
@@ -244,10 +308,24 @@ function createStyles(theme: AppTheme) {
     filterPanel: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       borderWidth: 1,
       gap: spacing.md,
-      padding: 14,
+      padding: spacing.md,
+    },
+    eyebrow: {
+      color: colors.primary,
+      ...typography.label,
+    },
+    eyebrowBadge: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+    },
+    header: {
+      gap: spacing.sm,
     },
     filterRow: {
       flexDirection: 'row',
@@ -259,7 +337,7 @@ function createStyles(theme: AppTheme) {
     },
     resultMeta: {
       color: colors.textMuted,
-      ...typography.label,
+      ...typography.helper,
     },
     safeArea: {
       backgroundColor: colors.background,
@@ -276,7 +354,7 @@ function createStyles(theme: AppTheme) {
       flexDirection: 'row',
       gap: spacing.sm,
       paddingHorizontal: spacing.md,
-      paddingVertical: 3,
+      paddingVertical: 2,
     },
     searchIcon: {
       color: colors.primary,
@@ -292,12 +370,35 @@ function createStyles(theme: AppTheme) {
     },
     subtitle: {
       color: colors.textSecondary,
-      marginTop: spacing.xs,
       ...typography.body,
+    },
+    summaryChip: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      flex: 1,
+      gap: 1,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+    },
+    summaryLabel: {
+      color: colors.textMuted,
+      ...typography.helper,
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    summaryValue: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
     },
     title: {
       color: colors.textPrimary,
-      ...typography.pageTitle,
+      ...typography.cardTitle,
     },
   });
 }

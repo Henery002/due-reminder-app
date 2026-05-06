@@ -67,8 +67,8 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.md,
       color: colors.textPrimary,
       paddingHorizontal: spacing.md,
-      paddingVertical: 8,
-      ...typography.bodyStrong,
+      paddingVertical: 7,
+      ...typography.label,
     },
     featureList: {
       flexDirection: 'row',
@@ -117,7 +117,7 @@ function createStyles(theme: AppTheme) {
     },
     title: {
       color: colors.textPrimary,
-      ...typography.pageTitle,
+      ...typography.cardTitle,
     },
   });
 }

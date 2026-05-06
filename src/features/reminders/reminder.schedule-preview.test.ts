@@ -57,6 +57,25 @@ describe('reminder schedule preview', () => {
     expect(preview.items.map((item) => item.offsetLabel)).toEqual(['提前 7 天', '到期当天']);
   });
 
+  it('previews custom reminder points together with defaults', () => {
+    const preview = buildReminderSchedulePreview(
+      {
+        dueDate: '2026-05-20',
+        selectedOffsets: [10, 7, 1, 0],
+        type: 'subscription',
+      },
+      new Date('2026-05-05T08:00:00.000Z'),
+    );
+
+    expect(preview.description).toBe('将安排 4 次本地提醒，默认在当天 09:00 提醒。');
+    expect(preview.items.map((item) => item.offsetLabel)).toEqual([
+      '提前 10 天',
+      '提前 7 天',
+      '提前 1 天',
+      '到期当天',
+    ]);
+  });
+
   it('returns an empty-state copy when no future reminders can be scheduled', () => {
     const preview = buildReminderSchedulePreview(
       {

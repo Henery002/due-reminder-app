@@ -183,17 +183,14 @@ function createStyles(theme: AppTheme) {
       color: colors.surface,
     },
     hero: {
-      backgroundColor: colors.primarySoft,
+      backgroundColor: colors.surfaceMuted,
       borderRadius: radius.lg,
       gap: spacing.xs,
-      padding: spacing.lg,
+      padding: spacing.md,
     },
     heroDate: {
       color: colors.textPrimary,
-      fontSize: 24,
-      fontWeight: '700',
-      letterSpacing: -0.3,
-      lineHeight: 31,
+      ...typography.cardTitle,
     },
     heroLabel: {
       color: colors.primary,
@@ -234,7 +231,8 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.md,
       flex: 1,
       justifyContent: 'center',
-      paddingVertical: 7,
+      minHeight: 32,
+      paddingVertical: 6,
     },
     stepper: {
       flexDirection: 'row',

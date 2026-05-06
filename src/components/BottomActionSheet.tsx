@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useTheme, type AppTheme } from '../theme/ThemeProvider';
+import { PressableScale } from './PressableScale';
 
 type BottomActionSheetProps = {
   actions: Array<{
@@ -19,17 +20,21 @@ export function BottomActionSheet({ title, actions, onCancel }: BottomActionShee
     <View style={styles.sheet}>
       <Text style={styles.title}>{title}</Text>
       {actions.map((action) => (
-        <Pressable key={action.label} onPress={action.onPress} style={styles.action}>
-          <Text style={styles.actionText}>{action.label}</Text>
-          {action.description ? (
-            <Text style={styles.actionDescription}>{action.description}</Text>
-          ) : null}
-        </Pressable>
+        <PressableScale key={action.label} onPress={action.onPress} scaleTo={0.98}>
+          <View style={styles.action}>
+            <Text style={styles.actionText}>{action.label}</Text>
+            {action.description ? (
+              <Text style={styles.actionDescription}>{action.description}</Text>
+            ) : null}
+          </View>
+        </PressableScale>
       ))}
       {onCancel ? (
-        <Pressable onPress={onCancel} style={styles.cancelAction}>
-          <Text style={styles.cancelText}>先不延后</Text>
-        </Pressable>
+        <PressableScale onPress={onCancel} scaleTo={0.98}>
+          <View style={styles.cancelAction}>
+            <Text style={styles.cancelText}>先不延后</Text>
+          </View>
+        </PressableScale>
       ) : null}
     </View>
   );
@@ -43,7 +48,8 @@ function createStyles(theme: AppTheme) {
       backgroundColor: colors.surfaceMuted,
       borderRadius: radius.md,
       gap: spacing.xs,
-      padding: spacing.md,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 11,
     },
     actionDescription: {
       color: colors.textSecondary,
@@ -55,7 +61,7 @@ function createStyles(theme: AppTheme) {
     },
     cancelAction: {
       alignItems: 'center',
-      padding: 10,
+      padding: 8,
     },
     cancelText: {
       color: colors.textSecondary,
@@ -64,10 +70,10 @@ function createStyles(theme: AppTheme) {
     sheet: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       borderWidth: 1,
       gap: spacing.sm,
-      padding: spacing.lg,
+      padding: spacing.md,
     },
     title: {
       color: colors.textPrimary,

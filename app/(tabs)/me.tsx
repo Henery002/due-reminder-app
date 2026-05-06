@@ -29,20 +29,26 @@ export default function MeScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Text style={styles.eyebrow}>到期提醒助手</Text>
-          <Text style={styles.title}>我的</Text>
+          <View style={styles.heroBadge}>
+            <Text style={styles.eyebrow}>到期提醒助手</Text>
+          </View>
+          <Text style={styles.title}>个人设置</Text>
           <Text style={styles.subtitle}>外观、通知、数据和合规说明集中管理。</Text>
         </View>
 
         <View style={styles.quickGrid}>
-          <PressableScale
-            accessibilityRole="button"
-            onPress={() => router.push('/membership')}
-            style={({ pressed }) => [styles.quickCard, pressed ? styles.pressed : null]}
-          >
-            <MembershipCard compact />
-          </PressableScale>
-          <PermissionBanner onPress={() => router.push('/notification-permission')} />
+          <View style={styles.quickItem}>
+            <PressableScale
+              accessibilityRole="button"
+              onPress={() => router.push('/membership')}
+              style={({ pressed }) => [styles.quickCard, pressed ? styles.pressed : null]}
+            >
+              <MembershipCard compact />
+            </PressableScale>
+          </View>
+          <View style={styles.quickItem}>
+            <PermissionBanner onPress={() => router.push('/notification-permission')} />
+          </View>
         </View>
 
         <View style={styles.section}>
@@ -98,7 +104,7 @@ export default function MeScreen() {
             <View style={styles.infoCopy}>
               <Text style={styles.infoTitle}>默认提醒点可开关</Text>
               <Text style={styles.infoText}>
-                新建或编辑事项时，可以关闭不需要的默认提醒点。自定义提前天数后续再作为高级能力评估。
+                新建或编辑事项时，可以关闭默认提醒点，也能补充自定义提前天数提醒。
               </Text>
             </View>
           </View>
@@ -321,18 +327,20 @@ function createStyles(theme: AppTheme) {
       ...typography.label,
     },
     hero: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: radius.xl,
-      borderWidth: 1,
-      gap: spacing.xs,
-      padding: spacing.lg,
+      gap: spacing.sm,
+    },
+    heroBadge: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
     },
     infoCard: {
       alignItems: 'flex-start',
       backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       borderWidth: 1,
       flexDirection: 'row',
       gap: spacing.md,
@@ -377,7 +385,11 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.lg,
     },
     quickGrid: {
+      flexDirection: 'row',
       gap: spacing.md,
+    },
+    quickItem: {
+      flex: 1,
     },
     safeArea: {
       backgroundColor: colors.background,
@@ -438,7 +450,7 @@ function createStyles(theme: AppTheme) {
     },
     title: {
       color: colors.textPrimary,
-      ...typography.pageTitle,
+      ...typography.cardTitle,
     },
   });
 }
