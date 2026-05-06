@@ -47,6 +47,16 @@ origin git@github.com:Henery002/due-reminder-app.git
 4. 本地 development build 详见 `docs/DEVELOPMENT_BUILD.md`。
 5. 如果 native 构建因 Maven 访问失败，优先使用本机 Gradle 镜像配置或重新生成 native 工程，不要为了临时镜像改动提交整个 `android/` 目录。
 
+## 视觉系统维护约定
+
+1. 后续 UI 修改必须先阅读 `docs/design/VISUAL_SYSTEM_GUIDE.md`。
+2. 默认使用 `src/theme/ThemeProvider.tsx` 提供的 `useTheme()` 和主题 token，不新增散落的硬编码主题色。
+3. 不再把 `fontWeight: '900'` 用作普通标题、按钮和列表项默认字重。
+4. 页面标题默认使用 24 号、700 字重；不要随意新增 28/30 号大标题。
+5. 普通按钮默认高度约 44，筛选 chip 约 32-34，普通卡片内边距约 14。
+6. 新页面应同时考虑浅色、深色和主题色切换，不允许只在默认青绿色浅色模式下看起来正常。
+7. 若需要特殊大字、重色块或厚卡片，必须能解释其信息层级目的。
+
 ## 本机环境清理约定
 
 1. 安装 JDK、Android Studio、Android SDK 后，不主动删除 SDK、Gradle、npm 缓存；这些缓存会显著加速后续构建。

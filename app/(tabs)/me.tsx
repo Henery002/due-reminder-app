@@ -5,11 +5,23 @@ import { IconGlyph } from '../../src/components/IconGlyph';
 import { MembershipCard } from '../../src/components/MembershipCard';
 import { PermissionBanner } from '../../src/components/PermissionBanner';
 import { PressableScale } from '../../src/components/PressableScale';
+import { buildAppTheme } from '../../src/features/appearance/appearance.theme';
+import {
+  accentColorOptions,
+  appearanceModeOptions,
+  type AccentColor,
+  type AppearanceMode,
+  type AppearanceOption,
+} from '../../src/features/appearance/appearance.types';
 import { getLegalActions } from '../../src/features/legal/legal.content';
 import { getSettingsActions, type SettingsAction } from '../../src/features/settings/settings.content';
-import { colors } from '../../src/theme/colors';
+import { useAppearanceSettings, useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 export default function MeScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
+  const { settings, updateAppearanceSettings } = useAppearanceSettings();
   const actions = getSettingsActions();
   const legalActions = getLegalActions();
 
@@ -17,9 +29,9 @@ export default function MeScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Text style={styles.eyebrow}>My Reminder Hub</Text>
+          <Text style={styles.eyebrow}>到期提醒助手</Text>
           <Text style={styles.title}>我的</Text>
-          <Text style={styles.subtitle}>会员、通知、数据和合规说明都收在这里。</Text>
+          <Text style={styles.subtitle}>外观、通知、数据和合规说明集中管理。</Text>
         </View>
 
         <View style={styles.quickGrid}>
@@ -34,31 +46,66 @@ export default function MeScreen() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader eyebrow="Tools" title="常用工具" />
+          <SectionHeader
+            helper="切换后即时生效，并保存在本机。"
+            title="外观主题"
+            styles={styles}
+          />
+          <View style={styles.preferenceCard}>
+            <Text style={styles.preferenceLabel}>显示模式</Text>
+            <View style={styles.segmentGrid}>
+              {appearanceModeOptions.map((option) => (
+                <TextOption
+                  key={option.value}
+                  option={option}
+                  selected={settings.mode === option.value}
+                  styles={styles}
+                  onSelect={(mode) => updateAppearanceSettings({ mode })}
+                />
+              ))}
+            </View>
+
+            <Text style={styles.preferenceLabel}>主题色</Text>
+            <View style={styles.accentGrid}>
+              {accentColorOptions.map((option) => (
+                <AccentOption
+                  key={option.value}
+                  option={option}
+                  selected={settings.accentColor === option.value}
+                  styles={styles}
+                  onSelect={(accentColor) => updateAppearanceSettings({ accentColor })}
+                />
+              ))}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader title="常用工具" styles={styles} />
           <View style={styles.actionList}>
             {actions.map((action) => (
-              <SettingsActionRow key={action.href} action={action} />
+              <SettingsActionRow key={action.href} action={action} styles={styles} />
             ))}
           </View>
         </View>
 
         <View style={styles.section}>
-          <SectionHeader eyebrow="Reminder Plan" title="提醒偏好" />
+          <SectionHeader title="提醒偏好" styles={styles} />
           <View style={styles.infoCard}>
             <View style={styles.infoIcon}>
-              <IconGlyph color={colors.primary} label="R" size={18} />
+              <IconGlyph color={colors.primary} label="R" size={17} />
             </View>
             <View style={styles.infoCopy}>
-              <Text style={styles.infoTitle}>默认提醒计划</Text>
+              <Text style={styles.infoTitle}>默认提醒点可开关</Text>
               <Text style={styles.infoText}>
-                当前按订阅、账单、证件使用推荐提醒规则。自定义多级提醒会作为 Pro 能力预留，避免首版规则编辑过重。
+                新建或编辑事项时，可以关闭不需要的默认提醒点。自定义提前天数后续再作为高级能力评估。
               </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <SectionHeader eyebrow="Legal" title="合规与说明" />
+          <SectionHeader title="合规与说明" styles={styles} />
           <View style={styles.actionList}>
             {legalActions.map((action) => (
               <PressableScale
@@ -68,7 +115,7 @@ export default function MeScreen() {
                 style={({ pressed }) => [styles.actionRow, pressed ? styles.pressed : null]}
               >
                 <View style={styles.actionIcon}>
-                  <IconGlyph color={colors.primary} label="L" size={15} />
+                  <IconGlyph color={colors.primary} label="L" size={14} />
                 </View>
                 <View style={styles.actionCopy}>
                   <Text style={styles.actionTitle}>{action.title}</Text>
@@ -84,7 +131,80 @@ export default function MeScreen() {
   );
 }
 
-function SettingsActionRow({ action }: { action: SettingsAction }) {
+function TextOption<T extends AppearanceMode>({
+  onSelect,
+  option,
+  selected,
+  styles,
+}: {
+  onSelect(value: T): void;
+  option: AppearanceOption<T>;
+  selected: boolean;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  return (
+    <PressableScale
+      accessibilityRole="button"
+      onPress={() => onSelect(option.value)}
+      scaleTo={0.96}
+      style={({ pressed }) => [
+        styles.segmentOption,
+        selected ? styles.segmentOptionSelected : null,
+        pressed ? styles.pressed : null,
+      ]}
+    >
+      <Text style={[styles.segmentLabel, selected ? styles.segmentLabelSelected : null]}>
+        {option.label}
+      </Text>
+      <Text style={styles.segmentDescription}>{option.description}</Text>
+    </PressableScale>
+  );
+}
+
+function AccentOption({
+  onSelect,
+  option,
+  selected,
+  styles,
+}: {
+  onSelect(value: AccentColor): void;
+  option: AppearanceOption<AccentColor>;
+  selected: boolean;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  const swatchColor = buildAppTheme({ accentColor: option.value, mode: 'light' }).colors.primary;
+
+  return (
+    <PressableScale
+      accessibilityRole="button"
+      onPress={() => onSelect(option.value)}
+      scaleTo={0.96}
+      style={({ pressed }) => [
+        styles.accentOption,
+        selected ? styles.accentOptionSelected : null,
+        pressed ? styles.pressed : null,
+      ]}
+    >
+      <View style={[styles.accentSwatch, { backgroundColor: swatchColor }]} />
+      <View style={styles.accentCopy}>
+        <Text style={[styles.segmentLabel, selected ? styles.segmentLabelSelected : null]}>
+          {option.label}
+        </Text>
+        <Text style={styles.segmentDescription}>{option.description}</Text>
+      </View>
+    </PressableScale>
+  );
+}
+
+function SettingsActionRow({
+  action,
+  styles,
+}: {
+  action: SettingsAction;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  const theme = useTheme();
+
   return (
     <PressableScale
       accessibilityRole="button"
@@ -92,7 +212,7 @@ function SettingsActionRow({ action }: { action: SettingsAction }) {
       style={({ pressed }) => [styles.actionRow, pressed ? styles.pressed : null]}
     >
       <View style={styles.actionIcon}>
-        <IconGlyph color={colors.primary} label={action.icon} size={15} />
+        <IconGlyph color={theme.colors.primary} label={action.icon} size={14} />
       </View>
       <View style={styles.actionCopy}>
         <Text style={styles.actionTitle}>{action.title}</Text>
@@ -103,149 +223,222 @@ function SettingsActionRow({ action }: { action: SettingsAction }) {
   );
 }
 
-function SectionHeader({ eyebrow, title }: { eyebrow: string; title: string }) {
+function SectionHeader({
+  helper,
+  styles,
+  title,
+}: {
+  helper?: string;
+  styles: ReturnType<typeof createStyles>;
+  title: string;
+}) {
   return (
-    <View>
-      <Text style={styles.sectionEyebrow}>{eyebrow}</Text>
+    <View style={styles.sectionHeader}>
       <Text style={styles.sectionTitle}>{title}</Text>
+      {helper ? <Text style={styles.sectionHelper}>{helper}</Text> : null}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  actionCopy: {
-    flex: 1,
-  },
-  actionDescription: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 3,
-  },
-  actionIcon: {
-    alignItems: 'center',
-    backgroundColor: colors.primarySoft,
-    borderRadius: 14,
-    height: 42,
-    justifyContent: 'center',
-    width: 42,
-  },
-  actionList: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 22,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  actionRow: {
-    alignItems: 'center',
-    borderBottomColor: colors.border,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    padding: 14,
-  },
-  actionTitle: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  chevron: {
-    color: colors.textMuted,
-    fontSize: 24,
-    fontWeight: '900',
-  },
-  content: {
-    gap: 20,
-    padding: 20,
-    paddingBottom: 112,
-  },
-  eyebrow: {
-    color: colors.primary,
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-  },
-  hero: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: 26,
-    gap: 7,
-    padding: 20,
-  },
-  infoCard: {
-    alignItems: 'flex-start',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 22,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    padding: 15,
-  },
-  infoCopy: {
-    flex: 1,
-  },
-  infoIcon: {
-    alignItems: 'center',
-    backgroundColor: colors.primarySoft,
-    borderRadius: 14,
-    height: 42,
-    justifyContent: 'center',
-    width: 42,
-  },
-  infoText: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 4,
-  },
-  infoTitle: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  pressed: {
-    opacity: 0.82,
-  },
-  quickCard: {
-    borderRadius: 18,
-  },
-  quickGrid: {
-    gap: 12,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  section: {
-    gap: 10,
-  },
-  sectionEyebrow: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-  },
-  sectionTitle: {
-    color: colors.textPrimary,
-    fontSize: 19,
-    fontWeight: '900',
-    marginTop: 3,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 30,
-    fontWeight: '900',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, sizes, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    accentCopy: {
+      flex: 1,
+    },
+    accentGrid: {
+      gap: spacing.sm,
+    },
+    accentOption: {
+      alignItems: 'center',
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: spacing.sm,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 10,
+    },
+    accentOptionSelected: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+    },
+    accentSwatch: {
+      borderRadius: radius.pill,
+      height: 18,
+      width: 18,
+    },
+    actionCopy: {
+      flex: 1,
+    },
+    actionDescription: {
+      color: colors.textSecondary,
+      ...typography.helper,
+      marginTop: 2,
+    },
+    actionIcon: {
+      alignItems: 'center',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.md,
+      height: sizes.listIconBox,
+      justifyContent: 'center',
+      width: sizes.listIconBox,
+    },
+    actionList: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      overflow: 'hidden',
+    },
+    actionRow: {
+      alignItems: 'center',
+      borderBottomColor: colors.border,
+      borderBottomWidth: 1,
+      flexDirection: 'row',
+      gap: spacing.md,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 12,
+    },
+    actionTitle: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
+    },
+    chevron: {
+      color: colors.textMuted,
+      fontSize: 20,
+      fontWeight: '500',
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 104,
+    },
+    eyebrow: {
+      color: colors.primary,
+      ...typography.label,
+    },
+    hero: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.xs,
+      padding: spacing.lg,
+    },
+    infoCard: {
+      alignItems: 'flex-start',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: spacing.md,
+      padding: spacing.md,
+    },
+    infoCopy: {
+      flex: 1,
+    },
+    infoIcon: {
+      alignItems: 'center',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.md,
+      height: sizes.listIconBox,
+      justifyContent: 'center',
+      width: sizes.listIconBox,
+    },
+    infoText: {
+      color: colors.textSecondary,
+      ...typography.helper,
+      marginTop: 3,
+    },
+    infoTitle: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
+    },
+    preferenceCard: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.md,
+      padding: spacing.md,
+    },
+    preferenceLabel: {
+      color: colors.textPrimary,
+      ...typography.label,
+    },
+    pressed: {
+      opacity: 0.82,
+    },
+    quickCard: {
+      borderRadius: radius.lg,
+    },
+    quickGrid: {
+      gap: spacing.md,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    section: {
+      gap: spacing.sm,
+    },
+    sectionHeader: {
+      gap: 2,
+    },
+    sectionHelper: {
+      color: colors.textMuted,
+      ...typography.helper,
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      ...typography.sectionTitle,
+    },
+    segmentDescription: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      fontWeight: '400',
+      lineHeight: 17,
+      marginTop: 2,
+    },
+    segmentGrid: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    segmentLabel: {
+      color: colors.textPrimary,
+      ...typography.label,
+    },
+    segmentLabelSelected: {
+      color: colors.primary,
+    },
+    segmentOption: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      flex: 1,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: 10,
+    },
+    segmentOptionSelected: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

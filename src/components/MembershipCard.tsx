@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { getMembershipPlans } from '../features/membership/membership.plan';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { IconGlyph } from './IconGlyph';
 
 type MembershipCardProps = {
@@ -8,6 +8,8 @@ type MembershipCardProps = {
 };
 
 export function MembershipCard({ compact }: MembershipCardProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const [freePlan, proPlan] = getMembershipPlans();
 
   return (
@@ -24,42 +26,43 @@ export function MembershipCard({ compact }: MembershipCardProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    alignItems: 'flex-start',
-    backgroundColor: colors.primarySoft,
-    borderRadius: 14,
-    flexDirection: 'row',
-    gap: 12,
-    padding: 16,
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surface,
-    borderRadius: 999,
-    color: colors.primary,
-    fontSize: 12,
-    fontWeight: '900',
-    marginTop: 10,
-    overflow: 'hidden',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  copy: {
-    flex: 1,
-  },
-  compactCard: {
-    borderRadius: 18,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 4,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '800',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    badge: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.surface,
+      borderRadius: radius.pill,
+      color: colors.primary,
+      marginTop: spacing.sm,
+      overflow: 'hidden',
+      paddingHorizontal: 9,
+      paddingVertical: 4,
+      ...typography.label,
+    },
+    card: {
+      alignItems: 'flex-start',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.lg,
+      flexDirection: 'row',
+      gap: spacing.md,
+      padding: spacing.md,
+    },
+    compactCard: {
+      borderRadius: radius.lg,
+    },
+    copy: {
+      flex: 1,
+    },
+    description: {
+      color: colors.textSecondary,
+      ...typography.helper,
+      marginTop: 3,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+  });
+}

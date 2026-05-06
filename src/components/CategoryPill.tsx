@@ -1,5 +1,5 @@
 import { StyleSheet, Text } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { PressableScale } from './PressableScale';
 
 type CategoryPillProps = {
@@ -9,6 +9,9 @@ type CategoryPillProps = {
 };
 
 export function CategoryPill({ label, selected, onPress }: CategoryPillProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   return (
     <PressableScale
       onPress={onPress}
@@ -21,28 +24,32 @@ export function CategoryPill({ label, selected, onPress }: CategoryPillProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  pill: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-  },
-  pressed: {
-    opacity: 0.82,
-  },
-  selected: {
-    backgroundColor: colors.primarySoft,
-    borderColor: colors.primary,
-  },
-  selectedText: {
-    color: colors.primary,
-  },
-  text: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    pill: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      minHeight: theme.sizes.chipHeight,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 7,
+    },
+    pressed: {
+      opacity: 0.82,
+    },
+    selected: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+    },
+    selectedText: {
+      color: colors.primary,
+    },
+    text: {
+      color: colors.textSecondary,
+      ...typography.label,
+    },
+  });
+}

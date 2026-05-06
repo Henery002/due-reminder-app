@@ -1,4 +1,9 @@
-import { getAboutSections, getFeedbackChannels, getSettingsActions } from './settings.content';
+import {
+  getAboutSections,
+  getFeedbackChannels,
+  getSettingsActions,
+  getVisualSystemSummary,
+} from './settings.content';
 
 describe('settings content', () => {
   it('lists practical settings actions for the me tab', () => {
@@ -37,5 +42,13 @@ describe('settings content', () => {
       body: '当前版本优先验证本地记录与本地通知可靠性，暂未接入账号、云同步、广告或真实支付。',
       title: '当前阶段',
     });
+  });
+
+  it('documents the visual system direction for future iterations', () => {
+    expect(getVisualSystemSummary()).toEqual([
+      '页面标题默认 24 号、700 字重，不再使用大字全粗模式。',
+      '普通卡片、按钮和列表行使用更克制的内边距与圆角。',
+      '外观支持跟随系统、浅色、深色和多主题色配置。',
+    ]);
   });
 });

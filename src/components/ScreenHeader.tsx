@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { PressableScale } from './PressableScale';
 
 type ScreenHeaderProps = {
@@ -9,6 +9,9 @@ type ScreenHeaderProps = {
 };
 
 export function ScreenHeader({ subtitle, title }: ScreenHeaderProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   const handleBack = () => {
     if (router.canGoBack()) {
       router.back();
@@ -43,48 +46,50 @@ export function ScreenHeader({ subtitle, title }: ScreenHeaderProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  backButton: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    height: 42,
-    justifyContent: 'center',
-    shadowColor: '#1F2A2A',
-    shadowOffset: { height: 6, width: 0 },
-    shadowOpacity: 0.06,
-    shadowRadius: 14,
-    width: 42,
-  },
-  backIcon: {
-    color: colors.textPrimary,
-    fontSize: 30,
-    fontWeight: '900',
-    lineHeight: 32,
-  },
-  backPressed: {
-    borderColor: colors.primary,
-    opacity: 0.86,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '800',
-    marginTop: 3,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  titleWrap: {
-    flex: 1,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    backButton: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      height: 40,
+      justifyContent: 'center',
+      shadowColor: colors.cardShadow,
+      shadowOffset: { height: 5, width: 0 },
+      shadowOpacity: theme.colorScheme === 'dark' ? 0.18 : 0.05,
+      shadowRadius: 12,
+      width: 40,
+    },
+    backIcon: {
+      color: colors.textPrimary,
+      fontSize: 27,
+      fontWeight: '600',
+      lineHeight: 29,
+    },
+    backPressed: {
+      borderColor: colors.primary,
+      opacity: 0.86,
+    },
+    header: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    subtitle: {
+      color: colors.textMuted,
+      ...typography.label,
+      marginTop: 1,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    titleWrap: {
+      flex: 1,
+    },
+  });
+}

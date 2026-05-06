@@ -146,6 +146,17 @@
    - 新建页和编辑页的提醒计划预览卡片支持点击开启/关闭默认提醒点
    - 编辑保存会取消旧通知，并只按开启的默认提醒点重排未来本地通知
    - 当前仍不开放自定义提前天数，不调整数据库 schema，UI 至少保留一个默认提醒点
+41. 启动全局视觉系统整改：
+   - 新增 `docs/design/VISUAL_SYSTEM_GUIDE.md`
+   - 明确当前“大字版”感受的原因：字号、字重、内边距、圆角和按钮尺寸过重
+   - 首页、全部页、我的页、新建/编辑页和核心组件切入更克制的字号、字重、边距与按钮尺寸
+   - `fontWeight: '900'` 不再作为普通标题和按钮默认字重
+42. 新增外观主题能力：
+   - 新增 `src/features/appearance/appearance.theme.ts`
+   - 新增 `src/features/appearance/appearance.types.ts`
+   - 新增 `src/theme/ThemeProvider.tsx`
+   - 新增 SQLite `app_preferences` 偏好表和 preference repository
+   - 我的页支持跟随系统、浅色、深色，以及青绿、蓝色、柔黄、浅绿主题色配置
 
 ## 2026-05-04
 

@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { getFirstRunGuideCards } from '../features/reminders/reminder.onboarding';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { IconGlyph } from './IconGlyph';
 
 type FirstRunGuideProps = {
@@ -8,6 +8,9 @@ type FirstRunGuideProps = {
 };
 
 export function FirstRunGuide({ onAddPress }: FirstRunGuideProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.card}>
       <View style={styles.hero}>
@@ -39,76 +42,77 @@ export function FirstRunGuide({ onAddPress }: FirstRunGuideProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  action: {
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    padding: 15,
-  },
-  actionText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    gap: 14,
-    padding: 16,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  exampleCard: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 14,
-    flexDirection: 'row',
-    gap: 12,
-    padding: 12,
-  },
-  exampleDescription: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 3,
-  },
-  exampleTextWrap: {
-    flex: 1,
-  },
-  exampleTitle: {
-    color: colors.textPrimary,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  examples: {
-    gap: 10,
-  },
-  eyebrow: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  hero: {
-    gap: 7,
-  },
-  iconWrap: {
-    alignItems: 'center',
-    backgroundColor: colors.primarySoft,
-    borderRadius: 12,
-    height: 42,
-    justifyContent: 'center',
-    width: 42,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 22,
-    fontWeight: '900',
-    lineHeight: 29,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    action: {
+      backgroundColor: colors.primary,
+      borderRadius: radius.lg,
+      minHeight: 44,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: 12,
+    },
+    actionText: {
+      color: colors.surface,
+      textAlign: 'center',
+      ...typography.bodyStrong,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.md,
+      padding: spacing.lg,
+    },
+    description: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    exampleCard: {
+      alignItems: 'center',
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
+      flexDirection: 'row',
+      gap: spacing.md,
+      padding: spacing.md,
+    },
+    exampleDescription: {
+      color: colors.textSecondary,
+      marginTop: 2,
+      ...typography.helper,
+    },
+    exampleTextWrap: {
+      flex: 1,
+    },
+    exampleTitle: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
+    },
+    examples: {
+      gap: spacing.sm,
+    },
+    eyebrow: {
+      color: colors.primary,
+      ...typography.label,
+    },
+    hero: {
+      gap: spacing.xs,
+    },
+    iconWrap: {
+      alignItems: 'center',
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.md,
+      height: 40,
+      justifyContent: 'center',
+      width: 40,
+    },
+    title: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: '700',
+      lineHeight: 27,
+    },
+  });
+}

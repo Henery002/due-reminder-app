@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { LegalSection } from '../features/legal/legal.content';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { ScreenHeader } from './ScreenHeader';
 
 type LegalDocumentViewProps = {
@@ -17,6 +17,9 @@ export function LegalDocumentView({
   sections,
   title,
 }: LegalDocumentViewProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -38,58 +41,57 @@ export function LegalDocumentView({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    gap: 8,
-    padding: 16,
-  },
-  cardText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 22,
-  },
-  cardTitle: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  content: {
-    gap: 16,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  eyebrow: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: '900',
-    letterSpacing: 1,
-  },
-  hero: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: 24,
-    gap: 8,
-    padding: 20,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 29,
-    fontWeight: '900',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.sm,
+      padding: spacing.lg,
+    },
+    cardText: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    cardTitle: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    description: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    eyebrow: {
+      color: colors.primary,
+      letterSpacing: 0.6,
+      ...typography.label,
+    },
+    hero: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.xl,
+      gap: spacing.sm,
+      padding: spacing.lg,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

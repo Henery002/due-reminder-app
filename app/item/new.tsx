@@ -34,7 +34,7 @@ import { createReminderSchema } from '../../src/features/reminders/reminder.sche
 import { buildReminderRules } from '../../src/features/reminders/reminder.service';
 import type { ReminderItem, ReminderType } from '../../src/features/reminders/reminder.types';
 import { reminderRepository } from '../../src/storage/reminder.store';
-import { colors } from '../../src/theme/colors';
+import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 const typeOptions: Array<{ label: string; value: ReminderType }> = [
   { label: '订阅', value: 'subscription' },
@@ -53,6 +53,9 @@ function waitForFeedbackTransition(): Promise<void> {
 }
 
 export default function NewItemScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
   const [type, setType] = useState<ReminderType>('subscription');
   const [name, setName] = useState('视频会员');
   const [dueDate, setDueDate] = useState(format(addDays(new Date(), 7), 'yyyy-MM-dd'));
@@ -285,60 +288,63 @@ export default function NewItemScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    gap: 18,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 8,
-    borderWidth: 1,
-    color: colors.textPrimary,
-    fontSize: 16,
-    padding: 14,
-  },
-  noteInput: {
-    minHeight: 82,
-    textAlignVertical: 'top',
-  },
-  pills: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  section: {
-    gap: 10,
-  },
-  sectionTitle: {
-    color: colors.textPrimary,
-    fontSize: 17,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 6,
-  },
-  templates: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '800',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    input: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      color: colors.textPrimary,
+      minHeight: 44,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 11,
+      ...typography.body,
+    },
+    noteInput: {
+      minHeight: 78,
+      textAlignVertical: 'top',
+    },
+    pills: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    section: {
+      gap: spacing.sm,
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      ...typography.sectionTitle,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      ...typography.body,
+    },
+    templates: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

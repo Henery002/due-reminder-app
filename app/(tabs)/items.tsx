@@ -24,7 +24,7 @@ import {
   type ReminderTypeFilter,
 } from '../../src/features/reminders/reminder.view';
 import { reminderRepository } from '../../src/storage/reminder.store';
-import { colors } from '../../src/theme/colors';
+import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 const typeFilterOptions: Array<{ label: string; value: ReminderTypeFilter }> = [
   { label: '全部', value: 'all' },
@@ -42,6 +42,9 @@ const statusFilterOptions: Array<{ label: string; value: ReminderStatusFilter }>
 ];
 
 export default function ItemsScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
   const [items, setItems] = useState<ReminderItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<ReminderStatusFilter>('all');
@@ -216,87 +219,85 @@ export default function ItemsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  clearPressed: {
-    opacity: 0.72,
-  },
-  clearSearch: {
-    backgroundColor: colors.surface,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-  },
-  clearSearchText: {
-    color: colors.primary,
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  content: {
-    gap: 18,
-    padding: 20,
-    paddingBottom: 112,
-  },
-  filterPanel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 20,
-    borderWidth: 1,
-    gap: 12,
-    padding: 14,
-  },
-  filterRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 9,
-  },
-  list: {
-    gap: 12,
-  },
-  resultMeta: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '700',
-    lineHeight: 18,
-  },
-  searchBox: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 16,
-    flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  searchIcon: {
-    color: colors.primary,
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  searchInput: {
-    color: colors.textPrimary,
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '700',
-    minHeight: 42,
-    paddingVertical: 8,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 6,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '800',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    clearPressed: {
+      opacity: 0.72,
+    },
+    clearSearch: {
+      backgroundColor: colors.surface,
+      borderRadius: radius.pill,
+      paddingHorizontal: 9,
+      paddingVertical: 6,
+    },
+    clearSearchText: {
+      color: colors.primary,
+      ...typography.label,
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 104,
+    },
+    filterPanel: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.md,
+      padding: 14,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    list: {
+      gap: spacing.md,
+    },
+    resultMeta: {
+      color: colors.textMuted,
+      ...typography.label,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    searchBox: {
+      alignItems: 'center',
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
+      flexDirection: 'row',
+      gap: spacing.sm,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 3,
+    },
+    searchIcon: {
+      color: colors.primary,
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    searchInput: {
+      color: colors.textPrimary,
+      flex: 1,
+      minHeight: 40,
+      paddingVertical: 7,
+      ...typography.body,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

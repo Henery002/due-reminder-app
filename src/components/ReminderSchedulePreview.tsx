@@ -10,7 +10,7 @@ import {
   normalizeSelectedReminderOffsets,
 } from '../features/reminders/reminder.defaults';
 import type { ReminderType } from '../features/reminders/reminder.types';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 
 type ReminderSchedulePreviewProps = {
   dueDate: string;
@@ -25,6 +25,8 @@ export function ReminderSchedulePreview({
   selectedOffsets,
   type,
 }: ReminderSchedulePreviewProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const preview = buildReminderSchedulePreview({ dueDate, selectedOffsets, type });
   const hasItems = preview.items.length > 0;
   const isEditable = Boolean(onToggleOffset);
@@ -80,7 +82,11 @@ export function ReminderSchedulePreview({
       {hasItems ? (
         <View style={styles.timeline}>
           {preview.items.map((item) => (
-            <SchedulePreviewRow key={`${item.offsetLabel}-${item.dateLabel}`} item={item} />
+            <SchedulePreviewRow
+              key={`${item.offsetLabel}-${item.dateLabel}`}
+              item={item}
+              styles={styles}
+            />
           ))}
         </View>
       ) : (
@@ -92,7 +98,13 @@ export function ReminderSchedulePreview({
   );
 }
 
-function SchedulePreviewRow({ item }: { item: ReminderSchedulePreviewItem }) {
+function SchedulePreviewRow({
+  item,
+  styles,
+}: {
+  item: ReminderSchedulePreviewItem;
+  styles: ReturnType<typeof createStyles>;
+}) {
   return (
     <View style={styles.row}>
       <View style={styles.dotWrap}>
@@ -109,161 +121,157 @@ function SchedulePreviewRow({ item }: { item: ReminderSchedulePreviewItem }) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    gap: 13,
-    padding: 15,
-  },
-  countBadge: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 999,
-    paddingHorizontal: 11,
-    paddingVertical: 7,
-  },
-  countBadgeActive: {
-    backgroundColor: colors.primarySoft,
-  },
-  countText: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  countTextActive: {
-    color: colors.primary,
-  },
-  datetime: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: 3,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  dot: {
-    backgroundColor: colors.primary,
-    borderRadius: 5,
-    height: 10,
-    width: 10,
-  },
-  dotWrap: {
-    alignItems: 'center',
-    paddingTop: 5,
-    width: 18,
-  },
-  emptyLine: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 14,
-    padding: 13,
-  },
-  emptyText: {
-    color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  eyebrow: {
-    color: colors.primary,
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  header: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  line: {
-    backgroundColor: colors.border,
-    flex: 1,
-    marginTop: 4,
-    minHeight: 18,
-    width: 2,
-  },
-  offset: {
-    color: colors.textPrimary,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  rowBody: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 14,
-    flex: 1,
-    padding: 12,
-  },
-  timeline: {
-    gap: 2,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-    marginTop: 3,
-  },
-  toggleChip: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: 999,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 7,
-    paddingHorizontal: 11,
-    paddingVertical: 9,
-  },
-  toggleChipActive: {
-    backgroundColor: colors.primarySoft,
-    borderColor: colors.primary,
-  },
-  toggleChipContainer: {
-    flexGrow: 1,
-  },
-  toggleDot: {
-    backgroundColor: colors.textMuted,
-    borderRadius: 4,
-    height: 8,
-    width: 8,
-  },
-  toggleDotActive: {
-    backgroundColor: colors.primary,
-  },
-  toggleGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 9,
-  },
-  toggleHint: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '700',
-    lineHeight: 18,
-  },
-  toggleLabel: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  toggleLabelActive: {
-    color: colors.primary,
-  },
-  togglePanel: {
-    gap: 9,
-  },
-  toggleState: {
-    color: colors.textMuted,
-    fontSize: 11,
-    fontWeight: '900',
-  },
-  toggleStateActive: {
-    color: colors.primary,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.md,
+      padding: 14,
+    },
+    countBadge: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    countBadgeActive: {
+      backgroundColor: colors.primarySoft,
+    },
+    countText: {
+      color: colors.textMuted,
+      ...typography.label,
+    },
+    countTextActive: {
+      color: colors.primary,
+    },
+    datetime: {
+      color: colors.textSecondary,
+      ...typography.helper,
+      marginTop: 2,
+    },
+    description: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    dot: {
+      backgroundColor: colors.primary,
+      borderRadius: 4,
+      height: 8,
+      width: 8,
+    },
+    dotWrap: {
+      alignItems: 'center',
+      paddingTop: 6,
+      width: 16,
+    },
+    emptyLine: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
+      padding: spacing.md,
+    },
+    emptyText: {
+      color: colors.textMuted,
+      textAlign: 'center',
+      ...typography.helper,
+    },
+    eyebrow: {
+      color: colors.primary,
+      ...typography.label,
+    },
+    header: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    line: {
+      backgroundColor: colors.border,
+      flex: 1,
+      marginTop: 4,
+      minHeight: 16,
+      width: 2,
+    },
+    offset: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    rowBody: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
+      flex: 1,
+      padding: spacing.md,
+    },
+    timeline: {
+      gap: 2,
+    },
+    title: {
+      color: colors.textPrimary,
+      marginTop: 2,
+      ...typography.cardTitle,
+    },
+    toggleChip: {
+      alignItems: 'center',
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 7,
+      minHeight: 34,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
+    },
+    toggleChipActive: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+    },
+    toggleChipContainer: {
+      flexGrow: 1,
+    },
+    toggleDot: {
+      backgroundColor: colors.textMuted,
+      borderRadius: 4,
+      height: 8,
+      width: 8,
+    },
+    toggleDotActive: {
+      backgroundColor: colors.primary,
+    },
+    toggleGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    toggleHint: {
+      color: colors.textMuted,
+      ...typography.label,
+    },
+    toggleLabel: {
+      color: colors.textSecondary,
+      ...typography.label,
+    },
+    toggleLabelActive: {
+      color: colors.primary,
+    },
+    togglePanel: {
+      gap: spacing.sm,
+    },
+    toggleState: {
+      color: colors.textMuted,
+      fontSize: 11,
+      fontWeight: '500',
+      lineHeight: 15,
+    },
+    toggleStateActive: {
+      color: colors.primary,
+    },
+  });
+}

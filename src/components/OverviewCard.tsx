@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 
 type OverviewCardProps = {
   nextSevenDays: number;
@@ -8,18 +8,31 @@ type OverviewCardProps = {
 };
 
 export function OverviewCard({ nextSevenDays, thisMonth, overdue }: OverviewCardProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.card}>
-      <Metric label="最近 7 天" value={nextSevenDays} />
+      <Metric label="最近 7 天" styles={styles} value={nextSevenDays} />
       <View style={styles.divider} />
-      <Metric label="本月将到期" value={thisMonth} />
+      <Metric label="本月将到期" styles={styles} value={thisMonth} />
       <View style={styles.divider} />
-      <Metric label="已逾期" value={overdue} danger={overdue > 0} />
+      <Metric danger={overdue > 0} label="已逾期" styles={styles} value={overdue} />
     </View>
   );
 }
 
-function Metric({ label, value, danger }: { label: string; value: number; danger?: boolean }) {
+function Metric({
+  danger,
+  label,
+  styles,
+  value,
+}: {
+  danger?: boolean;
+  label: string;
+  styles: ReturnType<typeof createStyles>;
+  value: number;
+}) {
   return (
     <View style={styles.metric}>
       <Text style={[styles.value, danger && styles.danger]}>{value}</Text>
@@ -28,36 +41,39 @@ function Metric({ label, value, danger }: { label: string; value: number; danger
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 8,
-    borderWidth: 1,
-    flexDirection: 'row',
-    padding: 16,
-  },
-  danger: {
-    color: colors.overdue,
-  },
-  divider: {
-    backgroundColor: colors.border,
-    height: 32,
-    width: 1,
-  },
-  label: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    marginTop: 2,
-  },
-  metric: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  value: {
-    color: colors.textPrimary,
-    fontSize: 24,
-    fontWeight: '800',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    card: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      flexDirection: 'row',
+      padding: spacing.lg,
+    },
+    danger: {
+      color: colors.overdue,
+    },
+    divider: {
+      backgroundColor: colors.border,
+      height: 30,
+      width: 1,
+    },
+    label: {
+      color: colors.textSecondary,
+      marginTop: 1,
+      ...typography.label,
+    },
+    metric: {
+      alignItems: 'center',
+      flex: 1,
+    },
+    value: {
+      color: colors.textPrimary,
+      ...typography.metric,
+    },
+  });
+}

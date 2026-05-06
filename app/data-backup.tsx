@@ -10,9 +10,12 @@ import { exportRemindersBackup, parseRemindersBackup } from '../src/features/dat
 import { getScreenshotDemoReminders } from '../src/features/launch/demo-data';
 import { type ReminderFeedback } from '../src/features/reminders/reminder.feedback';
 import { reminderRepository } from '../src/storage/reminder.store';
-import { colors } from '../src/theme/colors';
+import { useTheme, type AppTheme } from '../src/theme/ThemeProvider';
 
 export default function DataBackupScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
   const [backupText, setBackupText] = useState('');
   const [importText, setImportText] = useState('');
   const [feedback, setFeedback] = useState<ReminderFeedback | null>(null);
@@ -124,71 +127,70 @@ export default function DataBackupScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  backupText: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 14,
-    color: colors.textSecondary,
-    fontFamily: 'monospace',
-    fontSize: 12,
-    lineHeight: 17,
-    maxHeight: 260,
-    padding: 12,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    gap: 12,
-    padding: 16,
-  },
-  cardText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  cardTitle: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  content: {
-    gap: 16,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  importInput: {
-    minHeight: 150,
-    textAlignVertical: 'top',
-  },
-  input: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: 14,
-    borderWidth: 1,
-    color: colors.textPrimary,
-    fontSize: 14,
-    lineHeight: 20,
-    padding: 14,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 6,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '900',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    backupText: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
+      color: colors.textSecondary,
+      fontFamily: 'monospace',
+      fontSize: 12,
+      lineHeight: 17,
+      maxHeight: 260,
+      padding: spacing.md,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.md,
+      padding: spacing.lg,
+    },
+    cardText: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    cardTitle: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    importInput: {
+      minHeight: 150,
+      textAlignVertical: 'top',
+    },
+    input: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      color: colors.textPrimary,
+      padding: spacing.md,
+      ...typography.body,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

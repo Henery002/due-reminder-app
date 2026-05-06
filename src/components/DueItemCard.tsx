@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import type { ReminderItem } from '../features/reminders/reminder.types';
 import { getReminderStatusLabel, getReminderTypeMeta } from '../features/reminders/reminder.view';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { IconGlyph } from './IconGlyph';
 import { PressableScale } from './PressableScale';
 import { StatusBadge } from './StatusBadge';
@@ -22,6 +22,9 @@ type DueItemCardProps = {
 };
 
 export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
   const typeMeta = getReminderTypeMeta(item.type);
   const pressScale = useRef(new Animated.Value(1)).current;
 
@@ -102,110 +105,111 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
   );
 }
 
-const styles = StyleSheet.create({
-  actionButton: {
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 999,
-    flexDirection: 'row',
-    gap: 8,
-    minHeight: 42,
-    paddingHorizontal: 13,
-    paddingVertical: 8,
-  },
-  actionPressed: {
-    opacity: 0.84,
-  },
-  actionText: {
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 14,
-  },
-  doneAction: {
-    backgroundColor: colors.doneSoft,
-    borderColor: colors.doneSoft,
-  },
-  doneActionText: {
-    color: colors.done,
-  },
-  doneIconPuck: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 999,
-    height: 24,
-    justifyContent: 'center',
-    width: 24,
-  },
-  amount: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    marginTop: 12,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    padding: 15,
-  },
-  cardMotion: {
-    elevation: 2,
-    shadowColor: '#1F2A2A',
-    shadowOffset: { height: 8, width: 0 },
-    shadowOpacity: 0.07,
-    shadowRadius: 18,
-  },
-  date: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    marginTop: 3,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
-  },
-  iconWrap: {
-    alignItems: 'center',
-    borderRadius: 13,
-    height: 38,
-    justifyContent: 'center',
-    width: 38,
-  },
-  pressed: {
-    borderColor: colors.primarySoft,
-    opacity: 0.94,
-  },
-  snoozeAction: {
-    backgroundColor: colors.dueSoonSoft,
-    borderColor: colors.dueSoonSoft,
-  },
-  snoozeActionText: {
-    color: colors.dueSoon,
-  },
-  snoozeIconPuck: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 999,
-    height: 24,
-    justifyContent: 'center',
-    width: 24,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  titleWrap: {
-    flex: 1,
-  },
-  typeLabel: {
-    fontSize: 12,
-    fontWeight: '900',
-    marginBottom: 2,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    actionButton: {
+      alignItems: 'center',
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 7,
+      minHeight: 36,
+      paddingHorizontal: 11,
+      paddingVertical: 6,
+    },
+    actionPressed: {
+      opacity: 0.84,
+    },
+    actionText: {
+      ...typography.label,
+    },
+    actions: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      marginTop: spacing.md,
+    },
+    amount: {
+      color: colors.textSecondary,
+      ...typography.helper,
+      marginTop: spacing.sm,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      padding: 14,
+    },
+    cardMotion: {
+      elevation: 2,
+      shadowColor: colors.cardShadow,
+      shadowOffset: { height: 6, width: 0 },
+      shadowOpacity: theme.colorScheme === 'dark' ? 0.18 : 0.06,
+      shadowRadius: 14,
+    },
+    date: {
+      color: colors.textSecondary,
+      ...typography.helper,
+      marginTop: 2,
+    },
+    doneAction: {
+      backgroundColor: colors.doneSoft,
+      borderColor: colors.doneSoft,
+    },
+    doneActionText: {
+      color: colors.done,
+    },
+    doneIconPuck: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: radius.pill,
+      height: 22,
+      justifyContent: 'center',
+      width: 22,
+    },
+    header: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    iconWrap: {
+      alignItems: 'center',
+      borderRadius: radius.md,
+      height: 36,
+      justifyContent: 'center',
+      width: 36,
+    },
+    pressed: {
+      borderColor: colors.primarySoft,
+      opacity: 0.94,
+    },
+    snoozeAction: {
+      backgroundColor: colors.dueSoonSoft,
+      borderColor: colors.dueSoonSoft,
+    },
+    snoozeActionText: {
+      color: colors.dueSoon,
+    },
+    snoozeIconPuck: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: radius.pill,
+      height: 22,
+      justifyContent: 'center',
+      width: 22,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    titleWrap: {
+      flex: 1,
+    },
+    typeLabel: {
+      ...typography.label,
+      marginBottom: 1,
+    },
+  });
+}

@@ -1,5 +1,5 @@
 import { StyleSheet, Text } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { IconGlyph } from './IconGlyph';
 import { PressableScale } from './PressableScale';
 
@@ -8,6 +8,9 @@ type PermissionBannerProps = {
 };
 
 export function PermissionBanner({ onPress }: PermissionBannerProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   return (
     <PressableScale
       accessibilityRole="button"
@@ -22,27 +25,30 @@ export function PermissionBanner({ onPress }: PermissionBannerProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  banner: {
-    alignItems: 'center',
-    backgroundColor: colors.dueSoonSoft,
-    borderRadius: 16,
-    flexDirection: 'row',
-    gap: 10,
-    padding: 14,
-  },
-  arrow: {
-    color: colors.textMuted,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  pressed: {
-    opacity: 0.82,
-  },
-  text: {
-    color: colors.textPrimary,
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    banner: {
+      alignItems: 'center',
+      backgroundColor: colors.dueSoonSoft,
+      borderRadius: radius.lg,
+      flexDirection: 'row',
+      gap: spacing.sm,
+      padding: spacing.md,
+    },
+    arrow: {
+      color: colors.textMuted,
+      fontSize: 20,
+      fontWeight: '500',
+    },
+    pressed: {
+      opacity: 0.82,
+    },
+    text: {
+      color: colors.textPrimary,
+      flex: 1,
+      ...typography.bodyStrong,
+    },
+  });
+}

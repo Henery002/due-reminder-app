@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeProvider';
 
 type IconGlyphProps = {
   label: string;
@@ -8,16 +8,19 @@ type IconGlyphProps = {
   size?: number;
 };
 
-const toneColor = {
-  primary: colors.primary,
-  done: colors.done,
-  dueSoon: colors.dueSoon,
-} as const;
-
 export function IconGlyph({ label, color, tone = 'primary', size = 18 }: IconGlyphProps) {
+  const { colors } = useTheme();
+  const toneColor = {
+    done: colors.done,
+    dueSoon: colors.dueSoon,
+    primary: colors.primary,
+  } as const;
+
   return (
     <View style={[styles.wrap, { height: size + 16, width: size + 16 }]}>
-      <Text style={[styles.text, { color: color ?? toneColor[tone], fontSize: Math.max(12, size - 4) }]}>
+      <Text
+        style={[styles.text, { color: color ?? toneColor[tone], fontSize: Math.max(12, size - 4) }]}
+      >
         {label}
       </Text>
     </View>

@@ -39,6 +39,14 @@ export function getSettingsActions(): SettingsAction[] {
   ];
 }
 
+export function getVisualSystemSummary(): string[] {
+  return [
+    '页面标题默认 24 号、700 字重，不再使用大字全粗模式。',
+    '普通卡片、按钮和列表行使用更克制的内边距与圆角。',
+    '外观支持跟随系统、浅色、深色和多主题色配置。',
+  ];
+}
+
 export function getFeedbackChannels(): FeedbackChannel[] {
   return [
     {

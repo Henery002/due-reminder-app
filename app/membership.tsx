@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MembershipCard } from '../src/components/MembershipCard';
 import { ScreenHeader } from '../src/components/ScreenHeader';
 import { getMembershipPlans } from '../src/features/membership/membership.plan';
-import { colors } from '../src/theme/colors';
+import { useTheme, type AppTheme } from '../src/theme/ThemeProvider';
 
 export default function MembershipScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const plans = getMembershipPlans();
 
   return (
@@ -42,82 +44,80 @@ export default function MembershipScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    gap: 16,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  badge: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: 999,
-    color: colors.primary,
-    fontSize: 12,
-    fontWeight: '900',
-    overflow: 'hidden',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  feature: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 10,
-    color: colors.textPrimary,
-    fontSize: 14,
-    fontWeight: '800',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  featureList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 14,
-  },
-  planCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-  },
-  planDescription: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 8,
-  },
-  planHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'space-between',
-  },
-  planTitle: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  proBadge: {
-    backgroundColor: colors.dueSoonSoft,
-    color: colors.dueSoon,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 6,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '800',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    badge: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.pill,
+      color: colors.primary,
+      overflow: 'hidden',
+      paddingHorizontal: 9,
+      paddingVertical: 4,
+      ...typography.label,
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    feature: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.md,
+      color: colors.textPrimary,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 8,
+      ...typography.bodyStrong,
+    },
+    featureList: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+      marginTop: spacing.md,
+    },
+    planCard: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      padding: spacing.lg,
+    },
+    planDescription: {
+      color: colors.textSecondary,
+      marginTop: spacing.sm,
+      ...typography.body,
+    },
+    planHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: spacing.sm,
+      justifyContent: 'space-between',
+    },
+    planTitle: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    proBadge: {
+      backgroundColor: colors.dueSoonSoft,
+      color: colors.dueSoon,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

@@ -29,7 +29,7 @@ import { parseOptionalReminderAmount } from '../../src/features/reminders/remind
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
 import type { ReminderItem, ReminderType } from '../../src/features/reminders/reminder.types';
 import { reminderRepository } from '../../src/storage/reminder.store';
-import { colors } from '../../src/theme/colors';
+import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 const typeOptions: Array<{ label: string; value: ReminderType }> = [
   { label: '订阅', value: 'subscription' },
@@ -48,6 +48,9 @@ function waitForFeedbackTransition(): Promise<void> {
 }
 
 export default function EditItemScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const reminderId = readRouteId(params.id);
   const [item, setItem] = useState<ReminderItem | undefined>();
@@ -317,72 +320,76 @@ export default function EditItemScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    gap: 18,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 8,
-    borderWidth: 1,
-    color: colors.textPrimary,
-    fontSize: 16,
-    padding: 14,
-  },
-  notFound: {
-    flex: 1,
-    gap: 18,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  noteInput: {
-    minHeight: 82,
-    textAlignVertical: 'top',
-  },
-  pills: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  secondaryButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    padding: 15,
-  },
-  secondaryButtonText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  section: {
-    gap: 10,
-  },
-  sectionTitle: {
-    color: colors.textPrimary,
-    fontSize: 17,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 6,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '800',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    input: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      color: colors.textPrimary,
+      minHeight: 44,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 11,
+      ...typography.body,
+    },
+    notFound: {
+      flex: 1,
+      gap: spacing.lg,
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    noteInput: {
+      minHeight: 78,
+      textAlignVertical: 'top',
+    },
+    pills: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    secondaryButton: {
+      backgroundColor: colors.primary,
+      borderRadius: radius.lg,
+      minHeight: 44,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: 12,
+    },
+    secondaryButtonText: {
+      color: colors.surface,
+      textAlign: 'center',
+      ...typography.bodyStrong,
+    },
+    section: {
+      gap: spacing.sm,
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      ...typography.sectionTitle,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

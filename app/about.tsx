@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from '../src/components/ScreenHeader';
 import { getLegalActions } from '../src/features/legal/legal.content';
 import { getAboutSections } from '../src/features/settings/settings.content';
-import { colors } from '../src/theme/colors';
+import { useTheme, type AppTheme } from '../src/theme/ThemeProvider';
 
 export default function AboutScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const sections = getAboutSections();
   const legalActions = getLegalActions();
 
@@ -44,73 +46,70 @@ export default function AboutScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    gap: 8,
-    padding: 16,
-  },
-  cardText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 22,
-  },
-  cardTitle: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  content: {
-    gap: 16,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  hero: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: 24,
-    gap: 8,
-    padding: 20,
-  },
-  heroKicker: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: '900',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-  },
-  groupTitle: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  legalGroup: {
-    gap: 10,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 29,
-    fontWeight: '900',
-  },
-  version: {
-    color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.sm,
+      padding: spacing.lg,
+    },
+    cardText: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    cardTitle: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    groupTitle: {
+      color: colors.textPrimary,
+      ...typography.sectionTitle,
+    },
+    hero: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.xl,
+      gap: spacing.sm,
+      padding: spacing.lg,
+    },
+    heroKicker: {
+      color: colors.primary,
+      letterSpacing: 0.6,
+      textTransform: 'uppercase',
+      ...typography.label,
+    },
+    legalGroup: {
+      gap: spacing.sm,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+    version: {
+      color: colors.textMuted,
+      textAlign: 'center',
+      ...typography.label,
+    },
+  });
+}

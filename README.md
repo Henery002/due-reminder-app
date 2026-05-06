@@ -40,3 +40,15 @@ Development build 流程见：
 3. `src/components/` 放页面无关组件
 4. `src/storage/` 放本地存储
 5. `src/theme/` 放设计 token
+
+## 视觉系统
+
+后续 UI 迭代先阅读：
+
+1. `docs/design/VISUAL_SYSTEM_GUIDE.md`
+
+当前原则：
+
+1. 不再采用“大字全粗”模式
+2. 优先使用 `useTheme()` 和主题 token
+3. 同时维护浅色、深色和主题色切换体验

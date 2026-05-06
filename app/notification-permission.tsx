@@ -17,9 +17,11 @@ import {
   scheduleTestNotification,
 } from '../src/features/notifications/notification.service';
 import type { NotificationPermissionStatus } from '../src/features/notifications/notification.types';
-import { colors } from '../src/theme/colors';
+import { useTheme, type AppTheme } from '../src/theme/ThemeProvider';
 
 export default function NotificationPermissionScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const [permission, setPermission] = useState<NotificationPermissionStatus | undefined>();
   const [runtimeInfo, setRuntimeInfo] = useState<NotificationRuntimeInfo>(
     getExpoNotificationRuntimeInfo(),
@@ -121,51 +123,52 @@ export default function NotificationPermissionScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    gap: 16,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  copy: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  panel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 6,
-    padding: 16,
-  },
-  panelHint: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 20,
-  },
-  panelLabel: {
-    color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  panelValue: {
-    color: colors.textPrimary,
-    fontSize: 20,
-    fontWeight: '800',
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '800',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    copy: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    panel: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      gap: spacing.xs,
+      padding: spacing.lg,
+    },
+    panelHint: {
+      color: colors.textSecondary,
+      ...typography.helper,
+    },
+    panelLabel: {
+      color: colors.textMuted,
+      ...typography.label,
+    },
+    panelValue: {
+      color: colors.textPrimary,
+      fontSize: 18,
+      fontWeight: '700',
+      lineHeight: 24,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

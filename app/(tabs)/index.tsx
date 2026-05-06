@@ -33,7 +33,7 @@ import {
   type ReminderTypeFilter,
 } from '../../src/features/reminders/reminder.view';
 import { reminderRepository } from '../../src/storage/reminder.store';
-import { colors } from '../../src/theme/colors';
+import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 const categoryOptions: Array<{ label: string; value: ReminderTypeFilter }> = [
   { label: '全部', value: 'all' },
@@ -43,6 +43,9 @@ const categoryOptions: Array<{ label: string; value: ReminderTypeFilter }> = [
 ];
 
 export default function HomeScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
   const [items, setItems] = useState<ReminderItem[]>([]);
   const [selectedType, setSelectedType] = useState<ReminderTypeFilter>('all');
   const [snoozeTarget, setSnoozeTarget] = useState<ReminderItem | null>(null);
@@ -138,6 +141,7 @@ export default function HomeScreen() {
                   onOpen={(item) => router.push(`/item/${item.id}`)}
                   onSnooze={(item) => setSnoozeTarget(item)}
                   section={section}
+                  styles={styles}
                 />
               ))}
             </View>
@@ -178,11 +182,13 @@ function HomeReminderSectionView({
   onOpen,
   onSnooze,
   section,
+  styles,
 }: {
   onDone: (item: ReminderItem) => void;
   onOpen: (item: ReminderItem) => void;
   onSnooze: (item: ReminderItem) => void;
   section: HomeReminderSection;
+  styles: ReturnType<typeof createStyles>;
 }) {
   return (
     <View style={styles.group}>
@@ -212,126 +218,124 @@ function HomeReminderSectionView({
   );
 }
 
-const styles = StyleSheet.create({
-  calmBadge: {
-    backgroundColor: colors.doneSoft,
-  },
-  calmBadgeText: {
-    color: colors.done,
-  },
-  content: {
-    gap: 18,
-    padding: 20,
-    paddingBottom: 112,
-  },
-  eyebrow: {
-    color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  header: {
-    gap: 6,
-  },
-  dangerBadge: {
-    backgroundColor: colors.overdueSoft,
-  },
-  dangerBadgeText: {
-    color: colors.overdue,
-  },
-  group: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 22,
-    borderWidth: 1,
-    gap: 12,
-    padding: 14,
-  },
-  groupBadge: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  groupBadgeText: {
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  groupDescription: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 4,
-  },
-  groupHeader: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'space-between',
-  },
-  groupTitle: {
-    color: colors.textPrimary,
-    fontSize: 17,
-    fontWeight: '900',
-  },
-  groupTitleWrap: {
-    flex: 1,
-  },
-  list: {
-    gap: 12,
-  },
-  pills: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  primaryAction: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '800',
-    overflow: 'hidden',
-    padding: 15,
-    textAlign: 'center',
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  section: {
-    gap: 12,
-  },
-  sectionList: {
-    gap: 14,
-  },
-  sectionTitle: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '800',
-  },
-  primaryBadge: {
-    backgroundColor: colors.primarySoft,
-  },
-  primaryBadgeText: {
-    color: colors.primary,
-  },
-  warmBadge: {
-    backgroundColor: colors.dueSoonSoft,
-  },
-  warmBadgeText: {
-    color: colors.dueSoon,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    calmBadge: {
+      backgroundColor: colors.doneSoft,
+    },
+    calmBadgeText: {
+      color: colors.done,
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 104,
+    },
+    dangerBadge: {
+      backgroundColor: colors.overdueSoft,
+    },
+    dangerBadgeText: {
+      color: colors.overdue,
+    },
+    eyebrow: {
+      color: colors.textMuted,
+      ...typography.label,
+    },
+    group: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.md,
+      padding: 14,
+    },
+    groupBadge: {
+      borderRadius: radius.pill,
+      paddingHorizontal: 9,
+      paddingVertical: 5,
+    },
+    groupBadgeText: {
+      ...typography.label,
+    },
+    groupDescription: {
+      color: colors.textSecondary,
+      ...typography.helper,
+      marginTop: 2,
+    },
+    groupHeader: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      gap: spacing.sm,
+      justifyContent: 'space-between',
+    },
+    groupTitle: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    groupTitleWrap: {
+      flex: 1,
+    },
+    header: {
+      gap: spacing.xs,
+    },
+    list: {
+      gap: spacing.md,
+    },
+    pills: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    primaryAction: {
+      backgroundColor: colors.primary,
+      borderRadius: radius.lg,
+      color: colors.surface,
+      minHeight: 44,
+      overflow: 'hidden',
+      paddingHorizontal: spacing.lg,
+      paddingVertical: 12,
+      textAlign: 'center',
+      ...typography.bodyStrong,
+    },
+    primaryBadge: {
+      backgroundColor: colors.primarySoft,
+    },
+    primaryBadgeText: {
+      color: colors.primary,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    sectionList: {
+      gap: spacing.md,
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      ...typography.sectionTitle,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+    warmBadge: {
+      backgroundColor: colors.dueSoonSoft,
+    },
+    warmBadgeText: {
+      color: colors.dueSoon,
+    },
+  });
+}

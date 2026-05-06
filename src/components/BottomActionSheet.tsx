@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 
 type BottomActionSheetProps = {
   actions: Array<{
@@ -12,6 +12,9 @@ type BottomActionSheetProps = {
 };
 
 export function BottomActionSheet({ title, actions, onCancel }: BottomActionSheetProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.sheet}>
       <Text style={styles.title}>{title}</Text>
@@ -32,43 +35,43 @@ export function BottomActionSheet({ title, actions, onCancel }: BottomActionShee
   );
 }
 
-const styles = StyleSheet.create({
-  action: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 12,
-    gap: 4,
-    padding: 13,
-  },
-  actionDescription: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  actionText: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  cancelAction: {
-    alignItems: 'center',
-    padding: 10,
-  },
-  cancelText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    gap: 10,
-    padding: 16,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 17,
-    fontWeight: '900',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    action: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.md,
+      gap: spacing.xs,
+      padding: spacing.md,
+    },
+    actionDescription: {
+      color: colors.textSecondary,
+      ...typography.helper,
+    },
+    actionText: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    cancelAction: {
+      alignItems: 'center',
+      padding: 10,
+    },
+    cancelText: {
+      color: colors.textSecondary,
+      ...typography.bodyStrong,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.sm,
+      padding: spacing.lg,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+  });
+}

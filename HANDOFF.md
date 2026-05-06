@@ -75,6 +75,8 @@
 47. 二级页面已新增 `ScreenHeader` 显式返回入口，覆盖添加/编辑事项、会员权益、数据备份、反馈建议、通知权限、关于应用、合规说明页面
 48. 视觉资源与动效设计原则已补充到 `docs/launch/VISUAL_ASSETS_DIRECTION.md`；正式应用图标和截图采集后续单独迭代
 49. 新建页和编辑页已支持默认提醒点开关：用户可以关闭某个默认提醒点，保存时只生成开启项对应的本地通知规则；当前不做自定义提前天数，不改数据库 schema，UI 至少保留一个默认提醒点
+50. 已新增视觉系统整改规范 `docs/design/VISUAL_SYSTEM_GUIDE.md`，明确页面标题、卡片标题、正文、标签、按钮高度、卡片边距和圆角规范；后续不要继续新增大字号、`900` 字重和厚重卡片
+51. 已新增外观主题架构：`AppThemeProvider`、`useTheme`、`useAppearanceSettings`、SQLite `app_preferences` 表；我的页可配置跟随系统/浅色/深色和青绿、蓝色、柔黄、浅绿主题色
 
 ## 近期功能变更文件
 
@@ -152,6 +154,12 @@
 72. `app/(tabs)/me.tsx`
 73. `docs/launch/VISUAL_ASSETS_DIRECTION.md`
 74. `src/features/reminders/reminder.defaults.ts`
+75. `docs/design/VISUAL_SYSTEM_GUIDE.md`
+76. `src/features/appearance/appearance.theme.ts`
+77. `src/features/appearance/appearance.types.ts`
+78. `src/theme/ThemeProvider.tsx`
+79. `src/storage/preference.repository.ts`
+80. `src/storage/preference.store.ts`
 
 ## 后续补测清单
 

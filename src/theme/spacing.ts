@@ -1,8 +1,5 @@
-export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
-  xxl: 32,
-} as const;
+import { themeRadii, themeSizes, themeSpacing } from '../features/appearance/appearance.theme';
+
+export const spacing = themeSpacing;
+export const radii = themeRadii;
+export const sizes = themeSizes;

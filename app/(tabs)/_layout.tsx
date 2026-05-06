@@ -2,19 +2,23 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Animated, Pressable, StyleSheet, type PressableProps } from 'react-native';
-import { colors } from '../../src/theme/colors';
+import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 export default function TabsLayout() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarButton: (props) => <AnimatedTabButton {...props} />,
+        tabBarButton: (props) => <AnimatedTabButton {...props} styles={styles} />,
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '900',
+          fontWeight: '600',
         },
         tabBarStyle: {
           backgroundColor: colors.surface,
@@ -22,16 +26,16 @@ export default function TabsLayout() {
           borderTopWidth: 0,
           bottom: 12,
           elevation: 8,
-          height: 70,
+          height: 64,
           left: 16,
-          paddingBottom: 8,
-          paddingTop: 8,
+          paddingBottom: 6,
+          paddingTop: 6,
           position: 'absolute',
           right: 16,
-          borderRadius: 26,
-          shadowColor: '#1F2A2A',
+          borderRadius: 24,
+          shadowColor: colors.cardShadow,
           shadowOffset: { height: 8, width: 0 },
-          shadowOpacity: 0.1,
+          shadowOpacity: theme.colorScheme === 'dark' ? 0.24 : 0.1,
           shadowRadius: 20,
         },
       }}
@@ -84,9 +88,10 @@ function AnimatedTabButton({
   children,
   onPressIn,
   onPressOut,
+  styles,
   style,
   ...rest
-}: PressableProps & { children?: ReactNode }) {
+}: PressableProps & { children?: ReactNode; styles: ReturnType<typeof createStyles> }) {
   const selected = Boolean(accessibilityState?.selected);
   const selectedValue = useRef(new Animated.Value(selected ? 1 : 0)).current;
   const pressValue = useRef(new Animated.Value(1)).current;
@@ -150,18 +155,22 @@ function AnimatedTabButton({
   );
 }
 
-const styles = StyleSheet.create({
-  tabButton: {
-    alignItems: 'center',
-    borderRadius: 22,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  tabButtonMotion: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  tabButtonSelected: {
-    backgroundColor: colors.primarySoft,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius } = theme;
+
+  return StyleSheet.create({
+    tabButton: {
+      alignItems: 'center',
+      borderRadius: radius.xl,
+      flex: 1,
+      justifyContent: 'center',
+    },
+    tabButtonMotion: {
+      flex: 1,
+      marginHorizontal: 4,
+    },
+    tabButtonSelected: {
+      backgroundColor: colors.primarySoft,
+    },
+  });
+}

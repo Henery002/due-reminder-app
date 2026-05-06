@@ -6,7 +6,7 @@ import {
   shiftReminderDate,
   type ReminderDateUnit,
 } from '../features/reminders/reminder.date';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 
 type ReminderDatePickerProps = {
   value: string;
@@ -20,6 +20,8 @@ const controls: Array<{ label: string; unit: ReminderDateUnit }> = [
 ];
 
 export function ReminderDatePicker({ value, onChange }: ReminderDatePickerProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const quickOptions = getReminderDateQuickOptions();
   const calendar = buildReminderMonthCalendar(value);
 
@@ -110,149 +112,149 @@ export function ReminderDatePicker({ value, onChange }: ReminderDatePickerProps)
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: 14,
-    overflow: 'hidden',
-    padding: 14,
-  },
-  calendar: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 16,
-    gap: 10,
-    padding: 12,
-  },
-  calendarTitle: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  controlLabel: {
-    color: colors.textPrimary,
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  controlRow: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 12,
-    flex: 1,
-    gap: 10,
-    padding: 10,
-  },
-  controls: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  dayButton: {
-    alignItems: 'center',
-    aspectRatio: 1,
-    borderRadius: 12,
-    justifyContent: 'center',
-    width: '13.2%',
-  },
-  dayButtonMuted: {
-    opacity: 0.5,
-  },
-  dayButtonSelected: {
-    backgroundColor: colors.primary,
-  },
-  dayButtonToday: {
-    backgroundColor: colors.primarySoft,
-  },
-  dayGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 4,
-  },
-  dayText: {
-    color: colors.textPrimary,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  dayTextMuted: {
-    color: colors.textMuted,
-  },
-  dayTextSelected: {
-    color: colors.surface,
-  },
-  hero: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: 14,
-    gap: 5,
-    padding: 16,
-  },
-  heroDate: {
-    color: colors.textPrimary,
-    fontSize: 30,
-    fontWeight: '900',
-    letterSpacing: -0.5,
-  },
-  heroLabel: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  heroMeta: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  quickButton: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 13,
-    paddingVertical: 9,
-  },
-  quickButtonSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  quickGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 9,
-  },
-  quickText: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  quickTextSelected: {
-    color: colors.surface,
-  },
-  stepButton: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 10,
-    flex: 1,
-    justifyContent: 'center',
-    paddingVertical: 8,
-  },
-  stepper: {
-    flexDirection: 'row',
-    gap: 6,
-    width: '100%',
-  },
-  stepText: {
-    color: colors.primary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  weekday: {
-    color: colors.textMuted,
-    flex: 1,
-    fontSize: 12,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
-  weekRow: {
-    flexDirection: 'row',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    calendar: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.lg,
+      gap: spacing.sm,
+      padding: spacing.md,
+    },
+    calendarTitle: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      gap: spacing.md,
+      overflow: 'hidden',
+      padding: 14,
+    },
+    controlLabel: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
+    },
+    controlRow: {
+      alignItems: 'center',
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.md,
+      flex: 1,
+      gap: spacing.sm,
+      padding: 10,
+    },
+    controls: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    dayButton: {
+      alignItems: 'center',
+      aspectRatio: 1,
+      borderRadius: radius.md,
+      justifyContent: 'center',
+      width: '13.2%',
+    },
+    dayButtonMuted: {
+      opacity: 0.5,
+    },
+    dayButtonSelected: {
+      backgroundColor: colors.primary,
+    },
+    dayButtonToday: {
+      backgroundColor: colors.primarySoft,
+    },
+    dayGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.xs,
+    },
+    dayText: {
+      color: colors.textPrimary,
+      ...typography.label,
+    },
+    dayTextMuted: {
+      color: colors.textMuted,
+    },
+    dayTextSelected: {
+      color: colors.surface,
+    },
+    hero: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.lg,
+      gap: spacing.xs,
+      padding: spacing.lg,
+    },
+    heroDate: {
+      color: colors.textPrimary,
+      fontSize: 24,
+      fontWeight: '700',
+      letterSpacing: -0.3,
+      lineHeight: 31,
+    },
+    heroLabel: {
+      color: colors.primary,
+      ...typography.label,
+    },
+    heroMeta: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    quickButton: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      minHeight: 32,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 7,
+    },
+    quickButtonSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    quickGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    quickText: {
+      color: colors.textSecondary,
+      ...typography.label,
+    },
+    quickTextSelected: {
+      color: colors.surface,
+    },
+    stepButton: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
+      flex: 1,
+      justifyContent: 'center',
+      paddingVertical: 7,
+    },
+    stepper: {
+      flexDirection: 'row',
+      gap: 6,
+      width: '100%',
+    },
+    stepText: {
+      color: colors.primary,
+      fontSize: 17,
+      fontWeight: '600',
+      lineHeight: 22,
+    },
+    weekday: {
+      color: colors.textMuted,
+      flex: 1,
+      textAlign: 'center',
+      ...typography.label,
+    },
+    weekRow: {
+      flexDirection: 'row',
+    },
+  });
+}

@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 import { getSubmitActionState } from '../features/reminders/reminder.submit';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { PressableScale } from './PressableScale';
 
 type SubmitActionButtonProps = {
@@ -20,6 +20,8 @@ export function SubmitActionButton({
   onPress,
   variant = 'primary',
 }: SubmitActionButtonProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const state = getSubmitActionState({ disabled, label, loading, loadingLabel });
 
   return (
@@ -49,43 +51,46 @@ export function SubmitActionButton({
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    borderRadius: 16,
-    justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 18,
-    paddingVertical: 15,
-  },
-  danger: {
-    backgroundColor: colors.surface,
-    borderColor: colors.overdue,
-    borderWidth: 1,
-  },
-  dangerText: {
-    color: colors.overdue,
-  },
-  disabled: {
-    opacity: 0.58,
-  },
-  pressed: {
-    opacity: 0.86,
-    transform: [{ scale: 0.99 }],
-  },
-  primary: {
-    backgroundColor: colors.primary,
-  },
-  secondary: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  secondaryText: {
-    color: colors.textPrimary,
-  },
-  text: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, sizes, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    button: {
+      alignItems: 'center',
+      borderRadius: radius.lg,
+      justifyContent: 'center',
+      minHeight: sizes.buttonHeight,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: 11,
+    },
+    danger: {
+      backgroundColor: colors.surface,
+      borderColor: colors.overdue,
+      borderWidth: 1,
+    },
+    dangerText: {
+      color: colors.overdue,
+    },
+    disabled: {
+      opacity: 0.58,
+    },
+    pressed: {
+      opacity: 0.86,
+      transform: [{ scale: 0.99 }],
+    },
+    primary: {
+      backgroundColor: colors.primary,
+    },
+    secondary: {
+      backgroundColor: colors.surfaceMuted,
+    },
+    secondaryText: {
+      color: colors.textPrimary,
+    },
+    text: {
+      color: colors.surface,
+      ...typography.bodyStrong,
+      textAlign: 'center',
+    },
+  });
+}

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { IconGlyph } from './IconGlyph';
 
 type EmptyStateProps = {
@@ -21,6 +21,10 @@ export function EmptyState({
   onActionPress,
   title,
 }: EmptyStateProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const { colors } = theme;
+
   return (
     <View style={styles.empty}>
       <View style={styles.visualWrap}>
@@ -57,92 +61,92 @@ export function EmptyState({
   );
 }
 
-const styles = StyleSheet.create({
-  accentLabel: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: '900',
-    letterSpacing: 0.4,
-  },
-  action: {
-    backgroundColor: colors.textPrimary,
-    borderRadius: 999,
-    marginTop: 2,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-  },
-  actionPressed: {
-    opacity: 0.82,
-    transform: [{ scale: 0.98 }],
-  },
-  actionText: {
-    color: colors.surface,
-    fontSize: 14,
-    fontWeight: '900',
-  },
-  chip: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-  },
-  chipText: {
-    color: colors.primary,
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'center',
-    marginTop: 2,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    maxWidth: 290,
-    textAlign: 'center',
-  },
-  empty: {
-    alignItems: 'center',
-    backgroundColor: '#FBFDFB',
-    borderColor: colors.border,
-    borderRadius: 22,
-    borderWidth: 1,
-    gap: 10,
-    overflow: 'hidden',
-    padding: 24,
-  },
-  orbBack: {
-    backgroundColor: colors.dueSoonSoft,
-    borderRadius: 18,
-    height: 36,
-    left: 22,
-    position: 'absolute',
-    top: -2,
-    transform: [{ rotate: '10deg' }],
-    width: 36,
-  },
-  orbFront: {
-    alignItems: 'center',
-    backgroundColor: colors.primarySoft,
-    borderColor: colors.surface,
-    borderRadius: 18,
-    borderWidth: 2,
-    height: 52,
-    justifyContent: 'center',
-    width: 52,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 19,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
-  visualWrap: {
-    height: 56,
-    width: 72,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    accentLabel: {
+      color: colors.primary,
+      letterSpacing: 0.3,
+      ...typography.label,
+    },
+    action: {
+      backgroundColor: colors.textPrimary,
+      borderRadius: radius.pill,
+      marginTop: 2,
+      minHeight: 40,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: 10,
+    },
+    actionPressed: {
+      opacity: 0.82,
+      transform: [{ scale: 0.98 }],
+    },
+    actionText: {
+      color: colors.surface,
+      ...typography.bodyStrong,
+    },
+    chip: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: radius.pill,
+      paddingHorizontal: 9,
+      paddingVertical: 6,
+    },
+    chipText: {
+      color: colors.primary,
+      ...typography.label,
+    },
+    chips: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+      justifyContent: 'center',
+      marginTop: 2,
+    },
+    description: {
+      color: colors.textSecondary,
+      maxWidth: 290,
+      textAlign: 'center',
+      ...typography.body,
+    },
+    empty: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.sm,
+      overflow: 'hidden',
+      padding: spacing.xl,
+    },
+    orbBack: {
+      backgroundColor: colors.dueSoonSoft,
+      borderRadius: radius.lg,
+      height: 34,
+      left: 22,
+      position: 'absolute',
+      top: -2,
+      transform: [{ rotate: '10deg' }],
+      width: 34,
+    },
+    orbFront: {
+      alignItems: 'center',
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.surface,
+      borderRadius: radius.lg,
+      borderWidth: 2,
+      height: 50,
+      justifyContent: 'center',
+      width: 50,
+    },
+    title: {
+      color: colors.textPrimary,
+      textAlign: 'center',
+      ...typography.cardTitle,
+    },
+    visualWrap: {
+      height: 54,
+      width: 70,
+    },
+  });
+}

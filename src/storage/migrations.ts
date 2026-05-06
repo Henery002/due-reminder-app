@@ -16,5 +16,10 @@ export function runMigrations(database: SQLiteDatabase): void {
       completedAt TEXT,
       snoozedUntil TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS app_preferences (
+      key TEXT PRIMARY KEY NOT NULL,
+      value TEXT NOT NULL
+    );
   `);
 }

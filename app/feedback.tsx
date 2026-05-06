@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '../src/components/PressableScale';
 import { ScreenHeader } from '../src/components/ScreenHeader';
 import { getFeedbackChannels } from '../src/features/settings/settings.content';
-import { colors } from '../src/theme/colors';
+import { useTheme, type AppTheme } from '../src/theme/ThemeProvider';
 
 export default function FeedbackScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const channels = getFeedbackChannels();
 
   return (
@@ -44,67 +46,65 @@ export default function FeedbackScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  channelCard: {
-    backgroundColor: colors.primary,
-    borderRadius: 18,
-    gap: 6,
-    padding: 16,
-  },
-  channelText: {
-    color: colors.primarySoft,
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  channelTitle: {
-    color: colors.surface,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  content: {
-    gap: 16,
-    padding: 20,
-    paddingBottom: 36,
-  },
-  pressed: {
-    opacity: 0.86,
-    transform: [{ scale: 0.99 }],
-  },
-  promptCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    gap: 8,
-    padding: 16,
-  },
-  promptText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  promptTitle: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  safeArea: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 6,
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '900',
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    channelCard: {
+      backgroundColor: colors.primary,
+      borderRadius: radius.xl,
+      gap: spacing.xs,
+      padding: spacing.lg,
+    },
+    channelText: {
+      color: colors.primarySoft,
+      ...typography.body,
+    },
+    channelTitle: {
+      color: colors.surface,
+      ...typography.cardTitle,
+    },
+    content: {
+      gap: spacing.lg,
+      padding: spacing.lg,
+      paddingBottom: 32,
+    },
+    pressed: {
+      opacity: 0.86,
+      transform: [{ scale: 0.99 }],
+    },
+    promptCard: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      gap: spacing.sm,
+      padding: spacing.lg,
+    },
+    promptText: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    promptTitle: {
+      color: colors.textPrimary,
+      ...typography.cardTitle,
+    },
+    safeArea: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      ...typography.body,
+    },
+    title: {
+      color: colors.textPrimary,
+      ...typography.pageTitle,
+    },
+  });
+}

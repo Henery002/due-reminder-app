@@ -1,12 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { ReminderFeedback } from '../features/reminders/reminder.feedback';
-import { colors } from '../theme/colors';
+import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 
 type FeedbackBannerProps = {
   feedback: ReminderFeedback | null;
 };
 
 export function FeedbackBanner({ feedback }: FeedbackBannerProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
   if (!feedback) {
     return null;
   }
@@ -23,35 +26,37 @@ export function FeedbackBanner({ feedback }: FeedbackBannerProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  banner: {
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  success: {
-    backgroundColor: colors.doneSoft,
-    borderColor: '#CFEED8',
-  },
-  successTitle: {
-    color: colors.done,
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  warning: {
-    backgroundColor: colors.dueSoonSoft,
-    borderColor: '#FFE1B8',
-  },
-  warningTitle: {
-    color: colors.dueSoon,
-  },
-});
+function createStyles(theme: AppTheme) {
+  const { colors, radius, spacing, typography } = theme;
+
+  return StyleSheet.create({
+    banner: {
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      gap: spacing.xs,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 10,
+    },
+    description: {
+      color: colors.textSecondary,
+      ...typography.helper,
+    },
+    success: {
+      backgroundColor: colors.doneSoft,
+      borderColor: colors.doneSoft,
+    },
+    successTitle: {
+      color: colors.done,
+    },
+    title: {
+      ...typography.bodyStrong,
+    },
+    warning: {
+      backgroundColor: colors.dueSoonSoft,
+      borderColor: colors.dueSoonSoft,
+    },
+    warningTitle: {
+      color: colors.dueSoon,
+    },
+  });
+}
