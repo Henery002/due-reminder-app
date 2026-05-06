@@ -16,6 +16,7 @@ function item(overrides: Partial<ReminderItem>): ReminderItem {
     name: '视频会员',
     dueDate: '2026-05-10',
     status: 'active',
+    reminderMode: 'notify',
     reminderRules: [],
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),

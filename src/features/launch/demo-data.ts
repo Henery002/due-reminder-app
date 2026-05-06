@@ -67,6 +67,7 @@ export function getScreenshotDemoReminders(now = new Date()): ReminderItem[] {
       amount: seed.amount,
       note: seed.note,
       status: seed.daysFromNow < 0 ? 'overdue' : 'active',
+      reminderMode: 'notify',
       reminderRules:
         reminderRules.length > 0
           ? reminderRules

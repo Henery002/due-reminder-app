@@ -16,6 +16,7 @@ function item(overrides: Partial<ReminderItem> = {}): ReminderItem {
     name: '信用卡',
     dueDate: '2026-05-10',
     status: 'active',
+    reminderMode: 'notify',
     reminderRules: [
       {
         id: 'bill-2026-05-10-1',
@@ -157,6 +158,26 @@ describe('reminder notification actions', () => {
     );
   });
 
+  it('keeps record-only reminders from scheduling snooze notifications', async () => {
+    const gateway = createGateway();
+    const upsert = jest.fn();
+
+    await snoozeReminderWithNotifications(item({ reminderMode: 'record-only', reminderRules: [] }), 1, {
+      getNotificationGateway: async () => gateway,
+      now: baseDate,
+      upsert,
+    });
+
+    expect(gateway.scheduleNotificationAsync).not.toHaveBeenCalled();
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reminderMode: 'record-only',
+        reminderRules: [],
+      }),
+    );
+  });
+
+
   it('cancels old notifications and schedules new rules when updating reminder date', async () => {
     const gateway = createGateway();
     const upsert = jest.fn();
@@ -244,6 +265,36 @@ describe('reminder notification actions', () => {
     );
     const updated = upsert.mock.calls[0][0] as ReminderItem;
     expect(updated.reminderRules.map((rule) => rule.offsetDays)).toEqual([1, 0]);
+  });
+
+  it('updates reminder as record-only without scheduling new notifications', async () => {
+    const gateway = createGateway();
+    const upsert = jest.fn();
+
+    await updateReminderWithNotifications(
+      item(),
+      {
+        type: 'bill',
+        name: '信用卡年费',
+        dueDate: '2026-05-12',
+        reminderMode: 'record-only',
+        selectedReminderOffsets: [1, 0],
+      },
+      {
+        getNotificationGateway: async () => gateway,
+        now: baseDate,
+        upsert,
+      },
+    );
+
+    expect(gateway.cancelScheduledNotificationAsync).toHaveBeenCalledWith('notification-old');
+    expect(gateway.scheduleNotificationAsync).not.toHaveBeenCalled();
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reminderMode: 'record-only',
+        reminderRules: [],
+      }),
+    );
   });
 
   it('still updates reminder when notification runtime is unavailable', async () => {

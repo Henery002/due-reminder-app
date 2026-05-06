@@ -16,6 +16,7 @@ function item(overrides: Partial<ReminderItem> = {}): ReminderItem {
     name: '信用卡',
     dueDate: '2026-05-10',
     status: 'active',
+    reminderMode: 'notify',
     reminderRules: [
       {
         id: 'bill-2026-05-10-1',

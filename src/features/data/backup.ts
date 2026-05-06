@@ -16,6 +16,7 @@ const reminderItemSchema = z.object({
   amount: z.number().optional(),
   note: z.string().optional(),
   status: z.enum(['active', 'done', 'overdue', 'snoozed']),
+  reminderMode: z.enum(['notify', 'record-only']).default('notify'),
   reminderRules: z.array(reminderRuleSchema),
   createdAt: z.string(),
   updatedAt: z.string(),

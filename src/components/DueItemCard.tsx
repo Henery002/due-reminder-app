@@ -27,6 +27,7 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
   const { colors } = theme;
   const typeMeta = getReminderTypeMeta(item.type);
   const pressScale = useRef(new Animated.Value(1)).current;
+  const canSnooze = item.reminderMode === 'notify' && Boolean(onSnooze);
 
   const handleActionPress = (event: GestureResponderEvent, action?: () => void) => {
     event.stopPropagation();
@@ -87,20 +88,22 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
             </View>
             <Text style={[styles.actionText, styles.doneActionText]}>已处理</Text>
           </PressableScale>
-          <PressableScale
-            onPress={(event) => handleActionPress(event, onSnooze)}
-            scaleTo={0.94}
-            style={({ pressed }) => [
-              styles.actionButton,
-              styles.snoozeAction,
-              pressed ? styles.actionPressed : null,
-            ]}
-          >
-            <View style={styles.snoozeIconPuck}>
-              <IconGlyph color={colors.dueSoon} label="+" size={15} />
-            </View>
-            <Text style={[styles.actionText, styles.snoozeActionText]}>延后</Text>
-          </PressableScale>
+          {canSnooze ? (
+            <PressableScale
+              onPress={(event) => handleActionPress(event, onSnooze)}
+              scaleTo={0.94}
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.snoozeAction,
+                pressed ? styles.actionPressed : null,
+              ]}
+            >
+              <View style={styles.snoozeIconPuck}>
+                <IconGlyph color={colors.dueSoon} label="+" size={15} />
+              </View>
+              <Text style={[styles.actionText, styles.snoozeActionText]}>延后</Text>
+            </PressableScale>
+          ) : null}
         </View>
       </Pressable>
     </Animated.View>

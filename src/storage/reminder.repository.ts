@@ -23,6 +23,7 @@ function fromRow(row: ReminderRow): ReminderItem {
     name: row.name,
     dueDate: row.dueDate,
     status: row.status,
+    reminderMode: row.reminderMode ?? 'notify',
     reminderRules: JSON.parse(row.reminderRulesJson),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -75,9 +76,9 @@ export function createReminderRepository(database: ReminderDatabase) {
 
       database.runSync(
         `INSERT OR REPLACE INTO reminders (
-          id, type, name, dueDate, amount, note, status, reminderRulesJson,
+          id, type, name, dueDate, amount, note, status, reminderMode, reminderRulesJson,
           createdAt, updatedAt, completedAt, snoozedUntil
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           params.id,
           params.type,
@@ -86,6 +87,7 @@ export function createReminderRepository(database: ReminderDatabase) {
           params.amount,
           params.note,
           params.status,
+          params.reminderMode,
           params.reminderRulesJson,
           params.createdAt,
           params.updatedAt,

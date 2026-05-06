@@ -9,6 +9,7 @@ import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePreview';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
+import { PressableScale } from '../../src/components/PressableScale';
 import {
   getExpoNotificationGateway,
   isNotificationRuntimeUnavailableError,
@@ -29,7 +30,11 @@ import {
 } from '../../src/features/reminders/reminder.feedback';
 import { parseOptionalReminderAmount } from '../../src/features/reminders/reminder.form';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
-import type { ReminderItem, ReminderType } from '../../src/features/reminders/reminder.types';
+import type {
+  ReminderItem,
+  ReminderMode,
+  ReminderType,
+} from '../../src/features/reminders/reminder.types';
 import { reminderRepository } from '../../src/storage/reminder.store';
 import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
@@ -61,6 +66,7 @@ export default function EditItemScreen() {
   const [dueDate, setDueDate] = useState('');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
+  const [reminderMode, setReminderMode] = useState<ReminderMode>('notify');
   const [selectedReminderOffsets, setSelectedReminderOffsets] = useState<number[]>(() =>
     getDefaultReminderOffsets('subscription'),
   );
@@ -69,6 +75,7 @@ export default function EditItemScreen() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const selectedTypeLabel = typeOptions.find((option) => option.value === type)?.label ?? '事项';
+  const reminderModeLabel = reminderMode === 'notify' ? '本地提醒' : '仅记录';
 
   const loadItem = useCallback(() => {
     if (!reminderId) {
@@ -86,8 +93,9 @@ export default function EditItemScreen() {
       setDueDate(nextItem.dueDate);
       setAmount(typeof nextItem.amount === 'number' ? String(nextItem.amount) : '');
       setNote(nextItem.note ?? '');
+      setReminderMode(nextItem.reminderMode ?? 'notify');
       setSelectedReminderOffsets(
-        nextItem.reminderRules.length > 0
+        (nextItem.reminderMode ?? 'notify') === 'notify' && nextItem.reminderRules.length > 0
           ? normalizeSelectedReminderOffsets(
               nextItem.type,
               nextItem.reminderRules.map((rule) => rule.offsetDays),
@@ -191,6 +199,7 @@ export default function EditItemScreen() {
       item,
       {
         ...parsed.data,
+        reminderMode,
         selectedReminderOffsets,
       },
       {
@@ -279,8 +288,10 @@ export default function EditItemScreen() {
               <Text style={styles.summaryLabel}>当前类型</Text>
             </View>
             <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>{selectedReminderOffsets.length} 个</Text>
-              <Text style={styles.summaryLabel}>提醒点</Text>
+              <Text style={styles.summaryValue}>
+                {reminderMode === 'notify' ? `${selectedReminderOffsets.length} 个` : '关闭'}
+              </Text>
+              <Text style={styles.summaryLabel}>{reminderModeLabel}</Text>
             </View>
           </View>
         </View>
@@ -315,11 +326,27 @@ export default function EditItemScreen() {
           <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
+        <PressableScale onPress={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}>
+          <View style={styles.modeCard}>
+            <View style={styles.modeCopy}>
+              <Text style={styles.modeTitle}>安排本地提醒</Text>
+              <Text style={styles.modeDescription}>
+                {reminderMode === 'notify'
+                  ? '保存后会取消旧提醒，并按新计划重新安排。'
+                  : '仅保存这条到期记录；保存时会取消旧通知，不再安排新提醒。'}
+              </Text>
+            </View>
+            <View style={[styles.modeSwitch, reminderMode === 'notify' ? styles.modeSwitchActive : null]}>
+              <View style={[styles.modeThumb, reminderMode === 'notify' ? styles.modeThumbActive : null]} />
+            </View>
+          </View>
+        </PressableScale>
+
         <ReminderSchedulePreview
           dueDate={dueDate}
-          onAddCustomOffset={handleAddCustomReminderOffset}
-          onToggleOffset={handleToggleReminderOffset}
-          selectedOffsets={selectedReminderOffsets}
+          onAddCustomOffset={reminderMode === 'notify' ? handleAddCustomReminderOffset : undefined}
+          onToggleOffset={reminderMode === 'notify' ? handleToggleReminderOffset : undefined}
+          selectedOffsets={reminderMode === 'notify' ? selectedReminderOffsets : []}
           type={type}
         />
 
@@ -345,9 +372,9 @@ export default function EditItemScreen() {
 
         <SubmitActionButton
           disabled={isDeleting}
-          label="保存修改并重排提醒"
+          label={reminderMode === 'notify' ? '保存修改并重排提醒' : '保存为仅记录'}
           loading={isSaving}
-          loadingLabel="正在重排提醒..."
+          loadingLabel={reminderMode === 'notify' ? '正在重排提醒...' : '正在保存记录...'}
           onPress={handleSave}
         />
         <SubmitActionButton
@@ -392,6 +419,50 @@ function createStyles(theme: AppTheme) {
     noteInput: {
       minHeight: 78,
       textAlignVertical: 'top',
+    },
+    modeCard: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: spacing.md,
+      justifyContent: 'space-between',
+      padding: 14,
+    },
+    modeCopy: {
+      flex: 1,
+      gap: 3,
+    },
+    modeDescription: {
+      color: colors.textSecondary,
+      ...typography.helper,
+    },
+    modeSwitch: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.pill,
+      height: 28,
+      justifyContent: 'center',
+      paddingHorizontal: 3,
+      width: 50,
+    },
+    modeSwitchActive: {
+      backgroundColor: colors.primarySoft,
+    },
+    modeThumb: {
+      backgroundColor: colors.textMuted,
+      borderRadius: radius.pill,
+      height: 22,
+      width: 22,
+    },
+    modeThumbActive: {
+      alignSelf: 'flex-end',
+      backgroundColor: colors.primary,
+    },
+    modeTitle: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
     },
     pills: {
       flexDirection: 'row',

@@ -10,6 +10,7 @@ export function runMigrations(database: SQLiteDatabase): void {
       amount REAL,
       note TEXT,
       status TEXT NOT NULL,
+      reminderMode TEXT NOT NULL DEFAULT 'notify',
       reminderRulesJson TEXT NOT NULL,
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL,
@@ -22,4 +23,10 @@ export function runMigrations(database: SQLiteDatabase): void {
       value TEXT NOT NULL
     );
   `);
+
+  try {
+    database.execSync("ALTER TABLE reminders ADD COLUMN reminderMode TEXT NOT NULL DEFAULT 'notify';");
+  } catch {
+    // Column already exists on databases created by newer versions.
+  }
 }

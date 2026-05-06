@@ -5,7 +5,7 @@ import {
   type NotificationGateway,
 } from '../notifications/notification.service';
 import { buildReminderRules, markReminderDone, snoozeReminder } from './reminder.service';
-import type { ReminderItem, ReminderType } from './reminder.types';
+import type { ReminderItem, ReminderMode, ReminderType } from './reminder.types';
 
 type ReminderNotificationActionDeps = {
   getNotificationGateway: () => Promise<NotificationGateway>;
@@ -27,6 +27,7 @@ type EditableReminderInput = {
   dueDate: string;
   amount?: number;
   note?: string;
+  reminderMode?: ReminderMode;
   selectedReminderOffsets?: readonly number[];
 };
 
@@ -67,13 +68,24 @@ export async function snoozeReminderWithNotifications(
   days: number,
   deps: ReminderNotificationActionDeps,
 ): Promise<void> {
-  let snoozed = clearNotificationIds(snoozeReminder(item, days, deps.now));
+  let snoozed =
+    item.reminderMode === 'record-only'
+      ? clearNotificationIds({
+          ...item,
+          snoozedUntil: undefined,
+          updatedAt: (deps.now ?? new Date()).toISOString(),
+        })
+      : clearNotificationIds(snoozeReminder(item, days, deps.now));
 
   try {
     const gateway = await getConfiguredGateway(deps.getNotificationGateway);
     await cancelReminderNotifications(item, gateway);
-    const rescheduledRules = await scheduleReminderNotifications(snoozed, gateway, deps.now);
+    if (snoozed.reminderMode === 'record-only') {
+      deps.upsert(snoozed);
+      return;
+    }
 
+    const rescheduledRules = await scheduleReminderNotifications(snoozed, gateway, deps.now);
     snoozed = {
       ...snoozed,
       reminderRules: rescheduledRules,
@@ -91,6 +103,7 @@ export async function updateReminderWithNotifications(
   deps: ReminderNotificationActionDeps,
 ): Promise<void> {
   const now = deps.now ?? new Date();
+  const reminderMode = input.reminderMode ?? item.reminderMode ?? 'notify';
   let updated: ReminderItem = {
     ...item,
     type: input.type,
@@ -98,13 +111,12 @@ export async function updateReminderWithNotifications(
     dueDate: input.dueDate,
     amount: input.amount,
     note: input.note,
+    reminderMode,
     status: item.status === 'done' ? 'done' : 'active',
-    reminderRules: buildReminderRules(
-      input.type,
-      input.dueDate,
-      now,
-      input.selectedReminderOffsets,
-    ),
+    reminderRules:
+      reminderMode === 'record-only'
+        ? []
+        : buildReminderRules(input.type, input.dueDate, now, input.selectedReminderOffsets),
     snoozedUntil: undefined,
     updatedAt: now.toISOString(),
   };
@@ -117,7 +129,7 @@ export async function updateReminderWithNotifications(
     const gateway = await getConfiguredGateway(deps.getNotificationGateway);
     await cancelReminderNotifications(item, gateway);
 
-    if (updated.status !== 'done') {
+    if (updated.status !== 'done' && updated.reminderMode === 'notify') {
       updated = {
         ...updated,
         reminderRules: await scheduleReminderNotifications(updated, gateway, now),

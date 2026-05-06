@@ -10,6 +10,7 @@ import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePr
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import { TemplateCard } from '../../src/components/TemplateCard';
+import { PressableScale } from '../../src/components/PressableScale';
 import { reminderTemplates } from '../../src/constants/templates';
 import { getReminderCreationGate } from '../../src/features/membership/membership.entitlement';
 import {
@@ -34,7 +35,11 @@ import {
 import { parseOptionalReminderAmount } from '../../src/features/reminders/reminder.form';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
 import { buildReminderRules } from '../../src/features/reminders/reminder.service';
-import type { ReminderItem, ReminderType } from '../../src/features/reminders/reminder.types';
+import type {
+  ReminderItem,
+  ReminderMode,
+  ReminderType,
+} from '../../src/features/reminders/reminder.types';
 import { reminderRepository } from '../../src/storage/reminder.store';
 import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
@@ -63,6 +68,7 @@ export default function NewItemScreen() {
   const [dueDate, setDueDate] = useState(format(addDays(new Date(), 7), 'yyyy-MM-dd'));
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
+  const [reminderMode, setReminderMode] = useState<ReminderMode>('notify');
   const [selectedReminderOffsets, setSelectedReminderOffsets] = useState<number[]>(() =>
     getDefaultReminderOffsets('subscription'),
   );
@@ -71,6 +77,7 @@ export default function NewItemScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const creationGate = getReminderCreationGate(reminderCount);
   const selectedTypeLabel = typeOptions.find((option) => option.value === type)?.label ?? '事项';
+  const reminderModeLabel = reminderMode === 'notify' ? '本地提醒' : '仅记录';
 
   const refreshCreationGate = useCallback(() => {
     const gate = getReminderCreationGate(reminderRepository.list().length);
@@ -186,31 +193,32 @@ export default function NewItemScreen() {
       id: createId(),
       ...parsed.data,
       status: 'active',
-      reminderRules: buildReminderRules(
-        parsed.data.type,
-        parsed.data.dueDate,
-        now,
-        selectedReminderOffsets,
-      ),
+      reminderMode,
+      reminderRules:
+        reminderMode === 'notify'
+          ? buildReminderRules(parsed.data.type, parsed.data.dueDate, now, selectedReminderOffsets)
+          : [],
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
     };
 
-    try {
-      const notificationGateway = await getExpoNotificationGateway();
-      await configureNotifications(notificationGateway);
+    if (reminderMode === 'notify') {
+      try {
+        const notificationGateway = await getExpoNotificationGateway();
+        await configureNotifications(notificationGateway);
 
-      const permissionGranted = await requestNotificationPermission(notificationGateway);
-      if (permissionGranted) {
-        const scheduledRules = await scheduleReminderNotifications(reminder, notificationGateway);
-        reminder = {
-          ...reminder,
-          reminderRules: scheduledRules,
-        };
-      }
-    } catch (error) {
-      if (!isNotificationRuntimeUnavailableError(error)) {
-        console.warn('Failed to schedule reminder notifications', error);
+        const permissionGranted = await requestNotificationPermission(notificationGateway);
+        if (permissionGranted) {
+          const scheduledRules = await scheduleReminderNotifications(reminder, notificationGateway);
+          reminder = {
+            ...reminder,
+            reminderRules: scheduledRules,
+          };
+        }
+      } catch (error) {
+        if (!isNotificationRuntimeUnavailableError(error)) {
+          console.warn('Failed to schedule reminder notifications', error);
+        }
       }
     }
 
@@ -234,8 +242,10 @@ export default function NewItemScreen() {
               <Text style={styles.summaryLabel}>当前类型</Text>
             </View>
             <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>{selectedReminderOffsets.length} 个</Text>
-              <Text style={styles.summaryLabel}>提醒点</Text>
+              <Text style={styles.summaryValue}>
+                {reminderMode === 'notify' ? `${selectedReminderOffsets.length} 个` : '关闭'}
+              </Text>
+              <Text style={styles.summaryLabel}>{reminderModeLabel}</Text>
             </View>
           </View>
         </View>
@@ -284,6 +294,22 @@ export default function NewItemScreen() {
           <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
+        <PressableScale onPress={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}>
+          <View style={styles.modeCard}>
+            <View style={styles.modeCopy}>
+              <Text style={styles.modeTitle}>安排本地提醒</Text>
+              <Text style={styles.modeDescription}>
+                {reminderMode === 'notify'
+                  ? '保存后会按下方计划向系统安排本地通知。'
+                  : '仅保存这条到期记录，不向系统安排新通知。'}
+              </Text>
+            </View>
+            <View style={[styles.modeSwitch, reminderMode === 'notify' ? styles.modeSwitchActive : null]}>
+              <View style={[styles.modeThumb, reminderMode === 'notify' ? styles.modeThumbActive : null]} />
+            </View>
+          </View>
+        </PressableScale>
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>
           <TextInput
@@ -306,17 +332,17 @@ export default function NewItemScreen() {
 
         <ReminderSchedulePreview
           dueDate={dueDate}
-          onAddCustomOffset={handleAddCustomReminderOffset}
-          onToggleOffset={handleToggleReminderOffset}
-          selectedOffsets={selectedReminderOffsets}
+          onAddCustomOffset={reminderMode === 'notify' ? handleAddCustomReminderOffset : undefined}
+          onToggleOffset={reminderMode === 'notify' ? handleToggleReminderOffset : undefined}
+          selectedOffsets={reminderMode === 'notify' ? selectedReminderOffsets : []}
           type={type}
         />
 
         <SubmitActionButton
           disabled={!creationGate.allowed}
-          label="保存并安排提醒"
+          label={reminderMode === 'notify' ? '保存并安排提醒' : '保存为记录'}
           loading={isSaving}
-          loadingLabel="正在安排提醒..."
+          loadingLabel={reminderMode === 'notify' ? '正在安排提醒...' : '正在保存记录...'}
           onPress={handleSave}
         />
         {!creationGate.allowed ? (
@@ -354,6 +380,50 @@ function createStyles(theme: AppTheme) {
     noteInput: {
       minHeight: 78,
       textAlignVertical: 'top',
+    },
+    modeCard: {
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: spacing.md,
+      justifyContent: 'space-between',
+      padding: 14,
+    },
+    modeCopy: {
+      flex: 1,
+      gap: 3,
+    },
+    modeDescription: {
+      color: colors.textSecondary,
+      ...typography.helper,
+    },
+    modeSwitch: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.pill,
+      height: 28,
+      justifyContent: 'center',
+      paddingHorizontal: 3,
+      width: 50,
+    },
+    modeSwitchActive: {
+      backgroundColor: colors.primarySoft,
+    },
+    modeThumb: {
+      backgroundColor: colors.textMuted,
+      borderRadius: radius.pill,
+      height: 22,
+      width: 22,
+    },
+    modeThumbActive: {
+      alignSelf: 'flex-end',
+      backgroundColor: colors.primary,
+    },
+    modeTitle: {
+      color: colors.textPrimary,
+      ...typography.bodyStrong,
     },
     pills: {
       flexDirection: 'row',

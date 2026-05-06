@@ -11,6 +11,7 @@ const reminder: ReminderItem = {
   amount: 25,
   note: '自动续费前确认',
   status: 'active',
+  reminderMode: 'notify',
   reminderRules: [
     {
       id: 'subscription-2026-05-10-1',
@@ -45,6 +46,35 @@ describe('reminder backup helpers', () => {
       reminders: [reminder],
       schemaVersion: 1,
     });
+  });
+
+  it('preserves record-only reminder mode in backup text', () => {
+    const recordOnlyReminder: ReminderItem = {
+      ...reminder,
+      id: 'record-only-1',
+      reminderMode: 'record-only',
+      reminderRules: [],
+    };
+
+    const backupText = exportRemindersBackup([recordOnlyReminder], now);
+
+    expect(parseRemindersBackup(backupText).reminders[0]).toEqual(recordOnlyReminder);
+  });
+
+  it('defaults old backup text without reminder mode to notify mode', () => {
+    const legacyReminder = {
+      ...reminder,
+      reminderMode: undefined,
+    };
+    delete legacyReminder.reminderMode;
+
+    const backupText = JSON.stringify({
+      schemaVersion: 1,
+      exportedAt: now.toISOString(),
+      reminders: [legacyReminder],
+    });
+
+    expect(parseRemindersBackup(backupText).reminders[0]).toEqual(reminder);
   });
 
   it('rejects invalid backup text with friendly copy', () => {

@@ -18,6 +18,7 @@ function item(overrides: Partial<ReminderItem>): ReminderItem {
     name: '视频会员',
     dueDate: formatISO(addDays(baseDate, 2), { representation: 'date' }),
     status: 'active',
+    reminderMode: 'notify',
     reminderRules: [],
     createdAt: baseDate.toISOString(),
     updatedAt: baseDate.toISOString(),

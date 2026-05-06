@@ -10,6 +10,7 @@ const baseItem: ReminderItem = {
   amount: 25,
   note: '首月优惠结束',
   status: 'active',
+  reminderMode: 'notify',
   reminderRules: [
     {
       id: 'subscription-2026-05-10-1',
@@ -53,11 +54,12 @@ function createFakeDatabase() {
         amount: params[4],
         note: params[5],
         status: params[6],
-        reminderRulesJson: params[7],
-        createdAt: params[8],
-        updatedAt: params[9],
-        completedAt: params[10],
-        snoozedUntil: params[11],
+        reminderMode: params[7],
+        reminderRulesJson: params[8],
+        createdAt: params[9],
+        updatedAt: params[10],
+        completedAt: params[11],
+        snoozedUntil: params[12],
       });
     },
   };
@@ -73,6 +75,21 @@ describe('reminder repository', () => {
     repository.upsert(baseItem);
 
     expect(repository.getById('renewal-1')).toEqual(baseItem);
+  });
+
+  it('persists record-only reminder mode', () => {
+    const { database } = createFakeDatabase();
+    const repository = createReminderRepository(database);
+    const recordOnlyItem: ReminderItem = {
+      ...baseItem,
+      id: 'record-only',
+      reminderMode: 'record-only',
+      reminderRules: [],
+    };
+
+    repository.upsert(recordOnlyItem);
+
+    expect(repository.getById('record-only')).toEqual(recordOnlyItem);
   });
 
   it('lists reminders ordered by the database result', () => {

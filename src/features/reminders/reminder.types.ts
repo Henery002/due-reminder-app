@@ -1,5 +1,6 @@
 export type ReminderType = 'subscription' | 'bill' | 'document';
 export type ReminderStatus = 'active' | 'done' | 'overdue' | 'snoozed';
+export type ReminderMode = 'notify' | 'record-only';
 
 export type ReminderRule = {
   id: string;
@@ -16,6 +17,7 @@ export type ReminderItem = {
   amount?: number;
   note?: string;
   status: ReminderStatus;
+  reminderMode: ReminderMode;
   reminderRules: ReminderRule[];
   createdAt: string;
   updatedAt: string;
