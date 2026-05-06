@@ -1,6 +1,7 @@
 import {
   getAboutSections,
   getFeedbackChannels,
+  getReminderPreferenceNotes,
   getSettingsActions,
   getVisualSystemSummary,
 } from './settings.content';
@@ -49,6 +50,26 @@ describe('settings content', () => {
       '页面标题默认 24 号、700 字重，不再使用大字全粗模式。',
       '普通卡片、按钮和列表行使用更克制的内边距与圆角。',
       '外观支持跟随系统、浅色、深色和多主题色配置。',
+    ]);
+  });
+
+  it('explains reminder preferences without implying account or payment features', () => {
+    expect(getReminderPreferenceNotes()).toEqual([
+      {
+        body: '新建事项默认使用本地提醒；如果只想留一条到期记录，可以在表单里关闭“安排本地提醒”。',
+        glyph: 'N',
+        title: '默认使用本地提醒',
+      },
+      {
+        body: '适合补录已过期事项、线下已处理但想留档的记录，或暂时不想收到系统通知的事项。',
+        glyph: 'R',
+        title: '仅记录适用场景',
+      },
+      {
+        body: '本地提醒可关闭默认提醒点，也能添加 0-365 天内的自定义提醒；单个事项最多保留 5 个提醒点。',
+        glyph: '5',
+        title: '提醒点上限',
+      },
     ]);
   });
 });

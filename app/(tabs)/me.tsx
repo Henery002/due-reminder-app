@@ -14,7 +14,12 @@ import {
   type AppearanceOption,
 } from '../../src/features/appearance/appearance.types';
 import { getLegalActions } from '../../src/features/legal/legal.content';
-import { getSettingsActions, type SettingsAction } from '../../src/features/settings/settings.content';
+import {
+  getReminderPreferenceNotes,
+  getSettingsActions,
+  type ReminderPreferenceNote,
+  type SettingsAction,
+} from '../../src/features/settings/settings.content';
 import { useAppearanceSettings, useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 export default function MeScreen() {
@@ -24,6 +29,7 @@ export default function MeScreen() {
   const { settings, updateAppearanceSettings } = useAppearanceSettings();
   const actions = getSettingsActions();
   const legalActions = getLegalActions();
+  const reminderPreferenceNotes = getReminderPreferenceNotes();
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -96,17 +102,15 @@ export default function MeScreen() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="提醒偏好" styles={styles} />
-          <View style={styles.infoCard}>
-            <View style={styles.infoIcon}>
-              <IconGlyph color={colors.primary} label="R" size={17} />
-            </View>
-            <View style={styles.infoCopy}>
-              <Text style={styles.infoTitle}>默认提醒点可开关</Text>
-              <Text style={styles.infoText}>
-                新建或编辑事项时，可以关闭默认提醒点，也能补充自定义提前天数提醒。
-              </Text>
-            </View>
+          <SectionHeader
+            helper="这些是当前版本的本地提醒规则。"
+            title="提醒偏好"
+            styles={styles}
+          />
+          <View style={styles.infoList}>
+            {reminderPreferenceNotes.map((note) => (
+              <ReminderPreferenceNoteRow key={note.title} note={note} styles={styles} />
+            ))}
           </View>
         </View>
 
@@ -226,6 +230,28 @@ function SettingsActionRow({
       </View>
       <Text style={styles.chevron}>›</Text>
     </PressableScale>
+  );
+}
+
+function ReminderPreferenceNoteRow({
+  note,
+  styles,
+}: {
+  note: ReminderPreferenceNote;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  const theme = useTheme();
+
+  return (
+    <View style={styles.infoCard}>
+      <View style={styles.infoIcon}>
+        <IconGlyph color={theme.colors.primary} label={note.glyph} size={17} />
+      </View>
+      <View style={styles.infoCopy}>
+        <Text style={styles.infoTitle}>{note.title}</Text>
+        <Text style={styles.infoText}>{note.body}</Text>
+      </View>
+    </View>
   );
 }
 
@@ -365,6 +391,9 @@ function createStyles(theme: AppTheme) {
     infoTitle: {
       color: colors.textPrimary,
       ...typography.bodyStrong,
+    },
+    infoList: {
+      gap: spacing.sm,
     },
     preferenceCard: {
       backgroundColor: colors.surface,
