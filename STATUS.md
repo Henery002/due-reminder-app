@@ -74,3 +74,4 @@
 56. 2026-05-06 已启动 M3.7 表单体验继续精修：新建/编辑页的“安排本地提醒”已抽成 `ReminderModeSwitch`，保存前提醒摘要已抽成 `ReminderSaveSummary`，并新增 `getReminderModeSwitchCopy` / `getReminderSubmitLabels` 测试覆盖，便于后续统一动效和文案维护
 57. 2026-05-06 已增强全部事项页提醒方式筛选：列表可按“全部方式 / 本地提醒 / 仅记录”筛选事项，并与类型、状态和搜索组合生效，避免将 record-only 混入状态筛选
 58. 2026-05-06 已升级我的页提醒偏好说明：新增默认本地提醒、仅记录适用场景和提醒点上限说明，让用户更容易理解 notify / record-only 的使用边界
+59. 2026-05-06 已补齐提醒策略产品规则文档：新增 `docs/product/REMINDER_STRATEGY_RULES.md`，沉淀 notify / record-only、自定义提醒点、5 个上限、仅记录不延后、备份兼容和页面说明口径
