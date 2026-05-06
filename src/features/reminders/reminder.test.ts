@@ -97,8 +97,11 @@ describe('reminder service', () => {
     expect(getCustomReminderOffsetInputError('366', 'subscription', [7, 1, 0])).toBe(
       `请输入 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 之间的整数天数。`,
     );
-    expect(getCustomReminderOffsetInputError('14', 'subscription', [30, 14, 7, 1, 0])).toBe(
+    expect(getCustomReminderOffsetInputError('21', 'subscription', [30, 14, 7, 1, 0])).toBe(
       `已达到 ${MAX_REMINDER_POINT_COUNT} 个提醒点上限。`,
+    );
+    expect(getCustomReminderOffsetInputError('7', 'subscription', [7, 1, 0])).toBe(
+      '这个提醒点已经在计划里了，可以直接开启或关闭。',
     );
     expect(getCustomReminderOffsetInputError('14', 'subscription', [7, 1, 0])).toBeNull();
   });

@@ -54,10 +54,6 @@ export function getCustomReminderOffsetInputError(
   type: ReminderType,
   selectedOffsets?: readonly number[],
 ): string | null {
-  if (!canAddCustomReminderOffset(type, selectedOffsets)) {
-    return `已达到 ${MAX_REMINDER_POINT_COUNT} 个提醒点上限。`;
-  }
-
   const normalizedInput = input.trim();
   if (!normalizedInput) {
     return '先输入提前天数，例如 14。';
@@ -70,6 +66,14 @@ export function getCustomReminderOffsetInputError(
   const offsetDays = Number(normalizedInput);
   if (offsetDays > MAX_CUSTOM_REMINDER_OFFSET_DAYS) {
     return `请输入 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 之间的整数天数。`;
+  }
+
+  if (normalizeSelectedReminderOffsets(type, selectedOffsets).includes(offsetDays)) {
+    return '这个提醒点已经在计划里了，可以直接开启或关闭。';
+  }
+
+  if (!canAddCustomReminderOffset(type, selectedOffsets)) {
+    return `已达到 ${MAX_REMINDER_POINT_COUNT} 个提醒点上限。`;
   }
 
   return null;
