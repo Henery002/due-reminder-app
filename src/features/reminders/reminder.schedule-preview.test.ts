@@ -10,6 +10,7 @@ describe('reminder schedule preview', () => {
       new Date('2026-05-10T08:00:00.000Z'),
     );
 
+    expect(preview.status).toBe('scheduled');
     expect(preview.description).toBe('将安排 3 次本地提醒，默认在当天 09:00 提醒。');
     expect(preview.items).toEqual([
       {
@@ -39,6 +40,7 @@ describe('reminder schedule preview', () => {
       new Date('2026-05-19T12:00:00.000Z'),
     );
 
+    expect(preview.status).toBe('scheduled');
     expect(preview.description).toBe('将安排 1 次本地提醒，默认在当天 09:00 提醒。');
     expect(preview.items.map((item) => item.offsetLabel)).toEqual(['到期当天']);
   });
@@ -53,6 +55,7 @@ describe('reminder schedule preview', () => {
       new Date('2026-05-10T08:00:00.000Z'),
     );
 
+    expect(preview.status).toBe('scheduled');
     expect(preview.description).toBe('将安排 2 次本地提醒，默认在当天 09:00 提醒。');
     expect(preview.items.map((item) => item.offsetLabel)).toEqual(['提前 7 天', '到期当天']);
   });
@@ -67,6 +70,7 @@ describe('reminder schedule preview', () => {
       new Date('2026-05-05T08:00:00.000Z'),
     );
 
+    expect(preview.status).toBe('scheduled');
     expect(preview.description).toBe('将安排 4 次本地提醒，默认在当天 09:00 提醒。');
     expect(preview.items.map((item) => item.offsetLabel)).toEqual([
       '提前 10 天',
@@ -85,9 +89,24 @@ describe('reminder schedule preview', () => {
       new Date('2026-05-10T08:00:00.000Z'),
     );
 
+    expect(preview.status).toBe('record-only');
     expect(preview.description).toBe(
       '这个到期日已经没有可安排的未来提醒，可以保存为记录，但不会自动触发新提醒。',
     );
+    expect(preview.items).toEqual([]);
+  });
+
+  it('marks invalid date input as waiting for a valid schedule', () => {
+    const preview = buildReminderSchedulePreview(
+      {
+        dueDate: '',
+        type: 'document',
+      },
+      new Date('2026-05-10T08:00:00.000Z'),
+    );
+
+    expect(preview.status).toBe('invalid-date');
+    expect(preview.description).toBe('先选择一个有效到期日，再查看实际提醒计划。');
     expect(preview.items).toEqual([]);
   });
 });

@@ -47,6 +47,10 @@
    - 重复输入已有提醒点时留在提醒计划卡内提示，避免清空输入后才看见页面反馈
    - 达到 5 个提醒点上限时提示先关闭一个提醒点
    - 校验逻辑收敛到 `getCustomReminderOffsetInputError`，并补充单元测试
+11. 增强提醒计划状态表达：
+   - `buildReminderSchedulePreview` 新增 `scheduled` / `record-only` / `invalid-date` 状态
+   - 提醒计划卡右上角不再只显示次数，也会显示“待选择”或“仅记录”
+   - 用户选择已过期日期时，可以更清楚地区分“保存为记录”和“会安排通知”
 
 ## 2026-05-05
 

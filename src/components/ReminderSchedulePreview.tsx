@@ -39,6 +39,12 @@ export function ReminderSchedulePreview({
   const [customInputMessage, setCustomInputMessage] = useState<string | null>(null);
   const preview = buildReminderSchedulePreview({ dueDate, selectedOffsets, type });
   const hasItems = preview.items.length > 0;
+  const badgeLabel =
+    preview.status === 'invalid-date'
+      ? '待选择'
+      : preview.status === 'record-only'
+        ? '仅记录'
+        : `${preview.items.length} 次`;
   const isEditable = Boolean(onToggleOffset);
   const selectedOffsetSet = new Set(normalizeSelectedReminderOffsets(type, selectedOffsets));
   const defaultOffsetSet = new Set(getDefaultReminderOffsets(type));
@@ -70,7 +76,7 @@ export function ReminderSchedulePreview({
         </View>
         <View style={[styles.countBadge, hasItems ? styles.countBadgeActive : null]}>
           <Text style={[styles.countText, hasItems ? styles.countTextActive : null]}>
-            {preview.items.length} 次
+            {badgeLabel}
           </Text>
         </View>
       </View>

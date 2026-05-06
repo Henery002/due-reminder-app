@@ -18,6 +18,7 @@ export type ReminderSchedulePreviewItem = {
 export type ReminderSchedulePreview = {
   description: string;
   items: ReminderSchedulePreviewItem[];
+  status: 'invalid-date' | 'record-only' | 'scheduled';
   title: string;
 };
 
@@ -30,6 +31,7 @@ export function buildReminderSchedulePreview(
     return {
       description: '先选择一个有效到期日，再查看实际提醒计划。',
       items: [],
+      status: 'invalid-date',
       title: '提醒计划',
     };
   }
@@ -52,6 +54,7 @@ export function buildReminderSchedulePreview(
         ? `将安排 ${items.length} 次本地提醒，默认在当天 09:00 提醒。`
         : '这个到期日已经没有可安排的未来提醒，可以保存为记录，但不会自动触发新提醒。',
     items,
+    status: items.length > 0 ? 'scheduled' : 'record-only',
     title: '提醒计划',
   };
 }
