@@ -20,6 +20,7 @@ import { getSnoozeOptions } from '../../src/features/reminders/reminder.snooze';
 import type { ReminderItem } from '../../src/features/reminders/reminder.types';
 import {
   getVisibleAllReminders,
+  type ReminderModeFilter,
   type ReminderStatusFilter,
   type ReminderTypeFilter,
 } from '../../src/features/reminders/reminder.view';
@@ -41,6 +42,12 @@ const statusFilterOptions: Array<{ label: string; value: ReminderStatusFilter }>
   { label: '已处理', value: 'done' },
 ];
 
+const modeFilterOptions: Array<{ label: string; value: ReminderModeFilter }> = [
+  { label: '全部方式', value: 'all' },
+  { label: '本地提醒', value: 'notify' },
+  { label: '仅记录', value: 'record-only' },
+];
+
 const typeFilterLabels: Record<ReminderTypeFilter, string> = {
   all: '全部类型',
   subscription: '订阅',
@@ -57,12 +64,19 @@ const statusFilterLabels: Record<ReminderStatusFilter, string> = {
   done: '已处理',
 };
 
+const modeFilterLabels: Record<ReminderModeFilter, string> = {
+  all: '全部方式',
+  notify: '本地提醒',
+  'record-only': '仅记录',
+};
+
 export default function ItemsScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
   const { colors } = theme;
   const [items, setItems] = useState<ReminderItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMode, setSelectedMode] = useState<ReminderModeFilter>('all');
   const [selectedStatus, setSelectedStatus] = useState<ReminderStatusFilter>('all');
   const [selectedType, setSelectedType] = useState<ReminderTypeFilter>('all');
   const [snoozeTarget, setSnoozeTarget] = useState<ReminderItem | null>(null);
@@ -108,6 +122,7 @@ export default function ItemsScreen() {
   const emptyContent = getReminderEmptyStateContent('items-empty');
   const filteredEmptyContent = getReminderEmptyStateContent('home-filtered');
   const visibleItems = getVisibleAllReminders(items, {
+    mode: selectedMode,
     query: deferredSearchQuery,
     status: selectedStatus,
     type: selectedType,
@@ -118,6 +133,7 @@ export default function ItemsScreen() {
   const activeFilterLabels = [
     selectedType !== 'all' ? typeFilterLabels[selectedType] : null,
     selectedStatus !== 'all' ? statusFilterLabels[selectedStatus] : null,
+    selectedMode !== 'all' ? modeFilterLabels[selectedMode] : null,
     hasSearchQuery ? `搜索：${searchQuery.trim()}` : null,
   ].filter(Boolean) as string[];
 
@@ -191,8 +207,18 @@ export default function ItemsScreen() {
                 />
               ))}
             </View>
+            <View style={styles.filterRow}>
+              {modeFilterOptions.map((option) => (
+                <CategoryPill
+                  key={option.value}
+                  label={option.label}
+                  onPress={() => setSelectedMode(option.value)}
+                  selected={selectedMode === option.value}
+                />
+              ))}
+            </View>
             <Text style={styles.resultMeta}>
-              当前显示 {visibleItems.length} / {items.length} 件，支持按名称和备注搜索
+              当前显示 {visibleItems.length} / {items.length} 件，支持按名称、备注和提醒方式筛选
             </Text>
             {activeFilterLabels.length > 0 ? (
               <View style={styles.activeFilterRow}>

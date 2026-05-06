@@ -68,6 +68,11 @@
    - 新增 `ReminderSaveSummary`，统一保存前提醒摘要展示，避免页面重复维护文案样式
    - 新增 `getReminderModeSwitchCopy` 与 `getReminderSubmitLabels`，收敛提醒模式说明和提交按钮文案
    - 补充 `reminder.mode.test.ts`，锁住新建/编辑两种场景下的文案映射与提交状态文案
+15. 增强全部事项页提醒方式筛选：
+   - 新增 `ReminderModeFilter` 和 `filterRemindersByMode`
+   - `getVisibleAllReminders` 支持类型、状态、提醒方式和搜索组合筛选
+   - 全部事项页新增“全部方式 / 本地提醒 / 仅记录”筛选行
+   - 当前生效筛选标签会展示“本地提醒”或“仅记录”，帮助用户区分提醒模式和事项状态
 
 ## 2026-05-05
 

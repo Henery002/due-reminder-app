@@ -1,4 +1,5 @@
 import {
+  filterRemindersByMode,
   filterRemindersByStatus,
   filterRemindersByType,
   getReminderStatusLabel,
@@ -57,6 +58,22 @@ describe('reminder view helpers', () => {
     expect(filterRemindersByStatus(items, 'done').map((entry) => entry.id)).toEqual(['done']);
   });
 
+  it('filters reminders by selected reminder mode', () => {
+    const items = [
+      item({ id: 'notify', reminderMode: 'notify' }),
+      item({ id: 'record-only', reminderMode: 'record-only' }),
+    ];
+
+    expect(filterRemindersByMode(items, 'all').map((entry) => entry.id)).toEqual([
+      'notify',
+      'record-only',
+    ]);
+    expect(filterRemindersByMode(items, 'notify').map((entry) => entry.id)).toEqual(['notify']);
+    expect(filterRemindersByMode(items, 'record-only').map((entry) => entry.id)).toEqual([
+      'record-only',
+    ]);
+  });
+
   it('combines all-items filters and keeps pending reminders before completed reminders', () => {
     const items = [
       item({ id: 'done-old', dueDate: '2026-05-01', status: 'done', type: 'bill' }),
@@ -67,12 +84,14 @@ describe('reminder view helpers', () => {
 
     expect(
       getVisibleAllReminders(items, {
+        mode: 'all',
         status: 'all',
         type: 'all',
       }).map((entry) => entry.id),
     ).toEqual(['bill-overdue', 'bill-soon', 'subscription-later', 'done-old']);
     expect(
       getVisibleAllReminders(items, {
+        mode: 'all',
         status: 'pending',
         type: 'bill',
       }).map((entry) => entry.id),
@@ -88,6 +107,7 @@ describe('reminder view helpers', () => {
 
     expect(
       getVisibleAllReminders(items, {
+        mode: 'all',
         query: '共享',
         status: 'all',
         type: 'subscription',
@@ -95,6 +115,7 @@ describe('reminder view helpers', () => {
     ).toEqual(['netflix']);
     expect(
       getVisibleAllReminders(items, {
+        mode: 'all',
         query: '缴费',
         status: 'all',
         type: 'all',
@@ -102,11 +123,45 @@ describe('reminder view helpers', () => {
     ).toEqual(['water-bill']);
     expect(
       getVisibleAllReminders(items, {
+        mode: 'all',
         query: '   ',
         status: 'all',
         type: 'document',
       }).map((entry) => entry.id),
     ).toEqual(['driver-license']);
+  });
+
+  it('combines reminder mode with type, status and search filters', () => {
+    const items = [
+      item({
+        id: 'notify-subscription',
+        name: '视频会员',
+        reminderMode: 'notify',
+        type: 'subscription',
+      }),
+      item({
+        id: 'record-bill',
+        name: '线下缴费记录',
+        reminderMode: 'record-only',
+        type: 'bill',
+      }),
+      item({
+        id: 'record-document-done',
+        name: '护照换发记录',
+        reminderMode: 'record-only',
+        status: 'done',
+        type: 'document',
+      }),
+    ];
+
+    expect(
+      getVisibleAllReminders(items, {
+        mode: 'record-only',
+        query: '记录',
+        status: 'pending',
+        type: 'bill',
+      }).map((entry) => entry.id),
+    ).toEqual(['record-bill']);
   });
 
   it('shows today-specific copy for active reminders due today', () => {

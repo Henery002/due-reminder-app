@@ -1,10 +1,12 @@
 import { differenceInCalendarDays, parseISO } from 'date-fns';
-import type { ReminderItem, ReminderStatus, ReminderType } from './reminder.types';
+import type { ReminderItem, ReminderMode, ReminderStatus, ReminderType } from './reminder.types';
 
 export type ReminderTypeFilter = ReminderType | 'all';
 export type ReminderStatusFilter = ReminderStatus | 'all' | 'pending';
+export type ReminderModeFilter = ReminderMode | 'all';
 
 export type AllReminderFilters = {
+  mode: ReminderModeFilter;
   query?: string;
   status: ReminderStatusFilter;
   type: ReminderTypeFilter;
@@ -64,6 +66,17 @@ export function filterRemindersByStatus(
   return items.filter((item) => item.status === selectedStatus);
 }
 
+export function filterRemindersByMode(
+  items: ReminderItem[],
+  selectedMode: ReminderModeFilter,
+): ReminderItem[] {
+  if (selectedMode === 'all') {
+    return items;
+  }
+
+  return items.filter((item) => item.reminderMode === selectedMode);
+}
+
 export function filterRemindersByQuery(items: ReminderItem[], query = ''): ReminderItem[] {
   const normalizedQuery = query.trim().toLowerCase();
   if (!normalizedQuery) {
@@ -81,7 +94,10 @@ export function getVisibleAllReminders(
   filters: AllReminderFilters,
 ): ReminderItem[] {
   const filteredItems = filterRemindersByQuery(
-    filterRemindersByStatus(filterRemindersByType(items, filters.type), filters.status),
+    filterRemindersByMode(
+      filterRemindersByStatus(filterRemindersByType(items, filters.type), filters.status),
+      filters.mode,
+    ),
     filters.query,
   );
 
