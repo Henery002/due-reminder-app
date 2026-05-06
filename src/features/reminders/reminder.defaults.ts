@@ -48,3 +48,29 @@ export function canAddCustomReminderOffset(
 ): boolean {
   return normalizeSelectedReminderOffsets(type, selectedOffsets).length < MAX_REMINDER_POINT_COUNT;
 }
+
+export function getCustomReminderOffsetInputError(
+  input: string,
+  type: ReminderType,
+  selectedOffsets?: readonly number[],
+): string | null {
+  if (!canAddCustomReminderOffset(type, selectedOffsets)) {
+    return `已达到 ${MAX_REMINDER_POINT_COUNT} 个提醒点上限。`;
+  }
+
+  const normalizedInput = input.trim();
+  if (!normalizedInput) {
+    return '先输入提前天数，例如 14。';
+  }
+
+  if (!/^\d+$/.test(normalizedInput)) {
+    return `请输入 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 之间的整数天数。`;
+  }
+
+  const offsetDays = Number(normalizedInput);
+  if (offsetDays > MAX_CUSTOM_REMINDER_OFFSET_DAYS) {
+    return `请输入 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 之间的整数天数。`;
+  }
+
+  return null;
+}

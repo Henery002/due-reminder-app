@@ -1,7 +1,12 @@
 import { addDays, formatISO, subDays } from 'date-fns';
 import { getHomeReminderSections, groupRemindersForHome } from './reminder.selectors';
 import { buildReminderRules, markReminderDone, refreshReminderStatus, snoozeReminder } from './reminder.service';
-import { canAddCustomReminderOffset, MAX_REMINDER_POINT_COUNT } from './reminder.defaults';
+import {
+  canAddCustomReminderOffset,
+  getCustomReminderOffsetInputError,
+  MAX_CUSTOM_REMINDER_OFFSET_DAYS,
+  MAX_REMINDER_POINT_COUNT,
+} from './reminder.defaults';
 import type { ReminderItem } from './reminder.types';
 
 const baseDate = new Date('2026-05-03T08:00:00.000Z');
@@ -74,6 +79,28 @@ describe('reminder service', () => {
 
   it('allows adding custom reminder offsets when reminder points are still below limit', () => {
     expect(canAddCustomReminderOffset('subscription', [7, 1, 0])).toBe(true);
+  });
+
+  it('validates custom reminder offset input before adding', () => {
+    expect(getCustomReminderOffsetInputError('', 'subscription', [7, 1, 0])).toBe(
+      '先输入提前天数，例如 14。',
+    );
+    expect(getCustomReminderOffsetInputError('  ', 'subscription', [7, 1, 0])).toBe(
+      '先输入提前天数，例如 14。',
+    );
+    expect(getCustomReminderOffsetInputError('2.5', 'subscription', [7, 1, 0])).toBe(
+      `请输入 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 之间的整数天数。`,
+    );
+    expect(getCustomReminderOffsetInputError('-1', 'subscription', [7, 1, 0])).toBe(
+      `请输入 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 之间的整数天数。`,
+    );
+    expect(getCustomReminderOffsetInputError('366', 'subscription', [7, 1, 0])).toBe(
+      `请输入 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 之间的整数天数。`,
+    );
+    expect(getCustomReminderOffsetInputError('14', 'subscription', [30, 14, 7, 1, 0])).toBe(
+      `已达到 ${MAX_REMINDER_POINT_COUNT} 个提醒点上限。`,
+    );
+    expect(getCustomReminderOffsetInputError('14', 'subscription', [7, 1, 0])).toBeNull();
   });
 
   it('marks active reminders overdue when due date has passed', () => {

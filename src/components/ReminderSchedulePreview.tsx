@@ -10,6 +10,7 @@ import {
   MAX_CUSTOM_REMINDER_OFFSET_DAYS,
   MAX_REMINDER_POINT_COUNT,
   getDefaultReminderOffsets,
+  getCustomReminderOffsetInputError,
   getReminderOffsetLabel,
   normalizeSelectedReminderOffsets,
 } from '../features/reminders/reminder.defaults';
@@ -35,6 +36,7 @@ export function ReminderSchedulePreview({
   const { colors } = theme;
   const styles = createStyles(theme);
   const [customOffsetText, setCustomOffsetText] = useState('');
+  const [customInputMessage, setCustomInputMessage] = useState<string | null>(null);
   const preview = buildReminderSchedulePreview({ dueDate, selectedOffsets, type });
   const hasItems = preview.items.length > 0;
   const isEditable = Boolean(onToggleOffset);
@@ -48,21 +50,15 @@ export function ReminderSchedulePreview({
   const canAddMoreOffsets = canAddCustomReminderOffset(type, selectedOffsets);
 
   const handleAddCustomOffset = () => {
-    if (!canAddMoreOffsets) {
+    const inputError = getCustomReminderOffsetInputError(customOffsetText, type, selectedOffsets);
+    if (inputError) {
+      setCustomInputMessage(inputError);
       return;
     }
 
-    const offsetDays = Number(customOffsetText.trim());
-    if (
-      !Number.isInteger(offsetDays) ||
-      offsetDays < 0 ||
-      offsetDays > MAX_CUSTOM_REMINDER_OFFSET_DAYS
-    ) {
-      return;
-    }
-
-    onAddCustomOffset?.(offsetDays);
+    onAddCustomOffset?.(Number(customOffsetText.trim()));
     setCustomOffsetText('');
+    setCustomInputMessage(null);
   };
 
   return (
@@ -113,7 +109,10 @@ export function ReminderSchedulePreview({
             <TextInput
               keyboardType="number-pad"
               maxLength={3}
-              onChangeText={setCustomOffsetText}
+              onChangeText={(text) => {
+                setCustomOffsetText(text);
+                setCustomInputMessage(null);
+              }}
               placeholder="自定义天数"
               placeholderTextColor={colors.textMuted}
               style={[styles.customInput, !canAddMoreOffsets ? styles.customInputDisabled : null]}
@@ -130,6 +129,9 @@ export function ReminderSchedulePreview({
               </View>
             </PressableScale>
           </View>
+          {customInputMessage ? (
+            <Text style={styles.customInputMessage}>{customInputMessage}</Text>
+          ) : null}
           <Text style={styles.toggleHint}>
             {canAddMoreOffsets
               ? `可关闭默认提醒点，也可添加 0-${MAX_CUSTOM_REMINDER_OFFSET_DAYS} 天内的自定义提醒。最多保留 ${MAX_REMINDER_POINT_COUNT} 个提醒点。`
@@ -249,6 +251,10 @@ function createStyles(theme: AppTheme) {
     },
     customInputDisabled: {
       opacity: 0.68,
+    },
+    customInputMessage: {
+      color: colors.dueSoon,
+      ...typography.helper,
     },
     customRow: {
       flexDirection: 'row',
