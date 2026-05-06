@@ -2,6 +2,7 @@ import {
   filterRemindersByStatus,
   filterRemindersByType,
   getReminderStatusLabel,
+  getReminderModeLabel,
   getReminderTypeMeta,
   getVisibleAllReminders,
 } from './reminder.view';
@@ -116,6 +117,11 @@ describe('reminder view helpers', () => {
     expect(getReminderStatusLabel(item({ status: 'done' }), now)).toBe('已处理');
     expect(getReminderStatusLabel(item({ status: 'overdue' }), now)).toBe('已逾期');
     expect(getReminderStatusLabel(item({ status: 'snoozed' }), now)).toBe('已延后');
+  });
+
+  it('returns reminder mode copy for list badges', () => {
+    expect(getReminderModeLabel(item({ reminderMode: 'record-only' }))).toBe('仅记录');
+    expect(getReminderModeLabel(item({ reminderMode: 'notify' }))).toBeNull();
   });
 
   it('returns visual metadata for reminder types', () => {

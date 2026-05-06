@@ -1,4 +1,4 @@
-import { buildReminderSchedulePreview } from './reminder.schedule-preview';
+import { buildReminderSchedulePreview, getReminderSaveSummary } from './reminder.schedule-preview';
 
 describe('reminder schedule preview', () => {
   it('shows future reminder times from the selected due date', () => {
@@ -108,5 +108,42 @@ describe('reminder schedule preview', () => {
     expect(preview.status).toBe('invalid-date');
     expect(preview.description).toBe('先选择一个有效到期日，再查看实际提醒计划。');
     expect(preview.items).toEqual([]);
+  });
+
+  it('summarizes save behavior from reminder mode and preview status', () => {
+    const scheduledPreview = buildReminderSchedulePreview(
+      {
+        dueDate: '2026-05-20',
+        type: 'subscription',
+      },
+      new Date('2026-05-10T08:00:00.000Z'),
+    );
+    const recordOnlyPreview = buildReminderSchedulePreview(
+      {
+        dueDate: '2026-05-01',
+        type: 'subscription',
+      },
+      new Date('2026-05-10T08:00:00.000Z'),
+    );
+    const invalidPreview = buildReminderSchedulePreview(
+      {
+        dueDate: '',
+        type: 'subscription',
+      },
+      new Date('2026-05-10T08:00:00.000Z'),
+    );
+
+    expect(getReminderSaveSummary(scheduledPreview, 'notify')).toBe(
+      '保存后将安排 3 次本地提醒。',
+    );
+    expect(getReminderSaveSummary(recordOnlyPreview, 'notify')).toBe(
+      '当前没有可安排的未来提醒，会保存为记录。',
+    );
+    expect(getReminderSaveSummary(scheduledPreview, 'record-only')).toBe(
+      '将保存为仅记录，不发送本地通知。',
+    );
+    expect(getReminderSaveSummary(invalidPreview, 'notify')).toBe(
+      '选择有效到期日后再生成提醒计划。',
+    );
   });
 });

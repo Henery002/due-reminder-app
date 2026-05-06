@@ -117,6 +117,10 @@ export function getReminderStatusLabel(item: ReminderItem, now: Date = new Date(
   return '进行中';
 }
 
+export function getReminderModeLabel(item: ReminderItem): string | null {
+  return item.reminderMode === 'record-only' ? '仅记录' : null;
+}
+
 function compareRemindersForAllItems(left: ReminderItem, right: ReminderItem): number {
   const leftDoneWeight = left.status === 'done' ? 1 : 0;
   const rightDoneWeight = right.status === 'done' ? 1 : 0;

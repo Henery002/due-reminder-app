@@ -1,7 +1,7 @@
 import { format, isValid, parseISO } from 'date-fns';
 import { getReminderOffsetLabel } from './reminder.defaults';
 import { buildReminderRules } from './reminder.service';
-import type { ReminderType } from './reminder.types';
+import type { ReminderMode, ReminderType } from './reminder.types';
 
 export type ReminderSchedulePreviewInput = {
   dueDate: string;
@@ -57,4 +57,23 @@ export function buildReminderSchedulePreview(
     status: items.length > 0 ? 'scheduled' : 'record-only',
     title: '提醒计划',
   };
+}
+
+export function getReminderSaveSummary(
+  preview: ReminderSchedulePreview,
+  reminderMode: ReminderMode,
+): string {
+  if (preview.status === 'invalid-date') {
+    return '选择有效到期日后再生成提醒计划。';
+  }
+
+  if (reminderMode === 'record-only') {
+    return '将保存为仅记录，不发送本地通知。';
+  }
+
+  if (preview.status === 'record-only') {
+    return '当前没有可安排的未来提醒，会保存为记录。';
+  }
+
+  return `保存后将安排 ${preview.items.length} 次本地提醒。`;
 }

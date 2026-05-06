@@ -30,6 +30,10 @@ import {
 } from '../../src/features/reminders/reminder.feedback';
 import { parseOptionalReminderAmount } from '../../src/features/reminders/reminder.form';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
+import {
+  buildReminderSchedulePreview,
+  getReminderSaveSummary,
+} from '../../src/features/reminders/reminder.schedule-preview';
 import type {
   ReminderItem,
   ReminderMode,
@@ -76,6 +80,12 @@ export default function EditItemScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const selectedTypeLabel = typeOptions.find((option) => option.value === type)?.label ?? '事项';
   const reminderModeLabel = reminderMode === 'notify' ? '本地提醒' : '仅记录';
+  const reminderPreview = buildReminderSchedulePreview({
+    dueDate,
+    selectedOffsets: reminderMode === 'notify' ? selectedReminderOffsets : [],
+    type,
+  });
+  const saveSummary = getReminderSaveSummary(reminderPreview, reminderMode);
 
   const loadItem = useCallback(() => {
     if (!reminderId) {
@@ -326,8 +336,12 @@ export default function EditItemScreen() {
           <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
-        <PressableScale onPress={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}>
-          <View style={styles.modeCard}>
+        <PressableScale
+          accessibilityRole="switch"
+          accessibilityState={{ checked: reminderMode === 'notify' }}
+          onPress={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}
+        >
+          <View style={[styles.modeCard, reminderMode === 'notify' ? styles.modeCardActive : null]}>
             <View style={styles.modeCopy}>
               <Text style={styles.modeTitle}>安排本地提醒</Text>
               <Text style={styles.modeDescription}>
@@ -349,6 +363,8 @@ export default function EditItemScreen() {
           selectedOffsets={reminderMode === 'notify' ? selectedReminderOffsets : []}
           type={type}
         />
+
+        <Text style={styles.saveSummary}>{saveSummary}</Text>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>
@@ -431,6 +447,10 @@ function createStyles(theme: AppTheme) {
       justifyContent: 'space-between',
       padding: 14,
     },
+    modeCardActive: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primarySoft,
+    },
     modeCopy: {
       flex: 1,
       gap: 3,
@@ -476,6 +496,12 @@ function createStyles(theme: AppTheme) {
     screen: {
       backgroundColor: colors.background,
       flex: 1,
+    },
+    saveSummary: {
+      color: colors.textSecondary,
+      marginTop: -spacing.sm,
+      textAlign: 'center',
+      ...typography.helper,
     },
     secondaryButton: {
       backgroundColor: colors.primary,

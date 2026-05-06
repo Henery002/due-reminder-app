@@ -8,7 +8,11 @@ import {
   type GestureResponderEvent,
 } from 'react-native';
 import type { ReminderItem } from '../features/reminders/reminder.types';
-import { getReminderStatusLabel, getReminderTypeMeta } from '../features/reminders/reminder.view';
+import {
+  getReminderModeLabel,
+  getReminderStatusLabel,
+  getReminderTypeMeta,
+} from '../features/reminders/reminder.view';
 import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 import { IconGlyph } from './IconGlyph';
 import { PressableScale } from './PressableScale';
@@ -26,6 +30,7 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
   const styles = createStyles(theme);
   const { colors } = theme;
   const typeMeta = getReminderTypeMeta(item.type);
+  const modeLabel = getReminderModeLabel(item);
   const pressScale = useRef(new Animated.Value(1)).current;
   const canSnooze = item.reminderMode === 'notify' && Boolean(onSnooze);
 
@@ -54,7 +59,14 @@ export function DueItemCard({ item, onDone, onPress, onSnooze }: DueItemCardProp
         style={({ pressed }) => [styles.card, pressed && onPress ? styles.pressed : null]}
       >
         <View style={styles.metaRow}>
-          <Text style={[styles.typeLabel, { color: typeMeta.color }]}>{typeMeta.label}</Text>
+          <View style={styles.metaLeft}>
+            <Text style={[styles.typeLabel, { color: typeMeta.color }]}>{typeMeta.label}</Text>
+            {modeLabel ? (
+              <View style={styles.modeBadge}>
+                <Text style={styles.modeBadgeText}>{modeLabel}</Text>
+              </View>
+            ) : null}
+          </View>
           <StatusBadge label={getReminderStatusLabel(item)} status={item.status} />
         </View>
         <View style={styles.header}>
@@ -191,6 +203,23 @@ function createStyles(theme: AppTheme) {
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: spacing.sm,
+    },
+    metaLeft: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 6,
+    },
+    modeBadge: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      paddingHorizontal: 7,
+      paddingVertical: 3,
+    },
+    modeBadgeText: {
+      color: colors.textSecondary,
+      ...typography.label,
     },
     pressed: {
       borderColor: colors.primarySoft,
