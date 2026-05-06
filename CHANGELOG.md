@@ -63,6 +63,11 @@
    - 新建/编辑页保存按钮前新增提醒安排摘要，明确“安排 N 次提醒”或“仅保存记录”
    - “安排本地提醒”开关补充 switch 语义、选中态卡片底色和边框反馈
    - 新增 `getReminderModeLabel` 和 `getReminderSaveSummary` 测试覆盖
+14. 启动 M3.7 表单体验继续精修：
+   - 新增 `ReminderModeSwitch`，统一新建/编辑页的提醒模式开关结构、视觉与 switch 语义
+   - 新增 `ReminderSaveSummary`，统一保存前提醒摘要展示，避免页面重复维护文案样式
+   - 新增 `getReminderModeSwitchCopy` 与 `getReminderSubmitLabels`，收敛提醒模式说明和提交按钮文案
+   - 补充 `reminder.mode.test.ts`，锁住新建/编辑两种场景下的文案映射与提交状态文案
 
 ## 2026-05-05
 

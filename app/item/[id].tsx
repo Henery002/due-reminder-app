@@ -6,10 +6,11 @@ import { CategoryPill } from '../../src/components/CategoryPill';
 import { EmptyState } from '../../src/components/EmptyState';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
+import { ReminderModeSwitch } from '../../src/components/ReminderModeSwitch';
+import { ReminderSaveSummary } from '../../src/components/ReminderSaveSummary';
 import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePreview';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
-import { PressableScale } from '../../src/components/PressableScale';
 import {
   getExpoNotificationGateway,
   isNotificationRuntimeUnavailableError,
@@ -29,11 +30,9 @@ import {
   type ReminderFeedback,
 } from '../../src/features/reminders/reminder.feedback';
 import { parseOptionalReminderAmount } from '../../src/features/reminders/reminder.form';
+import { getReminderSubmitLabels } from '../../src/features/reminders/reminder.mode';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
-import {
-  buildReminderSchedulePreview,
-  getReminderSaveSummary,
-} from '../../src/features/reminders/reminder.schedule-preview';
+import { buildReminderSchedulePreview } from '../../src/features/reminders/reminder.schedule-preview';
 import type {
   ReminderItem,
   ReminderMode,
@@ -85,7 +84,7 @@ export default function EditItemScreen() {
     selectedOffsets: reminderMode === 'notify' ? selectedReminderOffsets : [],
     type,
   });
-  const saveSummary = getReminderSaveSummary(reminderPreview, reminderMode);
+  const submitLabels = getReminderSubmitLabels('edit', reminderMode);
 
   const loadItem = useCallback(() => {
     if (!reminderId) {
@@ -336,25 +335,11 @@ export default function EditItemScreen() {
           <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
-        <PressableScale
-          accessibilityRole="switch"
-          accessibilityState={{ checked: reminderMode === 'notify' }}
-          onPress={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}
-        >
-          <View style={[styles.modeCard, reminderMode === 'notify' ? styles.modeCardActive : null]}>
-            <View style={styles.modeCopy}>
-              <Text style={styles.modeTitle}>安排本地提醒</Text>
-              <Text style={styles.modeDescription}>
-                {reminderMode === 'notify'
-                  ? '保存后会取消旧提醒，并按新计划重新安排。'
-                  : '仅保存这条到期记录；保存时会取消旧通知，不再安排新提醒。'}
-              </Text>
-            </View>
-            <View style={[styles.modeSwitch, reminderMode === 'notify' ? styles.modeSwitchActive : null]}>
-              <View style={[styles.modeThumb, reminderMode === 'notify' ? styles.modeThumbActive : null]} />
-            </View>
-          </View>
-        </PressableScale>
+        <ReminderModeSwitch
+          mode={reminderMode}
+          onToggle={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}
+          variant="edit"
+        />
 
         <ReminderSchedulePreview
           dueDate={dueDate}
@@ -364,7 +349,7 @@ export default function EditItemScreen() {
           type={type}
         />
 
-        <Text style={styles.saveSummary}>{saveSummary}</Text>
+        <ReminderSaveSummary mode={reminderMode} preview={reminderPreview} />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>
@@ -388,9 +373,9 @@ export default function EditItemScreen() {
 
         <SubmitActionButton
           disabled={isDeleting}
-          label={reminderMode === 'notify' ? '保存修改并重排提醒' : '保存为仅记录'}
+          label={submitLabels.label}
           loading={isSaving}
-          loadingLabel={reminderMode === 'notify' ? '正在重排提醒...' : '正在保存记录...'}
+          loadingLabel={submitLabels.loadingLabel}
           onPress={handleSave}
         />
         <SubmitActionButton
@@ -436,54 +421,6 @@ function createStyles(theme: AppTheme) {
       minHeight: 78,
       textAlignVertical: 'top',
     },
-    modeCard: {
-      alignItems: 'center',
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      flexDirection: 'row',
-      gap: spacing.md,
-      justifyContent: 'space-between',
-      padding: 14,
-    },
-    modeCardActive: {
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.primarySoft,
-    },
-    modeCopy: {
-      flex: 1,
-      gap: 3,
-    },
-    modeDescription: {
-      color: colors.textSecondary,
-      ...typography.helper,
-    },
-    modeSwitch: {
-      backgroundColor: colors.surfaceMuted,
-      borderRadius: radius.pill,
-      height: 28,
-      justifyContent: 'center',
-      paddingHorizontal: 3,
-      width: 50,
-    },
-    modeSwitchActive: {
-      backgroundColor: colors.primarySoft,
-    },
-    modeThumb: {
-      backgroundColor: colors.textMuted,
-      borderRadius: radius.pill,
-      height: 22,
-      width: 22,
-    },
-    modeThumbActive: {
-      alignSelf: 'flex-end',
-      backgroundColor: colors.primary,
-    },
-    modeTitle: {
-      color: colors.textPrimary,
-      ...typography.bodyStrong,
-    },
     pills: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -496,12 +433,6 @@ function createStyles(theme: AppTheme) {
     screen: {
       backgroundColor: colors.background,
       flex: 1,
-    },
-    saveSummary: {
-      color: colors.textSecondary,
-      marginTop: -spacing.sm,
-      textAlign: 'center',
-      ...typography.helper,
     },
     secondaryButton: {
       backgroundColor: colors.primary,

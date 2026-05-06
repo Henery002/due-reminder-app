@@ -6,11 +6,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
+import { ReminderModeSwitch } from '../../src/components/ReminderModeSwitch';
+import { ReminderSaveSummary } from '../../src/components/ReminderSaveSummary';
 import { ReminderSchedulePreview } from '../../src/components/ReminderSchedulePreview';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { SubmitActionButton } from '../../src/components/SubmitActionButton';
 import { TemplateCard } from '../../src/components/TemplateCard';
-import { PressableScale } from '../../src/components/PressableScale';
 import { reminderTemplates } from '../../src/constants/templates';
 import { getReminderCreationGate } from '../../src/features/membership/membership.entitlement';
 import {
@@ -33,11 +34,9 @@ import {
   type ReminderFeedback,
 } from '../../src/features/reminders/reminder.feedback';
 import { parseOptionalReminderAmount } from '../../src/features/reminders/reminder.form';
+import { getReminderSubmitLabels } from '../../src/features/reminders/reminder.mode';
 import { createReminderSchema } from '../../src/features/reminders/reminder.schema';
-import {
-  buildReminderSchedulePreview,
-  getReminderSaveSummary,
-} from '../../src/features/reminders/reminder.schedule-preview';
+import { buildReminderSchedulePreview } from '../../src/features/reminders/reminder.schedule-preview';
 import { buildReminderRules } from '../../src/features/reminders/reminder.service';
 import type {
   ReminderItem,
@@ -87,7 +86,7 @@ export default function NewItemScreen() {
     selectedOffsets: reminderMode === 'notify' ? selectedReminderOffsets : [],
     type,
   });
-  const saveSummary = getReminderSaveSummary(reminderPreview, reminderMode);
+  const submitLabels = getReminderSubmitLabels('create', reminderMode);
 
   const refreshCreationGate = useCallback(() => {
     const gate = getReminderCreationGate(reminderRepository.list().length);
@@ -304,25 +303,11 @@ export default function NewItemScreen() {
           <ReminderDatePicker value={dueDate} onChange={setDueDate} />
         </View>
 
-        <PressableScale
-          accessibilityRole="switch"
-          accessibilityState={{ checked: reminderMode === 'notify' }}
-          onPress={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}
-        >
-          <View style={[styles.modeCard, reminderMode === 'notify' ? styles.modeCardActive : null]}>
-            <View style={styles.modeCopy}>
-              <Text style={styles.modeTitle}>安排本地提醒</Text>
-              <Text style={styles.modeDescription}>
-                {reminderMode === 'notify'
-                  ? '保存后会按下方计划向系统安排本地通知。'
-                  : '仅保存这条到期记录，不向系统安排新通知。'}
-              </Text>
-            </View>
-            <View style={[styles.modeSwitch, reminderMode === 'notify' ? styles.modeSwitchActive : null]}>
-              <View style={[styles.modeThumb, reminderMode === 'notify' ? styles.modeThumbActive : null]} />
-            </View>
-          </View>
-        </PressableScale>
+        <ReminderModeSwitch
+          mode={reminderMode}
+          onToggle={() => setReminderMode(reminderMode === 'notify' ? 'record-only' : 'notify')}
+          variant="create"
+        />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>
@@ -352,13 +337,13 @@ export default function NewItemScreen() {
           type={type}
         />
 
-        <Text style={styles.saveSummary}>{saveSummary}</Text>
+        <ReminderSaveSummary mode={reminderMode} preview={reminderPreview} />
 
         <SubmitActionButton
           disabled={!creationGate.allowed}
-          label={reminderMode === 'notify' ? '保存并安排提醒' : '保存为记录'}
+          label={submitLabels.label}
           loading={isSaving}
-          loadingLabel={reminderMode === 'notify' ? '正在安排提醒...' : '正在保存记录...'}
+          loadingLabel={submitLabels.loadingLabel}
           onPress={handleSave}
         />
         {!creationGate.allowed ? (
@@ -397,54 +382,6 @@ function createStyles(theme: AppTheme) {
       minHeight: 78,
       textAlignVertical: 'top',
     },
-    modeCard: {
-      alignItems: 'center',
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      flexDirection: 'row',
-      gap: spacing.md,
-      justifyContent: 'space-between',
-      padding: 14,
-    },
-    modeCardActive: {
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.primarySoft,
-    },
-    modeCopy: {
-      flex: 1,
-      gap: 3,
-    },
-    modeDescription: {
-      color: colors.textSecondary,
-      ...typography.helper,
-    },
-    modeSwitch: {
-      backgroundColor: colors.surfaceMuted,
-      borderRadius: radius.pill,
-      height: 28,
-      justifyContent: 'center',
-      paddingHorizontal: 3,
-      width: 50,
-    },
-    modeSwitchActive: {
-      backgroundColor: colors.primarySoft,
-    },
-    modeThumb: {
-      backgroundColor: colors.textMuted,
-      borderRadius: radius.pill,
-      height: 22,
-      width: 22,
-    },
-    modeThumbActive: {
-      alignSelf: 'flex-end',
-      backgroundColor: colors.primary,
-    },
-    modeTitle: {
-      color: colors.textPrimary,
-      ...typography.bodyStrong,
-    },
     pills: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -460,12 +397,6 @@ function createStyles(theme: AppTheme) {
     },
     section: {
       gap: spacing.sm,
-    },
-    saveSummary: {
-      color: colors.textSecondary,
-      marginTop: -spacing.sm,
-      textAlign: 'center',
-      ...typography.helper,
     },
     sectionTitle: {
       color: colors.textPrimary,
