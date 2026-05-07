@@ -16,27 +16,24 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarButton: (props) => <AnimatedTabButton {...props} styles={styles} />,
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-        },
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
           borderTopWidth: 0,
-          bottom: 10,
-          elevation: 5,
-          height: 58,
-          left: 16,
-          paddingBottom: 6,
-          paddingTop: 5,
+          bottom: 4,
+          elevation: 4,
+          height: 48,
+          left: 24,
+          paddingBottom: 0,
+          paddingTop: 0,
           position: 'absolute',
-          right: 16,
-          borderRadius: 20,
+          right: 24,
+          borderRadius: 18,
           shadowColor: colors.cardShadow,
-          shadowOffset: { height: 5, width: 0 },
-          shadowOpacity: theme.colorScheme === 'dark' ? 0.18 : 0.08,
-          shadowRadius: 14,
+          shadowOffset: { height: 4, width: 0 },
+          shadowOpacity: theme.colorScheme === 'dark' ? 0.14 : 0.06,
+          shadowRadius: 12,
         },
       }}
     >
@@ -44,11 +41,11 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: '首页',
-          tabBarIcon: ({ color, focused, size }) => (
+          tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               color={color}
               name={focused ? 'home-variant' : 'home-variant-outline'}
-              size={focused ? size + 2 : size}
+              size={focused ? 25 : 23}
             />
           ),
         }}
@@ -57,11 +54,11 @@ export default function TabsLayout() {
         name="items"
         options={{
           title: '全部',
-          tabBarIcon: ({ color, focused, size }) => (
+          tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               color={color}
               name={focused ? 'clipboard-list' : 'clipboard-list-outline'}
-              size={focused ? size + 2 : size}
+              size={focused ? 25 : 23}
             />
           ),
         }}
@@ -70,11 +67,11 @@ export default function TabsLayout() {
         name="me"
         options={{
           title: '我的',
-          tabBarIcon: ({ color, focused, size }) => (
+          tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               color={color}
               name={focused ? 'account-circle' : 'account-circle-outline'}
-              size={focused ? size + 2 : size}
+              size={focused ? 25 : 23}
             />
           ),
         }}
@@ -108,7 +105,7 @@ function AnimatedTabButton({
 
   const selectedScale = selectedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, 1.08],
+    outputRange: [1, 1.04],
   });
 
   return (
@@ -161,13 +158,15 @@ function createStyles(theme: AppTheme) {
   return StyleSheet.create({
     tabButton: {
       alignItems: 'center',
-      borderRadius: radius.xl,
-      flex: 1,
+      borderRadius: radius.pill,
+      height: 38,
       justifyContent: 'center',
+      width: 46,
     },
     tabButtonMotion: {
+      alignItems: 'center',
       flex: 1,
-      marginHorizontal: 4,
+      justifyContent: 'center',
     },
     tabButtonSelected: {
       backgroundColor: colors.primarySoft,

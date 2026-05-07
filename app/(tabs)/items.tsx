@@ -354,7 +354,7 @@ function createStyles(theme: AppTheme) {
     content: {
       gap: spacing.lg,
       padding: spacing.lg,
-      paddingBottom: 104,
+      paddingBottom: 76,
     },
     filterPanel: {
       backgroundColor: colors.surface,
