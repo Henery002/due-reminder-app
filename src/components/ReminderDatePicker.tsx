@@ -3,8 +3,6 @@ import {
   buildReminderMonthCalendar,
   getReminderDateDescription,
   getReminderDateQuickOptions,
-  shiftReminderDate,
-  type ReminderDateUnit,
 } from '../features/reminders/reminder.date';
 import { useTheme, type AppTheme } from '../theme/ThemeProvider';
 
@@ -12,12 +10,6 @@ type ReminderDatePickerProps = {
   value: string;
   onChange(value: string): void;
 };
-
-const controls: Array<{ label: string; unit: ReminderDateUnit }> = [
-  { label: '年', unit: 'year' },
-  { label: '月', unit: 'month' },
-  { label: '日', unit: 'day' },
-];
 
 export function ReminderDatePicker({ value, onChange }: ReminderDatePickerProps) {
   const theme = useTheme();
@@ -60,53 +52,33 @@ export function ReminderDatePicker({ value, onChange }: ReminderDatePickerProps)
           ))}
         </View>
         <View style={styles.dayGrid}>
-          {calendar.days.map((day) => {
-            return (
-              <Pressable
-                key={day.value}
-                onPress={() => onChange(day.value)}
-                style={[
-                  styles.dayButton,
-                  day.isSelected ? styles.dayButtonSelected : null,
-                  day.isToday && !day.isSelected ? styles.dayButtonToday : null,
-                  !day.isCurrentMonth ? styles.dayButtonMuted : null,
-                ]}
-              >
-                <Text
+          {calendar.weeks.map((week) => (
+            <View key={week.map((day) => day.value).join('-')} style={styles.weekGridRow}>
+              {week.map((day) => (
+                <Pressable
+                  key={day.value}
+                  onPress={() => onChange(day.value)}
                   style={[
-                    styles.dayText,
-                    day.isSelected ? styles.dayTextSelected : null,
-                    !day.isCurrentMonth || day.isPast ? styles.dayTextMuted : null,
+                    styles.dayButton,
+                    !day.isCurrentMonth ? styles.dayButtonMuted : null,
+                    day.isToday && !day.isSelected ? styles.dayButtonToday : null,
+                    day.isSelected ? styles.dayButtonSelected : null,
                   ]}
                 >
-                  {day.dayLabel}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
-
-      <View style={styles.controls}>
-        {controls.map((control) => (
-          <View key={control.unit} style={styles.controlRow}>
-            <Text style={styles.controlLabel}>{control.label}</Text>
-            <View style={styles.stepper}>
-              <Pressable
-                onPress={() => onChange(shiftReminderDate(value, control.unit, -1))}
-                style={styles.stepButton}
-              >
-                <Text style={styles.stepText}>-</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => onChange(shiftReminderDate(value, control.unit, 1))}
-                style={styles.stepButton}
-              >
-                <Text style={styles.stepText}>+</Text>
-              </Pressable>
+                  <Text
+                    style={[
+                      styles.dayText,
+                      !day.isCurrentMonth || day.isPast ? styles.dayTextMuted : null,
+                      day.isSelected ? styles.dayTextSelected : null,
+                    ]}
+                  >
+                    {day.dayLabel}
+                  </Text>
+                </Pressable>
+              ))}
             </View>
-          </View>
-        ))}
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -119,8 +91,9 @@ function createStyles(theme: AppTheme) {
     calendar: {
       backgroundColor: colors.surfaceMuted,
       borderRadius: radius.lg,
-      gap: spacing.sm,
-      padding: spacing.md,
+      gap: 10,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 12,
     },
     calendarTitle: {
       color: colors.textPrimary,
@@ -135,28 +108,12 @@ function createStyles(theme: AppTheme) {
       overflow: 'hidden',
       padding: 14,
     },
-    controlLabel: {
-      color: colors.textPrimary,
-      ...typography.bodyStrong,
-    },
-    controlRow: {
-      alignItems: 'center',
-      backgroundColor: colors.surfaceMuted,
-      borderRadius: radius.md,
-      flex: 1,
-      gap: spacing.sm,
-      padding: 10,
-    },
-    controls: {
-      flexDirection: 'row',
-      gap: spacing.sm,
-    },
     dayButton: {
       alignItems: 'center',
       aspectRatio: 1,
-      borderRadius: radius.md,
+      borderRadius: radius.pill,
+      flex: 1,
       justifyContent: 'center',
-      width: '13.2%',
     },
     dayButtonMuted: {
       opacity: 0.5,
@@ -168,9 +125,7 @@ function createStyles(theme: AppTheme) {
       backgroundColor: colors.primarySoft,
     },
     dayGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: spacing.xs,
+      gap: 6,
     },
     dayText: {
       color: colors.textPrimary,
@@ -210,8 +165,8 @@ function createStyles(theme: AppTheme) {
       paddingVertical: 7,
     },
     quickButtonSelected: {
-      backgroundColor: colors.primary,
-      borderColor: colors.primary,
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primarySoft,
     },
     quickGrid: {
       flexDirection: 'row',
@@ -223,27 +178,7 @@ function createStyles(theme: AppTheme) {
       ...typography.label,
     },
     quickTextSelected: {
-      color: colors.surface,
-    },
-    stepButton: {
-      alignItems: 'center',
-      backgroundColor: colors.surface,
-      borderRadius: radius.md,
-      flex: 1,
-      justifyContent: 'center',
-      minHeight: 32,
-      paddingVertical: 6,
-    },
-    stepper: {
-      flexDirection: 'row',
-      gap: 6,
-      width: '100%',
-    },
-    stepText: {
       color: colors.primary,
-      fontSize: 17,
-      fontWeight: '600',
-      lineHeight: 22,
     },
     weekday: {
       color: colors.textMuted,
@@ -253,6 +188,10 @@ function createStyles(theme: AppTheme) {
     },
     weekRow: {
       flexDirection: 'row',
+    },
+    weekGridRow: {
+      flexDirection: 'row',
+      gap: 6,
     },
   });
 }

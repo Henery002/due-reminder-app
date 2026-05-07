@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { EmptyState } from '../../src/components/EmptyState';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
+import { NumericTextInput } from '../../src/components/NumericTextInput';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderModeSwitch } from '../../src/components/ReminderModeSwitch';
 import { ReminderSaveSummary } from '../../src/components/ReminderSaveSummary';
@@ -261,7 +262,7 @@ export default function EditItemScreen() {
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <View style={styles.notFound}>
           <Stack.Screen options={{ title: '编辑事项' }} />
-          <ScreenHeader subtitle="返回上一页" title="编辑事项" />
+          <ScreenHeader title="编辑事项" />
           <EmptyState title="正在打开事项" description="正在读取本地事项数据，请稍等。" />
         </View>
       </SafeAreaView>
@@ -273,7 +274,7 @@ export default function EditItemScreen() {
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <View style={styles.notFound}>
           <Stack.Screen options={{ title: '编辑事项' }} />
-          <ScreenHeader subtitle="返回上一页" title="编辑事项" />
+          <ScreenHeader title="编辑事项" />
           <EmptyState title="没有找到这个事项" description="它可能已经被删除或本地数据已刷新。" />
           <Pressable onPress={() => router.back()} style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>返回</Text>
@@ -287,21 +288,16 @@ export default function EditItemScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '编辑事项' }} />
-        <ScreenHeader subtitle="返回上一页" title="编辑事项" />
+        <ScreenHeader title="编辑事项" />
         <View>
           <Text style={styles.title}>编辑到期事项</Text>
           <Text style={styles.subtitle}>修改后会取消旧提醒，并按新的到期日重新安排。</Text>
           <View style={styles.summaryRow}>
-            <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>{selectedTypeLabel}</Text>
-              <Text style={styles.summaryLabel}>当前类型</Text>
-            </View>
-            <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>
-                {reminderMode === 'notify' ? `${selectedReminderOffsets.length} 个` : '关闭'}
-              </Text>
-              <Text style={styles.summaryLabel}>{reminderModeLabel}</Text>
-            </View>
+            <Text style={styles.summaryText}>类型 {selectedTypeLabel}</Text>
+            <View style={styles.summaryDivider} />
+            <Text style={styles.summaryText}>
+              {reminderModeLabel} {reminderMode === 'notify' ? `${selectedReminderOffsets.length} 个` : '关闭'}
+            </Text>
           </View>
         </View>
         <FeedbackBanner feedback={feedback} />
@@ -353,8 +349,8 @@ export default function EditItemScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>
-          <TextInput
-            keyboardType="decimal-pad"
+          <NumericTextInput
+            decimal
             placeholder="金额，可选"
             placeholderTextColor={colors.textMuted}
             style={styles.input}
@@ -458,28 +454,25 @@ function createStyles(theme: AppTheme) {
       marginTop: spacing.xs,
       ...typography.body,
     },
-    summaryChip: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: radius.pill,
-      borderWidth: 1,
-      flex: 1,
-      gap: 1,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-    },
-    summaryLabel: {
-      color: colors.textMuted,
-      ...typography.helper,
-    },
     summaryRow: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.md,
       flexDirection: 'row',
-      gap: spacing.sm,
+      gap: 8,
       marginTop: spacing.md,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
     },
-    summaryValue: {
-      color: colors.textPrimary,
-      ...typography.bodyStrong,
+    summaryDivider: {
+      backgroundColor: colors.border,
+      height: 14,
+      width: 1,
+    },
+    summaryText: {
+      color: colors.textSecondary,
+      ...typography.helper,
     },
     title: {
       color: colors.textPrimary,

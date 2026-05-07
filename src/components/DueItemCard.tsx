@@ -172,15 +172,15 @@ function createStyles(theme: AppTheme) {
       marginTop: 2,
     },
     doneAction: {
-      backgroundColor: colors.doneSoft,
-      borderColor: colors.doneSoft,
+      backgroundColor: 'transparent',
+      borderColor: colors.border,
     },
     doneActionText: {
       color: colors.done,
     },
     doneIconPuck: {
       alignItems: 'center',
-      backgroundColor: colors.surface,
+      backgroundColor: colors.doneSoft,
       borderRadius: radius.pill,
       height: 20,
       justifyContent: 'center',
@@ -226,15 +226,15 @@ function createStyles(theme: AppTheme) {
       opacity: 0.94,
     },
     snoozeAction: {
-      backgroundColor: colors.dueSoonSoft,
-      borderColor: colors.dueSoonSoft,
+      backgroundColor: 'transparent',
+      borderColor: colors.border,
     },
     snoozeActionText: {
       color: colors.dueSoon,
     },
     snoozeIconPuck: {
       alignItems: 'center',
-      backgroundColor: colors.surface,
+      backgroundColor: colors.dueSoonSoft,
       borderRadius: radius.pill,
       height: 20,
       justifyContent: 'center',

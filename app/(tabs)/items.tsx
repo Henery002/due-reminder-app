@@ -35,7 +35,7 @@ const typeFilterOptions: Array<{ label: string; value: ReminderTypeFilter }> = [
 ];
 
 const statusFilterOptions: Array<{ label: string; value: ReminderStatusFilter }> = [
-  { label: '全部状态', value: 'all' },
+  { label: '全部', value: 'all' },
   { label: '未处理', value: 'pending' },
   { label: '已逾期', value: 'overdue' },
   { label: '已延后', value: 'snoozed' },
@@ -43,8 +43,8 @@ const statusFilterOptions: Array<{ label: string; value: ReminderStatusFilter }>
 ];
 
 const modeFilterOptions: Array<{ label: string; value: ReminderModeFilter }> = [
-  { label: '全部方式', value: 'all' },
-  { label: '本地提醒', value: 'notify' },
+  { label: '全部', value: 'all' },
+  { label: '本地', value: 'notify' },
   { label: '仅记录', value: 'record-only' },
 ];
 
@@ -187,36 +187,27 @@ export default function ItemsScreen() {
                 </Pressable>
               ) : null}
             </View>
-            <View style={styles.filterRow}>
-              {typeFilterOptions.map((option) => (
-                <CategoryPill
-                  key={option.value}
-                  label={option.label}
-                  onPress={() => setSelectedType(option.value)}
-                  selected={selectedType === option.value}
-                />
-              ))}
-            </View>
-            <View style={styles.filterRow}>
-              {statusFilterOptions.map((option) => (
-                <CategoryPill
-                  key={option.value}
-                  label={option.label}
-                  onPress={() => setSelectedStatus(option.value)}
-                  selected={selectedStatus === option.value}
-                />
-              ))}
-            </View>
-            <View style={styles.filterRow}>
-              {modeFilterOptions.map((option) => (
-                <CategoryPill
-                  key={option.value}
-                  label={option.label}
-                  onPress={() => setSelectedMode(option.value)}
-                  selected={selectedMode === option.value}
-                />
-              ))}
-            </View>
+            <FilterGroup
+              label="类型"
+              options={typeFilterOptions}
+              selectedValue={selectedType}
+              styles={styles}
+              onSelect={(value) => setSelectedType(value as ReminderTypeFilter)}
+            />
+            <FilterGroup
+              label="状态"
+              options={statusFilterOptions}
+              selectedValue={selectedStatus}
+              styles={styles}
+              onSelect={(value) => setSelectedStatus(value as ReminderStatusFilter)}
+            />
+            <FilterGroup
+              label="方式"
+              options={modeFilterOptions}
+              selectedValue={selectedMode}
+              styles={styles}
+              onSelect={(value) => setSelectedMode(value as ReminderModeFilter)}
+            />
             <Text style={styles.resultMeta}>
               当前显示 {visibleItems.length} / {items.length} 件，支持按名称、备注和提醒方式筛选
             </Text>
@@ -294,6 +285,40 @@ export default function ItemsScreen() {
   );
 }
 
+function FilterGroup({
+  label,
+  onSelect,
+  options,
+  selectedValue,
+  styles,
+}: {
+  label: string;
+  onSelect(value: string): void;
+  options: Array<{ label: string; value: string }>;
+  selectedValue: string;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  return (
+    <View style={styles.filterGroup}>
+      <Text style={styles.filterGroupLabel}>{label}</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.filterScrollContent}
+      >
+        {options.map((option) => (
+          <CategoryPill
+            key={option.value}
+            label={option.label}
+            onPress={() => onSelect(option.value)}
+            selected={selectedValue === option.value}
+          />
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
 function createStyles(theme: AppTheme) {
   const { colors, radius, spacing, typography } = theme;
 
@@ -353,10 +378,19 @@ function createStyles(theme: AppTheme) {
     header: {
       gap: spacing.sm,
     },
-    filterRow: {
+    filterGroup: {
+      alignItems: 'center',
       flexDirection: 'row',
-      flexWrap: 'wrap',
       gap: spacing.sm,
+    },
+    filterGroupLabel: {
+      color: colors.textMuted,
+      width: 32,
+      ...typography.label,
+    },
+    filterScrollContent: {
+      gap: spacing.sm,
+      paddingRight: spacing.sm,
     },
     list: {
       gap: spacing.md,

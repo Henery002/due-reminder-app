@@ -53,6 +53,9 @@ describe('reminder date helpers', () => {
     expect(calendar.title).toBe('2026 年 5 月');
     expect(calendar.weekdays).toEqual(['一', '二', '三', '四', '五', '六', '日']);
     expect(calendar.days).toHaveLength(35);
+    expect(calendar.weeks).toHaveLength(5);
+    expect(calendar.weeks.every((week) => week.length === 7)).toBe(true);
+    expect(calendar.weeks.map((week) => week[6].dayLabel)).toEqual(['3', '10', '17', '24', '31']);
     expect(calendar.days[0]).toEqual({
       dayLabel: '27',
       isCurrentMonth: false,

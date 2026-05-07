@@ -414,11 +414,10 @@ function createStyles(theme: AppTheme) {
       borderRadius: radius.lg,
     },
     quickGrid: {
-      flexDirection: 'row',
-      gap: spacing.md,
+      gap: spacing.sm,
     },
     quickItem: {
-      flex: 1,
+      width: '100%',
     },
     safeArea: {
       backgroundColor: colors.background,
@@ -450,7 +449,6 @@ function createStyles(theme: AppTheme) {
       marginTop: 2,
     },
     segmentGrid: {
-      flexDirection: 'row',
       gap: spacing.sm,
     },
     segmentLabel: {
@@ -465,7 +463,6 @@ function createStyles(theme: AppTheme) {
       borderColor: colors.border,
       borderRadius: radius.lg,
       borderWidth: 1,
-      flex: 1,
       paddingHorizontal: spacing.sm,
       paddingVertical: 10,
     },

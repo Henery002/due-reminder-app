@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { NumericTextInput } from './NumericTextInput';
 import { PressableScale } from './PressableScale';
 import {
   buildReminderSchedulePreview,
@@ -112,8 +113,7 @@ export function ReminderSchedulePreview({
             })}
           </View>
           <View style={styles.customRow}>
-            <TextInput
-              keyboardType="number-pad"
+            <NumericTextInput
               maxLength={3}
               onChangeText={(text) => {
                 setCustomOffsetText(text);

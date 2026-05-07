@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CategoryPill } from '../../src/components/CategoryPill';
 import { FeedbackBanner } from '../../src/components/FeedbackBanner';
+import { NumericTextInput } from '../../src/components/NumericTextInput';
 import { ReminderDatePicker } from '../../src/components/ReminderDatePicker';
 import { ReminderModeSwitch } from '../../src/components/ReminderModeSwitch';
 import { ReminderSaveSummary } from '../../src/components/ReminderSaveSummary';
@@ -241,21 +242,16 @@ export default function NewItemScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <Stack.Screen options={{ title: '添加事项' }} />
-        <ScreenHeader subtitle="返回上一页" title="添加事项" />
+        <ScreenHeader title="添加事项" />
         <View>
           <Text style={styles.title}>添加一件快到期的事</Text>
           <Text style={styles.subtitle}>先选模板，再确认到期日和提醒策略。</Text>
           <View style={styles.summaryRow}>
-            <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>{selectedTypeLabel}</Text>
-              <Text style={styles.summaryLabel}>当前类型</Text>
-            </View>
-            <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>
-                {reminderMode === 'notify' ? `${selectedReminderOffsets.length} 个` : '关闭'}
-              </Text>
-              <Text style={styles.summaryLabel}>{reminderModeLabel}</Text>
-            </View>
+            <Text style={styles.summaryText}>类型 {selectedTypeLabel}</Text>
+            <View style={styles.summaryDivider} />
+            <Text style={styles.summaryText}>
+              {reminderModeLabel} {reminderMode === 'notify' ? `${selectedReminderOffsets.length} 个` : '关闭'}
+            </Text>
           </View>
         </View>
         <FeedbackBanner feedback={feedback} />
@@ -311,8 +307,8 @@ export default function NewItemScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>金额和备注</Text>
-          <TextInput
-            keyboardType="decimal-pad"
+          <NumericTextInput
+            decimal
             placeholder="金额，可选"
             placeholderTextColor={colors.textMuted}
             style={styles.input}
@@ -407,28 +403,25 @@ function createStyles(theme: AppTheme) {
       marginTop: spacing.xs,
       ...typography.body,
     },
-    summaryChip: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: radius.pill,
-      borderWidth: 1,
-      flex: 1,
-      gap: 1,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-    },
-    summaryLabel: {
-      color: colors.textMuted,
-      ...typography.helper,
-    },
     summaryRow: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.md,
       flexDirection: 'row',
-      gap: spacing.sm,
+      gap: 8,
       marginTop: spacing.md,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
     },
-    summaryValue: {
-      color: colors.textPrimary,
-      ...typography.bodyStrong,
+    summaryDivider: {
+      backgroundColor: colors.border,
+      height: 14,
+      width: 1,
+    },
+    summaryText: {
+      color: colors.textSecondary,
+      ...typography.helper,
     },
     templates: {
       flexDirection: 'row',

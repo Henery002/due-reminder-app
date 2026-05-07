@@ -52,17 +52,11 @@ function createStyles(theme: AppTheme) {
   return StyleSheet.create({
     backButton: {
       alignItems: 'center',
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: radius.md,
-      borderWidth: 1,
-      height: 36,
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: radius.pill,
+      height: 32,
       justifyContent: 'center',
-      shadowColor: colors.cardShadow,
-      shadowOffset: { height: 3, width: 0 },
-      shadowOpacity: theme.colorScheme === 'dark' ? 0.14 : 0.035,
-      shadowRadius: 8,
-      width: 36,
+      width: 32,
     },
     backIcon: {
       color: colors.textPrimary,
@@ -71,7 +65,6 @@ function createStyles(theme: AppTheme) {
       lineHeight: 24,
     },
     backPressed: {
-      borderColor: colors.primary,
       opacity: 0.86,
     },
     header: {

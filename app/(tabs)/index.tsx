@@ -112,20 +112,6 @@ export default function HomeScreen() {
           </View>
           <Text style={styles.title}>今天待处理 {groups.today.length} 件</Text>
           <Text style={styles.subtitle}>订阅续费、账单缴费、证件到期都在这里看。</Text>
-          <View style={styles.summaryRow}>
-            <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>{groups.overdue.length}</Text>
-              <Text style={styles.summaryLabel}>已逾期</Text>
-            </View>
-            <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>{nextSevenDaysCount}</Text>
-              <Text style={styles.summaryLabel}>7 天内</Text>
-            </View>
-            <View style={styles.summaryChip}>
-              <Text style={styles.summaryValue}>{thisMonthCount}</Text>
-              <Text style={styles.summaryLabel}>本月到期</Text>
-            </View>
-          </View>
         </View>
 
         <PermissionBanner onPress={() => router.push('/notification-permission')} />
@@ -350,33 +336,11 @@ function createStyles(theme: AppTheme) {
       color: colors.textSecondary,
       ...typography.body,
     },
-    summaryChip: {
-      alignItems: 'center',
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: radius.pill,
-      borderWidth: 1,
-      flex: 1,
-      gap: 1,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-    },
-    summaryLabel: {
-      color: colors.textMuted,
-      ...typography.helper,
-    },
-    summaryRow: {
-      flexDirection: 'row',
-      gap: spacing.sm,
-      marginTop: spacing.xs,
-    },
-    summaryValue: {
-      color: colors.textPrimary,
-      ...typography.bodyStrong,
-    },
     title: {
       color: colors.textPrimary,
-      ...typography.cardTitle,
+      fontSize: 24,
+      fontWeight: '800',
+      lineHeight: 31,
     },
     warmBadge: {
       backgroundColor: colors.dueSoonSoft,

@@ -32,6 +32,7 @@ export type ReminderMonthCalendar = {
   days: ReminderCalendarDay[];
   title: string;
   weekdays: string[];
+  weeks: ReminderCalendarDay[][];
 };
 
 export function formatReminderDate(date: Date): string {
@@ -117,7 +118,17 @@ export function buildReminderMonthCalendar(
     days,
     title: format(selectedDate, 'yyyy 年 M 月'),
     weekdays: ['一', '二', '三', '四', '五', '六', '日'],
+    weeks: chunkCalendarWeeks(days),
   };
+}
+
+function chunkCalendarWeeks(days: ReminderCalendarDay[]): ReminderCalendarDay[][] {
+  const weeks: ReminderCalendarDay[][] = [];
+  for (let index = 0; index < days.length; index += 7) {
+    weeks.push(days.slice(index, index + 7));
+  }
+
+  return weeks;
 }
 
 function parseReminderDateOrFallback(value: string, fallbackDate: Date): Date {
