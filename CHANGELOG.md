@@ -7,6 +7,11 @@
    - 将 `react-dom` 锁定为 `19.1.0`，避免 npm 安装时解析到与 `react@19.1.0` 不兼容的新版本
    - Web 开发环境改用内存存储适配层，避免 `expo-sqlite` 同步 Web 实现因缺少 `SharedArrayBuffer` 导致页面崩溃
    - Android/iOS 端仍继续使用本地 SQLite 和原有迁移逻辑
+2. 启动小米 14 USB 真机调试：
+   - 通过 ADB 确认设备、安装并启动 Android development build
+   - 真机确认首页可渲染，底部 Tab 与首页内容可通过 UIAutomator 读取
+   - 修复首页/我的页通知权限提示未跟随系统授权状态隐藏的问题
+   - 新增通知权限提示可见性判定测试，授权后不再展示“打开通知”横幅
 
 ## 2026-05-07
 

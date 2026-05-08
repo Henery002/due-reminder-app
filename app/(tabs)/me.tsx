@@ -1,4 +1,5 @@
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconGlyph } from '../../src/components/IconGlyph';
@@ -15,6 +16,15 @@ import {
 } from '../../src/features/appearance/appearance.types';
 import { getLegalActions } from '../../src/features/legal/legal.content';
 import {
+  getExpoNotificationGateway,
+  getExpoNotificationRuntimeInfo,
+  isNotificationRuntimeUnavailableError,
+  type NotificationRuntimeInfo,
+} from '../../src/features/notifications/expo-notification.gateway';
+import { shouldShowNotificationPermissionBanner } from '../../src/features/notifications/notification.permission-view';
+import { getNotificationPermissionStatus } from '../../src/features/notifications/notification.service';
+import type { NotificationPermissionStatus } from '../../src/features/notifications/notification.types';
+import {
   getReminderPreferenceNotes,
   getSettingsActions,
   type ReminderPreferenceNote,
@@ -27,9 +37,46 @@ export default function MeScreen() {
   const styles = createStyles(theme);
   const { colors } = theme;
   const { settings, updateAppearanceSettings } = useAppearanceSettings();
+  const [notificationPermission, setNotificationPermission] =
+    useState<NotificationPermissionStatus>();
+  const [notificationRuntimeInfo, setNotificationRuntimeInfo] = useState<NotificationRuntimeInfo>(
+    getExpoNotificationRuntimeInfo(),
+  );
   const actions = getSettingsActions();
   const legalActions = getLegalActions();
   const reminderPreferenceNotes = getReminderPreferenceNotes();
+
+  const refreshNotificationPermission = useCallback(() => {
+    let active = true;
+    const runtimeInfo = getExpoNotificationRuntimeInfo();
+    setNotificationRuntimeInfo(runtimeInfo);
+
+    if (!runtimeInfo.available) {
+      setNotificationPermission(undefined);
+      return () => {
+        active = false;
+      };
+    }
+
+    getExpoNotificationGateway()
+      .then(getNotificationPermissionStatus)
+      .then((permission) => {
+        if (active) {
+          setNotificationPermission(permission);
+        }
+      })
+      .catch((error) => {
+        if (!isNotificationRuntimeUnavailableError(error)) {
+          console.warn('Failed to refresh notification permission', error);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useFocusEffect(refreshNotificationPermission);
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -52,9 +99,14 @@ export default function MeScreen() {
               <MembershipCard compact />
             </PressableScale>
           </View>
-          <View style={styles.quickItem}>
-            <PermissionBanner onPress={() => router.push('/notification-permission')} />
-          </View>
+          {shouldShowNotificationPermissionBanner({
+            permission: notificationPermission,
+            runtimeInfo: notificationRuntimeInfo,
+          }) ? (
+            <View style={styles.quickItem}>
+              <PermissionBanner onPress={() => router.push('/notification-permission')} />
+            </View>
+          ) : null}
         </View>
 
         <View style={styles.section}>

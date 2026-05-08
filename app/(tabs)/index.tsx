@@ -12,8 +12,13 @@ import { OverviewCard } from '../../src/components/OverviewCard';
 import { PermissionBanner } from '../../src/components/PermissionBanner';
 import {
   getExpoNotificationGateway,
+  getExpoNotificationRuntimeInfo,
   isNotificationRuntimeUnavailableError,
+  type NotificationRuntimeInfo,
 } from '../../src/features/notifications/expo-notification.gateway';
+import { shouldShowNotificationPermissionBanner } from '../../src/features/notifications/notification.permission-view';
+import { getNotificationPermissionStatus } from '../../src/features/notifications/notification.service';
+import type { NotificationPermissionStatus } from '../../src/features/notifications/notification.types';
 import {
   completeReminderWithNotifications,
   snoozeReminderWithNotifications,
@@ -47,6 +52,11 @@ export default function HomeScreen() {
   const styles = createStyles(theme);
   const { colors } = theme;
   const [items, setItems] = useState<ReminderItem[]>([]);
+  const [notificationPermission, setNotificationPermission] =
+    useState<NotificationPermissionStatus>();
+  const [notificationRuntimeInfo, setNotificationRuntimeInfo] = useState<NotificationRuntimeInfo>(
+    getExpoNotificationRuntimeInfo(),
+  );
   const [selectedType, setSelectedType] = useState<ReminderTypeFilter>('all');
   const [snoozeTarget, setSnoozeTarget] = useState<ReminderItem | null>(null);
 
@@ -59,6 +69,38 @@ export default function HomeScreen() {
   }, []);
 
   useFocusEffect(loadItems);
+
+  const refreshNotificationPermission = useCallback(() => {
+    let active = true;
+    const runtimeInfo = getExpoNotificationRuntimeInfo();
+    setNotificationRuntimeInfo(runtimeInfo);
+
+    if (!runtimeInfo.available) {
+      setNotificationPermission(undefined);
+      return () => {
+        active = false;
+      };
+    }
+
+    getExpoNotificationGateway()
+      .then(getNotificationPermissionStatus)
+      .then((permission) => {
+        if (active) {
+          setNotificationPermission(permission);
+        }
+      })
+      .catch((error) => {
+        if (!isNotificationRuntimeUnavailableError(error)) {
+          console.warn('Failed to refresh notification permission', error);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useFocusEffect(refreshNotificationPermission);
 
   const handleDone = async (item: ReminderItem) => {
     await completeReminderWithNotifications(item, {
@@ -114,7 +156,12 @@ export default function HomeScreen() {
           <Text style={styles.subtitle}>订阅续费、账单缴费、证件到期都在这里看。</Text>
         </View>
 
-        <PermissionBanner onPress={() => router.push('/notification-permission')} />
+        {shouldShowNotificationPermissionBanner({
+          permission: notificationPermission,
+          runtimeInfo: notificationRuntimeInfo,
+        }) ? (
+          <PermissionBanner onPress={() => router.push('/notification-permission')} />
+        ) : null}
         <OverviewCard
           nextSevenDays={nextSevenDaysCount}
           thisMonth={thisMonthCount}
