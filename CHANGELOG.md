@@ -1,5 +1,13 @@
 # 到期提醒助手原型变更记录
 
+## 2026-05-08
+
+1. 修复本地开发 Web 入口：
+   - 补齐 Expo Web 运行所需的 `react-native-web` 依赖
+   - 将 `react-dom` 锁定为 `19.1.0`，避免 npm 安装时解析到与 `react@19.1.0` 不兼容的新版本
+   - Web 开发环境改用内存存储适配层，避免 `expo-sqlite` 同步 Web 实现因缺少 `SharedArrayBuffer` 导致页面崩溃
+   - Android/iOS 端仍继续使用本地 SQLite 和原有迁移逻辑
+
 ## 2026-05-07
 
 1. 启动 M3.9 UI 细节精修：
