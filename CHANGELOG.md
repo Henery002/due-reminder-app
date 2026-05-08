@@ -29,6 +29,11 @@
    - UI 删除 notify 临时事项后，SQLite 确认记录移除
    - UI 创建 record-only 临时事项后，SQLite 确认 `reminderMode=record-only` 且 `reminderRulesJson=[]`
    - 列表确认 record-only 卡片展示“仅记录”且不展示“延后”，随后通过 UI 删除并确认记录移除
+6. 补充真机辅助链路复核：
+   - 通知权限页 deep link 可正常打开，点击“发送 5 秒测试通知”后会弹出“测试通知已安排”
+   - `dumpsys notification --noredact` 可看到 `到期提醒测试 / 如果你看到这条通知，说明本地提醒已经可以工作。`，确认测试通知真正进入系统通知服务
+   - 数据备份页 deep link 可正常打开，导出区域能生成包含 `schemaVersion`、`exportedAt` 和当前本机事项的 JSON 文本
+   - 本轮仅验证导出文本和导入入口可见性，未执行导入写库，避免对当前用户数据造成覆盖
 
 ## 2026-05-07
 
