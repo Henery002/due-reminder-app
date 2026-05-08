@@ -22,6 +22,13 @@
    - 选中态热区从 `46x38` 调整为 `58x48`，提升主导航的可点感
    - 底部偏移从 `4` 收为 `0`，减少浮动栏底部漏出背景的问题
    - 新增浮动 Tab 布局测试，并同步视觉系统底部导航规范
+5. 继续小米 14 真机核心闭环复核：
+   - USB 调试改用 `adb reverse tcp:8081 tcp:8081` + `127.0.0.1:8081` 启动 dev-client，避免局域网 manifest 下载波动
+   - UI 创建 notify 临时事项后，SQLite 确认写入 2 个 `notificationId`
+   - UI 编辑保存后，SQLite 确认名称更新且 `notificationId` 重排为新值
+   - UI 删除 notify 临时事项后，SQLite 确认记录移除
+   - UI 创建 record-only 临时事项后，SQLite 确认 `reminderMode=record-only` 且 `reminderRulesJson=[]`
+   - 列表确认 record-only 卡片展示“仅记录”且不展示“延后”，随后通过 UI 删除并确认记录移除
 
 ## 2026-05-07
 
