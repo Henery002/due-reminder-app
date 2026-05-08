@@ -2,6 +2,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Animated, Pressable, StyleSheet, type PressableProps } from 'react-native';
+import {
+  FLOATING_TAB_BAR_METRICS,
+  getFloatingTabIconSize,
+} from '../../src/components/floating-tab-bar.layout';
 import { useTheme, type AppTheme } from '../../src/theme/ThemeProvider';
 
 export default function TabsLayout() {
@@ -21,19 +25,19 @@ export default function TabsLayout() {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
           borderTopWidth: 0,
-          bottom: 4,
-          elevation: 4,
-          height: 48,
-          left: 24,
+          bottom: FLOATING_TAB_BAR_METRICS.bottomOffset,
+          elevation: 8,
+          height: FLOATING_TAB_BAR_METRICS.containerHeight,
+          left: FLOATING_TAB_BAR_METRICS.horizontalInset,
           paddingBottom: 0,
           paddingTop: 0,
           position: 'absolute',
-          right: 24,
-          borderRadius: 18,
+          right: FLOATING_TAB_BAR_METRICS.horizontalInset,
+          borderRadius: 22,
           shadowColor: colors.cardShadow,
-          shadowOffset: { height: 4, width: 0 },
-          shadowOpacity: theme.colorScheme === 'dark' ? 0.14 : 0.06,
-          shadowRadius: 12,
+          shadowOffset: { height: 3, width: 0 },
+          shadowOpacity: theme.colorScheme === 'dark' ? 0.18 : 0.08,
+          shadowRadius: 14,
         },
       }}
     >
@@ -45,7 +49,7 @@ export default function TabsLayout() {
             <MaterialCommunityIcons
               color={color}
               name={focused ? 'home-variant' : 'home-variant-outline'}
-              size={focused ? 25 : 23}
+              size={getFloatingTabIconSize(focused)}
             />
           ),
         }}
@@ -58,7 +62,7 @@ export default function TabsLayout() {
             <MaterialCommunityIcons
               color={color}
               name={focused ? 'clipboard-list' : 'clipboard-list-outline'}
-              size={focused ? 25 : 23}
+              size={getFloatingTabIconSize(focused)}
             />
           ),
         }}
@@ -71,7 +75,7 @@ export default function TabsLayout() {
             <MaterialCommunityIcons
               color={color}
               name={focused ? 'account-circle' : 'account-circle-outline'}
-              size={focused ? 25 : 23}
+              size={getFloatingTabIconSize(focused)}
             />
           ),
         }}
@@ -159,9 +163,9 @@ function createStyles(theme: AppTheme) {
     tabButton: {
       alignItems: 'center',
       borderRadius: radius.pill,
-      height: 38,
+      height: FLOATING_TAB_BAR_METRICS.selectedButtonHeight,
       justifyContent: 'center',
-      width: 46,
+      width: FLOATING_TAB_BAR_METRICS.selectedButtonWidth,
     },
     tabButtonMotion: {
       alignItems: 'center',
